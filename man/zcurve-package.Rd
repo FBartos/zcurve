@@ -4,9 +4,15 @@
 \name{zcurve-package}
 \alias{zcurve-package}
 \alias{_PACKAGE}
-\title{zcurve: Implementations of Z-curves}
+\title{zcurve: An Implementation of Z-curves}
 \description{
-More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+An implementation of z-curves - a method for estimating expected discovery 
+    and replicability rates on the bases of test-statistics of published studies. The package 
+    provides functions for fitting the new density and EM version (Bartoš & Schimmack, in 
+    preparation) as well as the original density z-curve (Brunner & Schimmack, 2019). 
+    Furthermore, the package provides summarizing and plotting functions for the 
+    fitted z-curve objects. See the aforementioned articles for more information about 
+    the z-curves, expected discovery and replicability rates, validation 
+    studies, and limitations.
 }
 \keyword{internal}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/zcurve_density.R
 \name{control_density_v1}
 \alias{control_density_v1}
-\title{Control settings for the original z-curve.1.0 density algorithm}
+\title{Control settings for the original z-curve density algorithm}
 \arguments{
 \item{version}{Set to \code{1} to fit the original version of z-curve.
 Defaults to \code{2} = the updated version of z-curve. For its settings
@@ -36,7 +36,8 @@ defaults to \code{1e-10}}
 All settings are passed to the density fitting
 algorithm. All unspecified settings are set to the default value.
 Setting \code{model = "KD1"} sets all settings to the default
-value irrespective of any other setting.
+value irrespective of any other setting and fits z-curve as described
+in \insertCite{zcurve1;textual}{zcurve}.
 }
 \examples{
 # to increase the number of iterations
@@ -46,6 +47,9 @@ ctrl <- list(
 )
 \dontrun{zcurve(z, algorithm = "density", control = ctrl)}
 
+}
+\references{
+\insertAllCited{}
 }
 \seealso{
 \code{\link[=zcurve]{zcurve()}}, \link{control_density}, \link{control_EM}

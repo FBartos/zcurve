@@ -39,11 +39,11 @@ z_to_power  <- function(z, alpha = .05, a = stats::qnorm(alpha/2,lower.tail = FA
 #' power_to_z(c(0.05, 0.20, 0.40, 0.60, 0.80, 0.974, 0.999), alpha = .05)
 power_to_z  <- function(power, alpha = .05, a = stats::qnorm(alpha/2,lower.tail = FALSE),
                         nleqslv_control = list(xtol = 1e-15, maxit = 300, stepmax = .5)){
-  if(!all(sapply(power, function(x)x >= 0 & x <= 1)))stop("power must be >= alpha & <= 1")
   if(a  < 0)stop("a must be >= 0")
   if(is.null(a) & is.null(alpha))stop("Either 'alpha' or 'a' must be provided")
   if(is.null(alpha) & !is.null(a))alpha <- stats::pnorm(a, lower.tail = FALSE)*2
   if(alpha < 0 | alpha > 1)stop("alpha must be >= 0 & <= 1")
+  if(!all(sapply(power, function(x)x >= alpha & x <= 1)))stop("power must be >= alpha & <= 1")
   sapply(power, function(pow)nleqslv::nleqslv(.5, .solve_power_to_z, power = pow, a = a, control = nleqslv_control)$x)
 }
 
@@ -54,6 +54,10 @@ power_to_z  <- function(power, alpha = .05, a = stats::qnorm(alpha/2,lower.tail 
 }
 
 ### internal tools for the results computation
+.p_to_z     <- function(p){
+  if(!all(sapply(p, function(x)x >= 0 & x <= 1)))stop("p-values must be >= 0 & <= 1")
+  stats::qnorm(p/2, lower.tail = F)
+}
 # expected number of unpublished studies
 .get_E_null <- function(N_fit, weights, Pow){
   sum((N_fit*weights)*(1/Pow-1))

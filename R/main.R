@@ -1,34 +1,54 @@
-#' Fit a z-curve
+#' @title Fit a z-curve
 #' 
-#' @param z a vector of z-scores
+#' @description \code{zcurve} is used to fit z-curve models. The function
+#' takes input of z-statistics or two-sided p-values and returns object of
+#' class \code{"zcurve"} that can be further interrogated by summary and plot
+#' function. It default to EM model, but different version of z-curves can
+#' be specified using the \code{method} and \code{control} arguments. See
+#' 'Examples' and 'Details' for more information.
+#' 
+#' @param z a vector of z-scores.
+#' @param p a vector of two-sided p-values, internally transformed to 
+#' z-scores.
 #' @param method the method to be used for fitting. Possible options are
 #' Expectation Maximization \code{"EM"} and density \code{"density"},
 #' defaults to \code{"EM"}.
 #' @param bootstrap the number of bootstraps for estimating CI. To skip
-#' bootstrap specify \code{FALSE}
+#' bootstrap specify \code{FALSE}.
 #' @param control additional options for the fitting algorithm more details in
-#' \link[=control_EM]{control EM} or \link[=control_density]{control density}
+#' \link[=control_EM]{control EM} or \link[=control_density]{control density}.
+#'
+#' @details The function returns the EM method by default and changing 
+#' \code{method = "density"} gives the KD2 version of z-curve as outlined in
+#' \insertCite{zcurve2;textual}{zcurve}. For the original z-curve 
+#' \insertCite{zcurve1}{zcurve}, referred to as KD1, specify 
+#'  \code{'control = "density", control = list(model = "KD1")'}.
+#'  
+#' @references
+#' \insertAllCited{}
 #'
 #' @return The fitted z-curve object
 #' @export zcurve
 #'
 #' @examples
-#' # simulate some z-statistics
-#' z <- abs(rnorm(300,3))
+#' # load data from OSC 2015 reproducibility project
+#' OSC.z
 #'
-#' # fit an EM7 z-curve
-#' m.EM <- zcurve(z, method = "EM", bootstrap = 100)
+#' # fit an EM z-curve (use larger bootstrap for real inference)
+#' m.EM <- zcurve(OSC.z, method = "EM", bootstrap = 100)
 #'
-#' # or z19.9 z-curve
-#' m.D <- zcurve(z, method = "density", bootstrap = 100)
+#' # or KD2 z-curve (use larger bootstrap for real inference)
+#' m.D <- zcurve(OSC.z, method = "density", bootstrap = 100)
 #'
 #' # inspect the results
 #' summary(m.EM)
 #' summary(m.D)
-#'
+#' # see '?summary.zcurve' for more output options
+#' 
 #' # plot the results
 #' plot(m.EM)
 #' plot(m.D)
+#' # see '?plot.zcurve' for more plotting options
 #'
 #' # to specify more options, set the control arguments
 #' # ei. increase the maximum number of iterations and change alpha level
@@ -36,14 +56,31 @@
 #'   "max_iter" = 9999,
 #'   "alpha"    = .10
 #'   )
-#' m1.EM <- zcurve(z, method = "EM", bootstrap = 100, control = ctr1)
-#' 
+#' m1.EM <- zcurve(OSC.z, method = "EM", bootstrap = 100, control = ctr1)
+#' # see '?control_EM' and '?control_density' for more information about different
+#' # z-curves specifications
 #' @seealso [summary.zcurve()], [plot.zcurve()], [control_EM], [control_density]
-zcurve       <- function(z, method = "EM", bootstrap = 1000, control = NULL){
+zcurve       <- function(z, p, method = "EM", bootstrap = 1000, control = NULL){
+  
+  # check input
+  if(missing(z) & missing(p))stop("No data input")
+  if(!missing(z)){
+    if(!is.numeric(z))stop("Wrong z-scores input: Data are not nummeric.")
+    if(!is.vector(z))stop("Wrong z-scores input: Data are not a vector")    
+  }else{
+    z <- NULL
+  }
+  if(!missing(p)){
+    if(!is.numeric(p))stop("Wrong p-values input: Data are not nummeric.")
+    if(!is.vector(p))stop("Wrong p-values input: Data are not a vector")    
+  }else{
+    p <- NULL
+  }
   
   if(!method %in% c("EM", "density"))stop("Wrong method, select a supported option")
   if(!is.numeric(bootstrap))bootstrap <- FALSE
   if(bootstrap <= 0)        bootstrap <- FALSE
+  
   
   # create results object
   object        <- NULL
@@ -61,11 +98,13 @@ zcurve       <- function(z, method = "EM", bootstrap = 1000, control = NULL){
   
   
   # prepare data
-  if(!is.numeric(z))stop("Wrong data input: Data are not nummeric.")
-  if(!is.vector(z))stop("Wrong data input: Data are not a vector")
+  if(!is.null(p)){
+    z_from_p <- .p_to_z(p)
+    z        <- c(z, z_from_p)
+  }
   z     <- abs(z)
   z_sig <- z[z > control$a]
-  object$data   <- z
+  object$data <- z
   
   
   # use apropriate algorithm
@@ -136,7 +175,7 @@ print.zcurve         <- function(x, ...){
 #'
 #' @param object A fitted z-curve object.
 #' @param type Whether the results \code{"results"} or the 
-#' mixture mode parameteres \code{"parameters"} should be 
+#' mixture mode parameters \code{"parameters"} should be 
 #' returned. Defaults to  \code{"results"}.
 #' @param all Whether additional results, such as file drawer 
 #' ration, expected and missing number of studies, and Soric FDR 
@@ -247,17 +286,12 @@ summary.zcurve       <- function(object, type = "results", all = FALSE, ERR.adj 
       }
     }
     
-    # remove untested stats from z-curve 1.0
     if(object$method == "density"){
       if(object$control$version == 1){
-        TAB["EDR",]           <- NULL
-        if(all){
-          TAB["File Drawer R",] <- NULL
-          TAB["Expected N",]    <- NULL
-          TAB["Missing N",]     <- NULL
-        }
+        TAB <- as.data.frame(TAB[1,,drop=FALSE])
       }
     }
+    
     
   }else if(type == "parameters" | substr(type,1,3) == "par"){
     
@@ -325,8 +359,12 @@ print.summary.zcurve <- function(x, ...){
   
   temp_to_int  <- !rownames(x$coefficients) %in% c("Expected N", "Missing N")
   temp_coef    <- x$coefficients
-  temp_coef[temp_to_int,]  <- apply(as.data.frame(x$coefficients[temp_to_int,]), 2, function(p).rXd(p, X = x$round.coef))
-  temp_coef[!temp_to_int,] <- round(x$coefficients[!temp_to_int,])
+  
+  if(length(temp_to_int) != 0){
+    temp_coef[temp_to_int,]  <- apply(as.data.frame(x$coefficients[temp_to_int,]), 2, function(p).rXd(p, X = x$round.coef))
+    temp_coef[!temp_to_int,] <- round(x$coefficients[!temp_to_int,])
+  }
+
   print(temp_coef,quote = FALSE, right = T)
   
   if(length(x$model$fit_index) > 1){
@@ -551,6 +589,22 @@ plot.zcurve          <- function(x, annotation = FALSE, CI = FALSE, extrapolate 
   }
   
 }
+
+#' @title Z-scores from subset of original studies featured in OSC 2015 
+#' reproducibility project
+#' 
+#' @description The dataset contains z-scores from subset of original
+#'  studies featured in psychology reproducibility project 
+#'  \insertCite{osc}{zcurve}. Only z-scores from studies with unambiguous 
+#' original outcomes are supplied (eliminating 7 studies with marginally 
+#' significant results). The real replication rate for those studies is 
+#' 35/90 (the whole project reports 36/97).
+#'
+#' @format A vector with 90 observations
+#' 
+#' @references
+#' \insertAllCited{}
+"OSC.z"
 
 # cleaning
 .onUnload <- function (libpath) {

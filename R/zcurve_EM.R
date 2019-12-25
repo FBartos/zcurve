@@ -107,7 +107,8 @@
 #' @description All these settings are passed to the Expectation Maximization
 #' fitting algorithm. All unspecified settings are set to the default value.
 #' Setting \code{model = "EM7"} sets all settings to the default
-#' value irrespective of any other setting.
+#' value irrespective of any other setting and fits z-curve as described in
+#' \insertCite{zcurve2;textual}{zcurve}
 #' 
 #' @param model A type of model to be fitted, defaults to \code{"EM7"}
 #' for a z-curve with z-scores centered components.
@@ -135,6 +136,10 @@
 #' starting phase of EM algorithm, defaults to \code{100} fit_reps
 #' @param fit_reps A number of starting fits to get the initial
 #' position for the EM algorithm, defaults to \code{20}
+#' 
+#' @references
+#' \insertAllCited{}
+#' 
 #' @examples # to increase the number of starting fits
 #' # and change the means of the mixture components
 #' 

@@ -47,7 +47,8 @@ position for the EM algorithm, defaults to \code{20}}
 All these settings are passed to the Expectation Maximization
 fitting algorithm. All unspecified settings are set to the default value.
 Setting \code{model = "EM7"} sets all settings to the default
-value irrespective of any other setting.
+value irrespective of any other setting and fits z-curve as described in
+\insertCite{zcurve2;textual}{zcurve}
 }
 \examples{
 # to increase the number of starting fits
@@ -59,6 +60,9 @@ ctrl <- list(
 )
 \dontrun{zcurve(z, algorithm = "EM", control = ctrl)}
 
+}
+\references{
+\insertAllCited{}
 }
 \seealso{
 \code{\link[=zcurve]{zcurve()}}, \link{control_density}

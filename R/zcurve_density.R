@@ -128,11 +128,12 @@
 }
 
 #' @name control_density_v1
-#' @title Control settings for the original z-curve.1.0 density algorithm
+#' @title Control settings for the original z-curve density algorithm
 #' @description All settings are passed to the density fitting
 #' algorithm. All unspecified settings are set to the default value.
 #' Setting \code{model = "KD1"} sets all settings to the default
-#' value irrespective of any other setting.
+#' value irrespective of any other setting and fits z-curve as described 
+#' in \insertCite{zcurve1;textual}{zcurve}.
 #' 
 #' @param version Set to \code{1} to fit the original version of z-curve. 
 #' Defaults to \code{2} = the updated version of z-curve. For its settings 
@@ -152,6 +153,9 @@
 #' @param criterion A criterion to terminate \link[stats]{nlminb} optimization,
 #' defaults to \code{1e-10}
 #' @param bw A bandwidth of the kernel density estimation, defaults to \code{"nrd0"}
+#' 
+#' @references
+#' \insertAllCited{}
 #' 
 #' @examples # to increase the number of iterations
 #' ctrl <- list(
@@ -262,8 +266,9 @@ NULL
 #' @description All settings are passed to the density fitting
 #' algorithm. All unspecified settings are set to the default value.
 #' Setting \code{model = "KD2"} sets all settings to the default
-#' value irrespective of any other setting. In order to fit the 
-#' z-curve 1.0 density algorithm, set \code{version = 1} and go to 
+#' value irrespective of any other setting and fits z-curve as 
+#' describe in \insertCite{zcurve2;textual}{zcurve}. In order to fit the 
+#' z-curve 1.0 density algorithm, set \code{model = "KD1"} and go to 
 #' [control_density_v1]
 #' 
 #' @param version Which version of z-curve should be fitted. Defaults to
@@ -303,6 +308,9 @@ NULL
 #' @param criterion_FDR_dbc A criterion for estimating the maximum FDR using
 #' the \link[evmix]{bckden} function, defaults to \code{.01}
 #' @param precision_FDR A maximum FDR precision, defaults to \code{.05}
+#' 
+#' @references
+#' \insertAllCited{}
 #' 
 #' @examples # to decrease the criterion and increase the number of iterations
 #' ctrl <- list(

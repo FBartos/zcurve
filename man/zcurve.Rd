@@ -4,44 +4,61 @@
 \alias{zcurve}
 \title{Fit a z-curve}
 \usage{
-zcurve(z, method = "EM", bootstrap = 1000, control = NULL)
+zcurve(z, p, method = "EM", bootstrap = 1000, control = NULL)
 }
 \arguments{
-\item{z}{a vector of z-scores}
+\item{z}{a vector of z-scores.}
+
+\item{p}{a vector of two-sided p-values, internally transformed to
+z-scores.}
 
 \item{method}{the method to be used for fitting. Possible options are
 Expectation Maximization \code{"EM"} and density \code{"density"},
 defaults to \code{"EM"}.}
 
 \item{bootstrap}{the number of bootstraps for estimating CI. To skip
-bootstrap specify \code{FALSE}}
+bootstrap specify \code{FALSE}.}
 
 \item{control}{additional options for the fitting algorithm more details in
-\link[=control_EM]{control EM} or \link[=control_density]{control density}}
+\link[=control_EM]{control EM} or \link[=control_density]{control density}.}
 }
 \value{
 The fitted z-curve object
 }
 \description{
-Fit a z-curve
+\code{zcurve} is used to fit z-curve models. The function
+takes input of z-statistics or two-sided p-values and returns object of
+class \code{"zcurve"} that can be further interrogated by summary and plot
+function. It default to EM model, but different version of z-curves can
+be specified using the \code{method} and \code{control} arguments. See
+'Examples' and 'Details' for more information.
+}
+\details{
+The function returns the EM method by default and changing
+\code{method = "density"} gives the KD2 version of z-curve as outlined in
+\insertCite{zcurve2;textual}{zcurve}. For the original z-curve
+\insertCite{zcurve1}{zcurve}, referred to as KD1, specify
+\code{'control = "density", control = list(model = "KD1")'}.
 }
 \examples{
-# simulate some z-statistics
-z <- abs(rnorm(300,3))
+# load data from OSC 2015 reproducibility project
+OSC.z
 
-# fit an EM7 z-curve
-m.EM <- zcurve(z, method = "EM", bootstrap = 100)
+# fit an EM z-curve (use larger bootstrap for real inference)
+m.EM <- zcurve(OSC.z, method = "EM", bootstrap = 100)
 
-# or z19.9 z-curve
-m.D <- zcurve(z, method = "density", bootstrap = 100)
+# or KD2 z-curve (use larger bootstrap for real inference)
+m.D <- zcurve(OSC.z, method = "density", bootstrap = 100)
 
 # inspect the results
 summary(m.EM)
 summary(m.D)
+# see '?summary.zcurve' for more output options
 
 # plot the results
 plot(m.EM)
 plot(m.D)
+# see '?plot.zcurve' for more plotting options
 
 # to specify more options, set the control arguments
 # ei. increase the maximum number of iterations and change alpha level
@@ -49,8 +66,12 @@ ctr1 <- list(
   "max_iter" = 9999,
   "alpha"    = .10
   )
-m1.EM <- zcurve(z, method = "EM", bootstrap = 100, control = ctr1)
-
+m1.EM <- zcurve(OSC.z, method = "EM", bootstrap = 100, control = ctr1)
+# see '?control_EM' and '?control_density' for more information about different
+# z-curves specifications
+}
+\references{
+\insertAllCited{}
 }
 \seealso{
 \code{\link[=summary.zcurve]{summary.zcurve()}}, \code{\link[=plot.zcurve]{plot.zcurve()}}, \link{control_EM}, \link{control_density}

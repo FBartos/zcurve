@@ -7,5 +7,6 @@
 ## usethis namespace: start
 #' @useDynLib zcurve, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
+#' @importFrom Rdpack reprompt
 ## usethis namespace: end
 NULL

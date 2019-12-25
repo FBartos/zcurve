@@ -18,7 +18,7 @@
 \item{object}{A fitted z-curve object.}
 
 \item{type}{Whether the results \code{"results"} or the
-mixture mode parameteres \code{"parameters"} should be
+mixture mode parameters \code{"parameters"} should be
 returned. Defaults to  \code{"results"}.}
 
 \item{all}{Whether additional results, such as file drawer

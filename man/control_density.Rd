@@ -66,8 +66,9 @@ the \link[evmix]{bckden} function, defaults to \code{.01}}
 All settings are passed to the density fitting
 algorithm. All unspecified settings are set to the default value.
 Setting \code{model = "KD2"} sets all settings to the default
-value irrespective of any other setting. In order to fit the
-z-curve 1.0 density algorithm, set \code{version = 1} and go to
+value irrespective of any other setting and fits z-curve as
+describe in \insertCite{zcurve2;textual}{zcurve}. In order to fit the
+z-curve 1.0 density algorithm, set \code{model = "KD1"} and go to
 \link{control_density_v1}
 }
 \examples{
@@ -78,6 +79,9 @@ ctrl <- list(
 )
 \dontrun{zcurve(z, algorithm = "density", control = ctrl)}
 
+}
+\references{
+\insertAllCited{}
 }
 \seealso{
 \code{\link[=zcurve]{zcurve()}}, \link{control_density_v1}, \link{control_EM}
