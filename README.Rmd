@@ -16,7 +16,6 @@ knitr::opts_chunk$set(
 # zcurve
 
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.org/FBartos/zcurve.svg?branch=master)](https://travis-ci.org/FBartos/zcurve)
 [![Travis build status](https://travis-ci.com/FBartos/zcurve.svg?branch=master)](https://travis-ci.com/FBartos/zcurve)
 <!-- badges: end -->
 
@@ -85,7 +84,7 @@ plot(fit)
 
 The default plot can be further modified by using classic R plotting arguments as 'xlab', 'ylab',
 'main', 'cex.axis', 'cex.lab'. Furthermore, an annotation with the main test statistics can be 
-added to the plot by specifying 'annotation = TRUE' and the piece-wise confidence intervals of the
+added to the plot by specifying 'annotation = TRUE' and the pointwise confidence intervals of the
 plot by specifying "CI = TRUE". For more options regarding the annotation see '?plot.zcurve". 
 
 ```{r}
@@ -117,7 +116,7 @@ and '?control_density_v1'.
 
 
 ## Sources
-Bartoš., & Schimmack U. (in preparation). Z-Curve2.0: Estimating Replication Rates and Discovery Rates.
+Bartoš F., & Schimmack U. (in preparation). Z-Curve2.0: Estimating Replication Rates and Discovery Rates.
 
 Brunner J. & Schimmack U. (2019). Estimating population mean power under conditions of heterogeneity and 
 selection for significance. Meta-Psychology, 3.

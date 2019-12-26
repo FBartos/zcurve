@@ -6,8 +6,6 @@
 <!-- badges: start -->
 
 [![Travis build
-status](https://travis-ci.org/FBartos/zcurve.svg?branch=master)](https://travis-ci.org/FBartos/zcurve)
-[![Travis build
 status](https://travis-ci.com/FBartos/zcurve.svg?branch=master)](https://travis-ci.com/FBartos/zcurve)
 <!-- badges: end -->
 
@@ -65,11 +63,11 @@ summary(fit)
 #> model: EM7 via EM
 #> 
 #>     Estimate  l.CI  u.CI
-#> ERR    0.620 0.471 0.754
-#> EDR    0.404 0.085 0.702
+#> ERR    0.616 0.448 0.747
+#> EDR    0.448 0.072 0.700
 #> 
-#> Model converged in 38 + 67 iterations
-#> Q = -60.61, 95% CI[-71.31, -48.41]
+#> Model converged in 59 + 63 iterations
+#> Q = -60.62, 95% CI[-70.68, -46.54]
 ```
 
 More details from the fitted object can be extracted from the fitted
@@ -84,15 +82,15 @@ summary(fit, all = TRUE)
 #> model: EM7 via EM
 #> 
 #>               Estimate  l.CI   u.CI
-#> ERR              0.620 0.471  0.754
-#> EDR              0.404 0.085  0.702
-#> Soric FDR        0.078 0.022  0.566
-#> File Drawer R    1.475 0.424 10.757
-#> Expected N         210   121    999
-#> Missing N         -120  -909    -31
+#> ERR              0.616 0.448  0.747
+#> EDR              0.448 0.072  0.700
+#> Soric FDR        0.065 0.023  0.674
+#> File Drawer R    1.233 0.428 12.800
+#> Expected N         190   121   1173
+#> Missing N         -100 -1083    -31
 #> 
-#> Model converged in 38 + 67 iterations
-#> Q = -60.61, 95% CI[-71.31, -48.41]
+#> Model converged in 59 + 63 iterations
+#> Q = -60.62, 95% CI[-70.68, -46.54]
 ```
 
 For more information regarding the fitted model weights add ‘type =
@@ -106,16 +104,16 @@ summary(fit, type = "parameters")
 #> model: EM7 via EM
 #> 
 #>   Mean  Weight  l.CI  u.CI
-#> 1 0.000  0.050 0.000 0.377
-#> 2 1.000  0.007 0.000 0.424
-#> 3 2.000  0.742 0.002 0.998
-#> 4 3.000  0.201 0.000 0.654
+#> 1 0.000  0.021 0.000 0.428
+#> 2 1.000  0.069 0.000 0.440
+#> 3 2.000  0.697 0.001 0.998
+#> 4 3.000  0.213 0.000 0.643
 #> 5 4.000  0.000 0.000 0.000
 #> 6 5.000  0.000 0.000 0.000
 #> 7 6.000  0.000 0.000 0.000
 #> 
-#> Model converged in 38 + 67 iterations
-#> Q = -60.61, 95% CI[-71.31, -48.41]
+#> Model converged in 59 + 63 iterations
+#> Q = -60.62, 95% CI[-70.68, -46.54]
 ```
 
 The package also provides a convenient plotting method for the z-curve
@@ -190,7 +188,7 @@ information about the control settings see ‘?control\_EM’,
 
 ## Sources
 
-Bartoš., & Schimmack U. (in preparation). Z-Curve2.0: Estimating
+Bartoš F., & Schimmack U. (in preparation). Z-Curve2.0: Estimating
 Replication Rates and Discovery Rates.
 
 Brunner J. & Schimmack U. (2019). Estimating population mean power under
