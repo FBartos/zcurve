@@ -74,8 +74,8 @@
                                      a         = control$a,
                                      b         = control$b,
                                      bootstrap = bootstrap,
-                                     max_iter  = control$max_iter,
-                                     criterion = control$criterion
+                                     max_iter  = control$max_iter_boot,
+                                     criterion = control$criterion_boot
                                      )
   }else if(control$type == 2){
     fit_boot <- .zcurve_EM_boot_RCpp(x         = z_sig,
@@ -86,8 +86,8 @@
                                      a         = control$a,
                                      b         = control$b,
                                      bootstrap = bootstrap,
-                                     criterion = control$criterion,
-                                     max_iter  = control$max_iter)
+                                     criterion = control$criterion_boot,
+                                     max_iter  = control$max_iter_boot)
   }
 
   return(
@@ -106,19 +106,19 @@
 #' @title Control settings for the zcurve EM algorithm
 #' @description All these settings are passed to the Expectation Maximization
 #' fitting algorithm. All unspecified settings are set to the default value.
-#' Setting \code{model = "EM7"} sets all settings to the default
+#' Setting \code{model = "EM"} sets all settings to the default
 #' value irrespective of any other setting and fits z-curve as described in
 #' \insertCite{zcurve2;textual}{zcurve}
 #' 
-#' @param model A type of model to be fitted, defaults to \code{"EM7"}
-#' for a z-curve with z-scores centered components.
+#' @param model A type of model to be fitted, defaults to \code{"EM"}
+#' for a z-curve with 7 z-scores centered components.
 #' @param sig_level An alpha level of the test statistics, defaults to
 #' \code{.05}
 #' @param a A beginning of fitting interval, defaults to
 #' \code{qnorm(sig_level/2,lower.tail = F)}
 #' @param b An end of fitting interval, defaults to \code{5}
 #' @param mu Means of the components, defaults to
-#' \code{c(0, 1.11, 1.71, 2.21, 2.80, 3.9, 5)}
+#' \code{0:6}
 #' @param sigma A standard deviation of the components, defaults to
 #' \code{rep(1, length(mu))}
 #' @param theta_alpha A vector of alpha parameters of a Dirichlet distribution
@@ -127,15 +127,19 @@
 #' @param theta_max Upper limits for weights, defaults to
 #' \code{rep(1,length(mu))}
 #' @param criterion A criterion to terminate the EM algorithm,
-#' defaults to \code{1e-5}
-#' @param criterion_start A criterion to terminate the EM algorithm,
-#' defaults to \code{1e-3}
+#' defaults to \code{1e-6}
+#' @param criterion_start A criterion to terminate the starting phase 
+#' of the EM algorithm, defaults to \code{1e-3}
+#' @param criterion_boot A criterion to terminate the bootstrapping phase 
+#' of the EM algorithm, defaults to \code{1e-5}
 #' @param max_iter A maximum number of iterations of the EM algorithm
-#' (not including the starting iterations) defaults to \code{1000}
+#' (not including the starting iterations) defaults to \code{10000}
 #' @param max_iter_start A maximum number of iterations for the 
-#' starting phase of EM algorithm, defaults to \code{100} fit_reps
+#' starting phase of EM algorithm, defaults to \code{100}
+#' @param max_iter_boot A maximum number of iterations for the 
+#' booting phase of EM algorithm, defaults to \code{100}
 #' @param fit_reps A number of starting fits to get the initial
-#' position for the EM algorithm, defaults to \code{20}
+#' position for the EM algorithm, defaults to \code{100}
 #' 
 #' @references
 #' \insertAllCited{}
@@ -183,16 +187,18 @@ NULL
     control$theta_alpha     <- rep(.5, length(control$mu))
     control$mu_alpha        <- 2:(control$K+1)
     control$mu_max          <- control$b + 2
-    control$criterion       <- 1e-5
-    control$max_iter        <- 1000
+    control$criterion       <- 1e-6
+    control$max_iter        <- 10000
+    control$criterion_boot  <- 1e-5
+    control$max_iter_boot   <- 1000
     control$criterion_start <- 1e-3
     control$max_iter_start  <- 100
-    control$fit_reps        <- 20
-    control$model           <- "EM7"
+    control$fit_reps        <- 100
+    control$model           <- "EM"
     return(control)
   }
   if(!is.null(control$model)){
-    if(control$model == "EM7"){
+    if(control$model == "EM"){
       control$sig_level       <- .05
       control$a               <- stats::qnorm(control$sig_level/2,lower.tail = F)
       control$b               <- 6
@@ -203,12 +209,14 @@ NULL
       control$theta_alpha     <- rep(.5, length(control$mu))
       control$mu_alpha        <- 2:(control$K+1)
       control$mu_max          <- control$b + 2
-      control$criterion       <- 1e-5
-      control$max_iter        <- 1000
+      control$criterion       <- 1e-6
+      control$max_iter        <- 10000
+      control$criterion_boot  <- 1e-5
+      control$max_iter_boot   <- 1000
       control$criterion_start <- 1e-3
       control$max_iter_start  <- 100
-      control$fit_reps        <- 20
-      control$model           <- "EM7"
+      control$fit_reps        <- 100
+      control$model           <- "EM"
       return(control)
     }
   }
@@ -225,7 +233,7 @@ NULL
     control$type            <- 1
   }
   if(is.null(control$mu)){
-    control$mu              <- c(0, 1.11, 1.71, 2.21, 2.80, 3.9, 5)
+    control$mu              <- 0:6
   }
   if(is.null(control$sigma)){
     control$sigma           <- rep(1, length(control$mu))
@@ -243,10 +251,16 @@ NULL
     control$mu_max          <- control$b + 2
   }
   if(is.null(control$criterion)){
-    control$criterion       <- 1e-5
+    control$criterion       <- 1e-6
   }
   if(is.null(control$max_iter)){
-    control$max_iter        <- 1000
+    control$max_iter        <- 10000
+  }
+  if(is.null(control$criterion_boot)){
+    control$criterion_boot  <- 1e-5
+  }
+  if(is.null(control$max_iter_boot)){
+    control$max_iter_boot   <- 1000
   }
   if(is.null(control$criterion_start)){
     control$criterion_start <- 1e-3
@@ -255,7 +269,7 @@ NULL
     control$max_iter_start  <- 100
   }
   if(is.null(control$fit_reps)){
-    control$fit_reps        <- 20
+    control$fit_reps        <- 100
   }
   if(is.null(control$model)){
     control$model           <- NULL

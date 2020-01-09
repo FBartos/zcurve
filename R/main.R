@@ -274,8 +274,8 @@ summary.zcurve       <- function(object, type = "results", all = FALSE, ERR.adj 
                                       "l.CI"        = .get_expected_N(TAB["EDR","u.CI"], temp_N_sig),
                                       "u.CI"        = .get_expected_N(TAB["EDR","l.CI"], temp_N_sig)),
                      "Missing N" = c("Estimate"     = .get_missing_N(TAB["EDR","Estimate"], temp_N_sig, temp_N_obs),
-                                     "l.CI"         = .get_missing_N(TAB["EDR","l.CI"], temp_N_sig, temp_N_obs),
-                                     "u.CI"         = .get_missing_N(TAB["EDR","u.CI"], temp_N_sig, temp_N_obs))
+                                     "l.CI"         = .get_missing_N(TAB["EDR","u.CI"], temp_N_sig, temp_N_obs),
+                                     "u.CI"         = .get_missing_N(TAB["EDR","l.CI"], temp_N_sig, temp_N_obs))
         )
       }else{
         TAB <- rbind(TAB,

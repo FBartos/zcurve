@@ -107,7 +107,7 @@ power_to_z  <- function(power, alpha = .05, a = stats::qnorm(alpha/2,lower.tail 
   .get_file_drawer_R(EDR)*N_sig + N_sig
 }
 .get_missing_N     <- function(EDR, N_sig, N_obs){
-  N_obs - .get_expected_N(EDR, N_sig)
+  .get_expected_N(EDR, N_sig) - N_obs
 }
 
 

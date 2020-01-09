@@ -1,0 +1,11 @@
+citHeader("To cite the zcurve package in publications use:")
+
+note <- sprintf("R package version %s", meta$Version)
+
+bibentry(bibtype = "misc",
+         title = "zcurve: An R Package for Fitting Z-curves",
+         author = c(person("František", "Bartoš"),
+                    person("Ulrich",    "Schimmack")),
+         year = 2020,
+         note = note,
+         url = "https://github.com/FBartos/zcurve")
