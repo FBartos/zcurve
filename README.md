@@ -197,7 +197,7 @@ citation(package = "zcurve")
 #> 
 #> Bartoš F, Schimmack U (2020). "zcurve: An R Package for Fitting
 #> Z-curves." R package version 1.0.0, <URL:
-#> https://CRAN.R-project.org/package=zcurve>.
+#> https://github.com/FBartos/zcurve>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
@@ -206,18 +206,19 @@ citation(package = "zcurve")
 #>     author = {František Bartoš and Ulrich Schimmack},
 #>     year = {2020},
 #>     note = {R package version 1.0.0},
-#>     url = {https://CRAN.R-project.org/package=zcurve},
+#>     url = {https://github.com/FBartos/zcurve},
 #>   }
 ```
 
 ## Sources
 
-Bartoš F., & Schimmack U. (in preparation). Z-Curve2.0: Estimating
+Bartoš, F., & Schimmack, U. (2020, January 10). Z-Curve.2.0: Estimating
 Replication Rates and Discovery Rates.
+<https://doi.org/10.31234/osf.io/urgtn>
 
-Brunner J. & Schimmack U. (in press). Estimating population mean power
-under conditions of heterogeneity and selection for significance.
-Meta-Psychology
+Brunner, J. & Schimmack, U. (2019). Estimating Population Mean Power
+Under Conditions of Heterogeneity and Selection for Significance. Meta
+Psychology, in press.
 
 Open Science Collaboration. (2015). Estimating the reproducibility of
 psychological science. Science, 349(6251), aac4716.

@@ -106,6 +106,8 @@ zcurve       <- function(z, p, method = "EM", bootstrap = 1000, control = NULL){
   z_sig <- z[z > control$a]
   object$data <- z
   
+  # only run the algorithm with some significant results
+  if(sum(z_sig < control$b) < 10)stop("There must be at least 10 z-scores in the fitting range.")
   
   # use apropriate algorithm
   if(method == "EM"){

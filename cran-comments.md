@@ -1,6 +1,8 @@
+This is my first submission.
+
 ## Test environments
-* local Windows 10, R 3.6.1
-* ubuntu 12.04 (on travis-ci), R 3.1.2
+* local Windows 10, R 3.6.2 & R-devel
+* ubuntu 12.04 (on travis-ci)
 
 ## R CMD check results
 There were no ERRORs, WARNINGs or NOTEs. 
