@@ -30,12 +30,19 @@ studies, and limitations.
 
 ## Installation
 
-You can install the current version of zcurve from [GitHub](https://github.com/) with:
+You can install the current version of zcurve from CRAN with:
+
+``` r
+instal_packages("zcurve")
+```
+
+or the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("FBartos/zcurve")
 ```
+
 ## Example
 
 Z-curve can be used to estimate expected replicability rate (ERR) and expected discovery rate (EDR) 

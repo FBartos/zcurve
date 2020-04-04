@@ -1,5 +1,3 @@
-This is my first submission.
-
 ## Test environments
 * local Windows 10, R 3.6.2 & R-devel
 * ubuntu 12.04 (on travis-ci)

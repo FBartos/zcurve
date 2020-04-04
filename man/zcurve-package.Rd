@@ -4,15 +4,24 @@
 \name{zcurve-package}
 \alias{zcurve-package}
 \alias{_PACKAGE}
-\title{zcurve: An Implementation of Z-curves}
+\title{zcurve: An Implementation of Z-Curves}
 \description{
 An implementation of z-curves - a method for estimating expected discovery 
     and replicability rates on the bases of test-statistics of published studies. The package 
-    provides functions for fitting the new density and EM version (Bartoš & Schimmack, in 
-    preparation) as well as the original density z-curve (Brunner & Schimmack, 2019). 
-    Furthermore, the package provides summarizing and plotting functions for the 
-    fitted z-curve objects. See the aforementioned articles for more information about 
-    the z-curves, expected discovery and replicability rates, validation 
-    studies, and limitations.
+    provides functions for fitting the new density and EM version 
+    (Bartoš & Schimmack, 2020, <doi:10.31234/osf.io/urgtn>) as well as the original density 
+    z-curve (Brunner & Schimmack, 2017, <doi:10.31219/osf.io/wr93f>). Furthermore, the package 
+    provides summarizing and plotting functions for the fitted z-curve objects. See the 
+    aforementioned articles for more information about the z-curves, expected discovery 
+    and replicability rates, validation studies, and limitations.
+}
+\author{
+\strong{Maintainer}: František Bartoš \email{f.bartos96@gmail.com}
+
+Authors:
+\itemize{
+  \item Ulrich Schimmack \email{ulrich.schimmack@utoronto.ca}
+}
+
 }
 \keyword{internal}

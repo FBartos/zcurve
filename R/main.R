@@ -34,11 +34,13 @@
 #' # load data from OSC 2015 reproducibility project
 #' OSC.z
 #'
-#' # fit an EM z-curve (use larger bootstrap for real inference)
-#' m.EM <- zcurve(OSC.z, method = "EM", bootstrap = 100)
-#'
+#' # fit an EM z-curve (with disabled bootstrap due to examples times limits)
+#' m.EM <- zcurve(OSC.z, method = "EM", bootstrap = FALSE)
+#' # a version with 1000 boostraped samples would looked like:
+#' \donttest{m.EM <- zcurve(OSC.z, method = "EM", bootstrap = 1000)}
+#' 
 #' # or KD2 z-curve (use larger bootstrap for real inference)
-#' m.D <- zcurve(OSC.z, method = "density", bootstrap = 100)
+#' m.D <- zcurve(OSC.z, method = "density", bootstrap = FALSE)
 #'
 #' # inspect the results
 #' summary(m.EM)
@@ -56,7 +58,7 @@
 #'   "max_iter" = 9999,
 #'   "alpha"    = .10
 #'   )
-#' m1.EM <- zcurve(OSC.z, method = "EM", bootstrap = 100, control = ctr1)
+#' \donttest{m1.EM <- zcurve(OSC.z, method = "EM", bootstrap = FALSE, control = ctr1)}
 #' # see '?control_EM' and '?control_density' for more information about different
 #' # z-curves specifications
 #' @seealso [summary.zcurve()], [plot.zcurve()], [control_EM], [control_density]

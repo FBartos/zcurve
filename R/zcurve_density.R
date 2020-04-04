@@ -162,7 +162,7 @@
 #'    version   = 1,
 #'    max_iter  = 300
 #' )
-#' \dontrun{zcurve(z, algorithm = "density", control = ctrl)}
+#' \donttest{zcurve(z, method = "density", control = ctrl)}
 #' 
 #' @seealso [zcurve()], [control_density], [control_EM]
 NULL
@@ -317,7 +317,7 @@ NULL
 #'    max_iter  = 300,
 #'    criterion = 1e-4
 #' )
-#' \dontrun{zcurve(z, algorithm = "density", control = ctrl)}
+#' \donttest{zcurve(z, method = "density", control = ctrl)}
 #' 
 #' @seealso [zcurve()], [control_density_v1], [control_EM]
 NULL

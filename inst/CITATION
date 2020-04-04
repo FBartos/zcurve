@@ -8,4 +8,4 @@ bibentry(bibtype = "misc",
                     person("Ulrich",    "Schimmack")),
          year = 2020,
          note = note,
-         url = "https://github.com/FBartos/zcurve")
+         url = "https://CRAN.R-project.org/package=zcurve")
