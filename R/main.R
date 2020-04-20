@@ -68,7 +68,8 @@ zcurve       <- function(z, p, method = "EM", bootstrap = 1000, control = NULL){
   if(missing(z) & missing(p))stop("No data input")
   if(!missing(z)){
     if(!is.numeric(z))stop("Wrong z-scores input: Data are not nummeric.")
-    if(!is.vector(z))stop("Wrong z-scores input: Data are not a vector")    
+    if(!is.vector(z))stop("Wrong z-scores input: Data are not a vector")
+    if(max(z) < 1 )stop("It looks like you are entering p-values rather than Z-scores. To use p-values, explicitly name your argument 'zcurve(p = [vector of p-values])'")
   }else{
     z <- NULL
   }
