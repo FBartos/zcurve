@@ -64,7 +64,7 @@ ctrl <- list(
    fit_reps  = 50,
    mu = c(0, 1.5, 3, 4.5, 6)
 )
-\donttest{zcurve(z, method = "EM", control = ctrl)}
+\donttest{zcurve(OSC.z, method = "EM", control = ctrl)}
 
 }
 \references{
