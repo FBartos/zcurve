@@ -467,16 +467,20 @@ plot.zcurve          <- function(x, annotation = FALSE, CI = FALSE, extrapolate 
   br2[length(br2)] <- x$control$a
   
   # get histograms
-  h1 <- graphics::hist(x$data[x$data > x$control$a & x$data < x$control$b], breaks = br1, plot = F)
-  h2 <- graphics::hist(x$data[x$data < x$control$a], breaks = br2, plot = F)
-  # scale the density of nonsignificant z-scores appropriately to the first one
-  h2$density <- h2$density * (x$control$a/(x$control$b - x$control$a))
-  h2$density <- h2$density/(
-    (length(x$data[x$data > x$control$a & x$data < x$control$b])/(x$control$b - x$control$a))
-    /
-      (length(x$data[x$data < x$control$a])/(x$control$a))
-  )
-  
+  h1 <- graphics::hist(x$data[x$data > x$control$a & x$data < x$control$b], breaks = br1, plot = F) 
+  if(length(x$data[x$data < x$control$a])){
+    h2 <- graphics::hist(x$data[x$data < x$control$a], breaks = br2, plot = F)
+    # scale the density of nonsignificant z-scores appropriately to the first one
+    h2$density <- h2$density * (x$control$a/(x$control$b - x$control$a))
+    h2$density <- h2$density/(
+      (length(x$data[x$data > x$control$a & x$data < x$control$b])/(x$control$b - x$control$a))
+      /
+        (length(x$data[x$data < x$control$a])/(x$control$a))
+    )    
+  }else{
+    h2 <- NULL
+  }
+
   # compute fitted z-curve density
   x_seq <- seq(0, x$control$b, .01)
   y_den <- sapply(1:length(x$fit$mu), function(i){
@@ -500,18 +504,18 @@ plot.zcurve          <- function(x, annotation = FALSE, CI = FALSE, extrapolate 
   x.anno <- x_max*x.anno
   
   if(extrapolate){
-    y_max  <- max(y_den, h1$density, h2$density)
+    y_max  <- max(c(y_den, h1$density, h2$density))
   }else{
-    y_max <-  max(h1$density, h2$density)
+    y_max <-  max(c(h1$density, h2$density))
   }
   
   # adjusting the height of the chart so the text is higher than the highest ploted thing in the x-range of the text
   if(annotation & CI){
-    y_max <- ifelse(max(y_den_u.CI[x.anno < x_seq], h1$density[x.anno < h1$breaks[-length(h1$density)]]) > y_max*(y.anno[length(y.anno)] - .025),
-                    max(y_den_u.CI[x.anno < x_seq], h1$density[x.anno < h1$breaks[-length(h1$density)]])/(y.anno[length(y.anno)] - .025), y_max)
+    y_max <- ifelse(max(c(y_den_u.CI[x.anno < x_seq], h1$density[x.anno < h1$breaks[-length(h1$density)]])) > y_max*(y.anno[length(y.anno)] - .025),
+                    max(c(y_den_u.CI[x.anno < x_seq], h1$density[x.anno < h1$breaks[-length(h1$density)]]))/(y.anno[length(y.anno)] - .025), y_max)
   }else if(annotation & !CI){
-    y_max <- ifelse(max(y_den[x.anno < x_seq], h1$density[x.anno < h1$breaks[-length(h1$density)]]) > y_max*(y.anno[length(y.anno)] - .025),
-                    max(y_den[x.anno < x_seq], h1$density[x.anno < h1$breaks[-length(h1$density)]])/(y.anno[length(y.anno)] - .025), y_max)
+    y_max <- ifelse(max(c(y_den[x.anno < x_seq], h1$density[x.anno < h1$breaks[-length(h1$density)]])) > y_max*(y.anno[length(y.anno)] - .025),
+                    max(c(y_den[x.anno < x_seq], h1$density[x.anno < h1$breaks[-length(h1$density)]]))/(y.anno[length(y.anno)] - .025), y_max)
   }
   
   
@@ -527,12 +531,14 @@ plot.zcurve          <- function(x, annotation = FALSE, CI = FALSE, extrapolate 
                  cex.axis = cex.axis,
                  lwd = 1, las = 1)
   # and un-used z-scores
-  graphics::par(new=TRUE)
-  graphics::plot(h2,
-                 freq = FALSE, density = 0, angle = 0, border ="grey30",
-                 xlim = c(0, x_max),
-                 ylim = c(0, y_max),
-                 axes = FALSE, ann = FALSE, lwd = 1, las = 1)
+  if(!is.null(h2)){
+    graphics::par(new=TRUE)
+    graphics::plot(h2,
+                   freq = FALSE, density = 0, angle = 0, border ="grey30",
+                   xlim = c(0, x_max),
+                   ylim = c(0, y_max),
+                   axes = FALSE, ann = FALSE, lwd = 1, las = 1)  
+  }
   # add the density estimate if the model was estimated by density
   if(x$method == "density"){
     graphics::lines(x$fit$density$x, x$fit$density$y, lty = 1, col = "grey60", lwd = 4)
