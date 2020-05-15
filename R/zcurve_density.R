@@ -317,7 +317,7 @@ NULL
 #'    max_iter  = 300,
 #'    criterion = 1e-4
 #' )
-#' \donttest{zcurve(z, method = "density", control = ctrl)}
+#' \donttest{zcurve(OSC.z, method = "density", control = ctrl)}
 #' 
 #' @seealso [zcurve()], [control_density_v1], [control_EM]
 NULL
