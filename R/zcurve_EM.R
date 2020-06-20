@@ -197,7 +197,7 @@ NULL
     control$model           <- "EM"
     return(control)
   }
-  if(!is.null(control$model)){
+  if(!is.null(control[["model"]])){
     if(control$model == "EM"){
       control$sig_level       <- .05
       control$a               <- stats::qnorm(control$sig_level/2,lower.tail = F)
@@ -220,58 +220,58 @@ NULL
       return(control)
     }
   }
-  if(is.null(control$sig_level)){
+  if(is.null(control[["sig_level"]])){
     control$sig_level       <- .05
   }
-  if(is.null(control$a)){
+  if(is.null(control[["a"]])){
     control$a               <- stats::qnorm(control$sig_level/2,lower.tail = F)
   }
-  if(is.null(control$b)){
+  if(is.null(control[["b"]])){
     control$b               <- 6
   }
-  if(is.null(control$type)){
+  if(is.null(control[["type"]])){
     control$type            <- 1
   }
-  if(is.null(control$mu)){
+  if(is.null(control[["mu"]])){
     control$mu              <- 0:6
   }
-  if(is.null(control$sigma)){
+  if(is.null(control[["sigma"]])){
     control$sigma           <- rep(1, length(control$mu))
   }
-  if(is.null(control$K)){
+  if(is.null(control[["K"]])){
     control$K               <- ifelse(control$type == 1, length(control$mu), 4)
   }
-  if(is.null(control$theta_alpha)){
+  if(is.null(control[["theta_alpha"]])){
     control$theta_alpha     <- rep(.5, length(control$mu))
   }
-  if(is.null(control$mu_alpha)){
+  if(is.null(control[["mu_alpha"]])){
     control$mu_alpha        <- 2:(control$K+1)
   }
-  if(is.null(control$mu_max)){
+  if(is.null(control[["mu_max"]])){
     control$mu_max          <- control$b + 2
   }
-  if(is.null(control$criterion)){
+  if(is.null(control[["criterion"]])){
     control$criterion       <- 1e-6
   }
-  if(is.null(control$max_iter)){
+  if(is.null(control[["max_iter"]])){
     control$max_iter        <- 10000
   }
-  if(is.null(control$criterion_boot)){
+  if(is.null(control[["criterion_boot"]])){
     control$criterion_boot  <- 1e-5
   }
-  if(is.null(control$max_iter_boot)){
+  if(is.null(control[["max_iter_boot"]])){
     control$max_iter_boot   <- 1000
   }
-  if(is.null(control$criterion_start)){
+  if(is.null(control[["criterion_start"]])){
     control$criterion_start <- 1e-3
   }
-  if(is.null(control$max_iter_start)){
+  if(is.null(control[["max_iter_start"]])){
     control$max_iter_start  <- 100
   }
-  if(is.null(control$fit_reps)){
+  if(is.null(control[["fit_reps"]])){
     control$fit_reps        <- 100
   }
-  if(is.null(control$model)){
+  if(is.null(control[["model"]])){
     control$model           <- NULL
   }
   return(control)
