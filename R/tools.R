@@ -1,6 +1,6 @@
 #### helper tools for export
 
-#' @title Compute z-score corresponding to power
+#' @title Compute power corresponding to z-scores
 #' @description A function for computing power of two-sided tests
 #' corresponding to z-scores for a given significance level.
 #' \code{alpha} (or corresponding cut-off z-score \code{a})
@@ -11,7 +11,7 @@
 #'
 #' @export z_to_power
 #'
-#' @examples # mean powers corresponding to the mean components of EM7z and 19.9
+#' @examples # mean powers corresponding to the mean components of KD2
 #' z_to_power(0:6, alpha = .05)
 z_to_power  <- function(z, alpha = .05, a = stats::qnorm(alpha/2,lower.tail = FALSE)){
   if(!all(sapply(z, function(x)x >= 0)))stop("z must be >= 0")
@@ -23,10 +23,12 @@ z_to_power  <- function(z, alpha = .05, a = stats::qnorm(alpha/2,lower.tail = FA
 }
 
 
-#' @title Compute power corresponding to z-scores
+#' @title Compute z-score corresponding to a power
 #' @description A function for computing z-scores of two-sided tests
-#' corresponding to power for a given significance level.
-#' @param power A vector of z-scores
+#' corresponding to power \code{power} for a given significance level 
+#' alpha \code{alpha} (or corresponding cut-off z-statistic \code{a}).
+#' 
+#' @param power A vector of powers
 #' @param alpha Level of significance alpha
 #' @param a Or, alternatively a z-score corresponding to \code{alpha}
 #' @param nleqslv_control A named list of control parameters passed to the 
@@ -35,7 +37,7 @@ z_to_power  <- function(z, alpha = .05, a = stats::qnorm(alpha/2,lower.tail = FA
 #'
 #' @export power_to_z
 #'
-#' @examples # z-scores corresponding to the (aproximate) power of components of EM7p
+#' @examples # z-scores corresponding to the (aproximate) power of components of EM2
 #' power_to_z(c(0.05, 0.20, 0.40, 0.60, 0.80, 0.974, 0.999), alpha = .05)
 power_to_z  <- function(power, alpha = .05, a = stats::qnorm(alpha/2,lower.tail = FALSE),
                         nleqslv_control = list(xtol = 1e-15, maxit = 300, stepmax = .5)){
