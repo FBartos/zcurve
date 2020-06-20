@@ -368,7 +368,7 @@ NULL
 
     return(control)
   }
-  if(!is.null(control$model)){
+  if(!is.null(control[["model"]])){
     if(control$model == "KD2"){
       control$version         <- 2
       control$sig_level       <- .05
@@ -403,7 +403,7 @@ NULL
       
       return(control)
     }
-    if(control$model == "KD1"){
+    if(control[["model"]] == "KD1"){
       control$version         <- 1
       control$sig_level       <- .05
       control$sig_level_Z     <- stats::qnorm(control$sig_level/2,lower.tail = F)
@@ -419,114 +419,114 @@ NULL
       return(control)
     }
   }
-  if(!is.null(control$version)){
-    if(control$version == 1){
-      if(is.null(control$sig_level)){
+  if(!is.null(control[["version"]])){
+    if(control[["version"]] == 1){
+      if(is.null(control[["sig_level"]])){
         control$sig_level       <- .05
       }
-      if(is.null(control$sig_level_Z)){
+      if(is.null(control[["sig_level_Z"]])){
         control$sig_level_Z     <- stats::qnorm(control$sig_level/2,lower.tail = F)
       }
-      if(is.null(control$a)){
+      if(is.null(control[["a"]])){
         control$a               <- stats::qnorm(control$sig_level/2,lower.tail = F)  	# Beginning of fitting interval
       }
-      if(is.null(control$b)){
+      if(is.null(control[["b"]])){
         control$b               <- 6  	          	# End of fitting interval
       }
-      if(is.null(control$K)){
+      if(is.null(control[["K"]])){
         control$K               <- 3
       }
-      if(is.null(control$max_iter)){
+      if(is.null(control[["max_iter"]])){
         control$max_iter        <- 150              # settings for the nlminb agortihm for fitting mixture model
       }
-      if(is.null(control$max_eval)){
+      if(is.null(control[["max_eval"]])){
         control$max_eval        <- 300             # settings for the nlminb agortihm for fitting mixture model
       }
-      if(is.null(control$criterion)){
+      if(is.null(control[["criterion"]])){
         control$criterion       <- 1e-10           	# Criterion to terminate nlminb
       }
-      if(is.null(control$bw)){
+      if(is.null(control[["bw"]])){
         control$bw              <- "nrd0"           # Bandwidth of Kernal Density
       }
       return(control)
     }
   }
   # individual parameter settings
-  if(is.null(control$version)){
+  if(is.null(control[["version"]])){
     control$version         <- 2
   }
-  if(is.null(control$sig_level)){
+  if(is.null(control[["sig_level"]])){
     control$sig_level       <- .05
   }
-  if(is.null(control$sig_level_Z)){
+  if(is.null(control[["sig_level_Z"]])){
     control$sig_level_Z     <- stats::qnorm(control$sig_level/2,lower.tail = F)
   }
-  if(is.null(control$a)){
+  if(is.null(control[["a"]])){
     control$a               <- stats::qnorm(control$sig_level/2,lower.tail = F)  	# Beginning of fitting interval
   }
-  if(is.null(control$b)){
+  if(is.null(control[["b"]])){
     control$b               <- 6  	          	# End of fitting interval
   }
-  if(is.null(control$mu)){
+  if(is.null(control[["mu"]])){
     control$mu              <- seq(0,6,1)  	    # means of the components
   }
-  if(is.null(control$sigma)){
+  if(is.null(control[["sigma"]])){
     control$sigma           <- 1                # Don't touch this!!! # Change Standard Deviation of Normals
   }
-  if(is.null(control$theta_min)){
+  if(is.null(control[["theta_min"]])){
     control$theta_min       <- rep(0,length(control$mu))	# set lower limit for weights,  default = 0
   }
-  if(is.null(control$theta_max)){
+  if(is.null(control[["theta_max"]])){
     control$theta_max       <- rep(1,length(control$mu))	# set upper limits for weights, default = 1
   }
-  if(is.null(control$max_iter)){
+  if(is.null(control[["max_iter"]])){
     control$max_iter        <- 150              # settings for the nlminb agortihm for fitting mixture model
   }
-  if(is.null(control$max_eval)){
+  if(is.null(control[["max_eval"]])){
     control$max_eval        <- 1000             # settings for the nlminb agortihm for fitting mixture model
   }
-  if(is.null(control$criterion)){
+  if(is.null(control[["criterion"]])){
     control$criterion       <- 1e-03           	# Criterion to terminate nlminb
   }
-  if(is.null(control$bw)){
+  if(is.null(control[["bw"]])){
     control$bw              <- .10              # Bandwidth of Kernal Density
   }
-  if(is.null(control$aug)){
+  if(is.null(control[["aug"]])){
     control$aug             <- TRUE		          # Augment truncated Kernal Density
   }
-  if(is.null(control$aug.bw)){
+  if(is.null(control[["aug.bw"]])){
     control$aug.bw          <- .20  		        # augation Bandwidth
   }
-  if(is.null(control$n.bars)){
+  if(is.null(control[["n.bars"]])){
     control$n.bars          <- 512   		        # resolution of density function (doesn't seem to matter much)
   }
-  if(is.null(control$density_dbc)){
+  if(is.null(control[["density_dbc"]])){
     control$density_dbc     <- FALSE			      # USE dbckden function to truncate Kernal Density
   }
-  if(is.null(control$criterion_FDR)){
+  if(is.null(control[["criterion_FDR"]])){
     control$criterion_FDR     <- .02		        # criterion for maximum FDR
   }
-  if(is.null(control$criterion_FDR_dbc)){
+  if(is.null(control[["criterion_FDR_dbc"]])){
     control$criterion_FDR_dbc <- .01	          # criterion for maximum FDR using density_dbc function
   }
-  if(is.null(control$precision_FDR)){
+  if(is.null(control[["precision_FDR"]])){
     control$precision_FDR   <- .05              # Maximum FDR precision (low precision slows things down)
   }
-  if(is.null(control$compute_FDR)){
+  if(is.null(control[["compute_FDR"]])){
     control$compute_FDR     <- FALSE	          # Compute Maximum FDR, Slows Things Down Considerably
   }
-  if(is.null(control$model)){
+  if(is.null(control[["model"]])){
     control$model           <- NULL
   }
   # check whether this is needed
-  if(is.null(control$MAX.INP.Z)){
+  if(is.null(control[["MAX.INP.Z"]])){
     control$MAX.INP.Z       <- 100	            # values greater than MAX.INP.Z will be set to maximum
   }
   ### probably to be removed
-  if(is.null(control$PLOT)){
+  if(is.null(control[["PLOT"]])){
     control$PLOT = F
   }
-  if(is.null(control$FDR.PLOT)){
+  if(is.null(control[["FDR.PLOT"]])){
     control$FDR.PLOT = F
   }
   return(control)

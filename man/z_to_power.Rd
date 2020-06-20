@@ -2,7 +2,7 @@
 % Please edit documentation in R/tools.R
 \name{z_to_power}
 \alias{z_to_power}
-\title{Compute z-score corresponding to power}
+\title{Compute power corresponding to z-scores}
 \usage{
 z_to_power(z, alpha = 0.05, a = stats::qnorm(alpha/2, lower.tail = FALSE))
 }
@@ -19,6 +19,6 @@ corresponding to z-scores for a given significance level.
 \code{alpha} (or corresponding cut-off z-score \code{a})
 }
 \examples{
-# mean powers corresponding to the mean components of EM7z and 19.9
+# mean powers corresponding to the mean components of KD2
 z_to_power(0:6, alpha = .05)
 }

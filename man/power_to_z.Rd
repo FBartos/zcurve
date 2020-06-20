@@ -2,7 +2,7 @@
 % Please edit documentation in R/tools.R
 \name{power_to_z}
 \alias{power_to_z}
-\title{Compute power corresponding to z-scores}
+\title{Compute z-score corresponding to a power}
 \usage{
 power_to_z(
   power,
@@ -12,7 +12,7 @@ power_to_z(
 )
 }
 \arguments{
-\item{power}{A vector of z-scores}
+\item{power}{A vector of powers}
 
 \item{alpha}{Level of significance alpha}
 
@@ -24,9 +24,10 @@ power_to_z(
 }
 \description{
 A function for computing z-scores of two-sided tests
-corresponding to power for a given significance level.
+corresponding to power \code{power} for a given significance level
+alpha \code{alpha} (or corresponding cut-off z-statistic \code{a}).
 }
 \examples{
-# z-scores corresponding to the (aproximate) power of components of EM7p
+# z-scores corresponding to the (aproximate) power of components of EM2
 power_to_z(c(0.05, 0.20, 0.40, 0.60, 0.80, 0.974, 0.999), alpha = .05)
 }

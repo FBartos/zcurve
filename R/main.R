@@ -65,17 +65,20 @@
 zcurve       <- function(z, p, method = "EM", bootstrap = 1000, control = NULL){
   
   # check input
+  input_type <- NULL
   if(missing(z) & missing(p))stop("No data input")
   if(!missing(z)){
     if(!is.numeric(z))stop("Wrong z-scores input: Data are not nummeric.")
     if(!is.vector(z))stop("Wrong z-scores input: Data are not a vector")
     if(max(z) < 1 )stop("It looks like you are entering p-values rather than Z-scores. To use p-values, explicitly name your argument 'zcurve(p = [vector of p-values])'")
+    input_type <- c(input_type, "z")
   }else{
     z <- NULL
   }
   if(!missing(p)){
     if(!is.numeric(p))stop("Wrong p-values input: Data are not nummeric.")
-    if(!is.vector(p))stop("Wrong p-values input: Data are not a vector")    
+    if(!is.vector(p))stop("Wrong p-values input: Data are not a vector") 
+    input_type <- c(input_type, "p")
   }else{
     p <- NULL
   }
@@ -86,9 +89,10 @@ zcurve       <- function(z, p, method = "EM", bootstrap = 1000, control = NULL){
   
   
   # create results object
-  object        <- NULL
-  object$call   <- match.call()
-  object$method <- method
+  object            <- NULL
+  object$call       <- match.call()
+  object$method     <- method
+  object$input_type <- input_type
   
   
   # update control
@@ -227,12 +231,20 @@ summary.zcurve       <- function(object, type = "results", all = FALSE, ERR.adj 
     iter_text <- object$fit$iter
   }
   
+  temp_N_sig     <- sum(object$data > object$control$a)
+  temp_N_obs     <- length(object$data)
+  temp_N_used    <- sum(object$data > object$control$a & object$data < object$control$b)
+    
   model <- list(
     "method"    = method_text,
     "model"     = ifelse(is.null(object$control$model), "custom", object$control$model),
     "fit_index" = fit_index,
     "fit_stat"  = fit_stat,
-    "iter"      = iter_text
+    "iter"      = iter_text,
+    "input_type"= object$input_type,
+    "N_all"     = temp_N_obs,
+    "N_sig"     = temp_N_sig,
+    "N_used"    = temp_N_used
   )
   
   if(type == "results" | substr(type,1,3) == "res"){
@@ -264,8 +276,6 @@ summary.zcurve       <- function(object, type = "results", all = FALSE, ERR.adj 
     if(all){
       
       temp_sig_level <- object$control$sig_level
-      temp_N_sig     <- sum(object$data > object$control$a)
-      temp_N_obs     <- length(object$data)
       
       if(!is.null(object$boot)){
         TAB <- rbind(TAB,
@@ -385,7 +395,8 @@ print.summary.zcurve <- function(x, ...){
     cat(paste(c("\033[0;31m", "Model did not converge in ", x$model$iter, " iterations", "\033[0m", "\n"), collapse = ""))
   }
   
-  
+  obs_proportion <- stats::prop.test(x$model$N_sig, x$model$N_all)
+  cat(paste0("Fitted using ", x$model$N_used, " ", paste(x$model$input_type, collapse = " and "), "-values. ", x$model$N_all, " supplied, ", x$model$N_sig, " significant (ODR = ",  .r2d(obs_proportion$estimate), ", 95% CI [", .r2d(obs_proportion$conf.int[1]), ", ", .r2d(obs_proportion$conf.int[2]), "]).\n"))
 
   cat(paste(c(x$model$fit_stat," = " , .r2d(x$model$fit_index[1]), fit_index_CI, "\n"), collapse = ""))
   
