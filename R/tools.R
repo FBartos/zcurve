@@ -219,9 +219,9 @@ ODR   <- function(object, round.coef = 3){
   prt <- stats::prop.test(sum$N_sig, sum$N_all)
   
   val <- list()
-  val[["Estimate"]] <- prt$estimate
-  val[["l.CI"]] <- prt$conf.int[1]
-  val[["u.CI"]] <- prt$conf.int[2]
+  val[["Estimate"]] <- unname(prt$estimate)
+  val[["l.CI"]] <- unname(prt$conf.int[1])
+  val[["u.CI"]] <- unname(prt$conf.int[2])
 
   val[["round.coef"]] <- round.coef
   
