@@ -1,3 +1,6 @@
+# zcurve 1.0.5
+Adding convenience functions for extracting the z-curve estimates directly from the fitted object. (issue #3)
+
 # zcurve 1.0.4
 Adding observed discovery rate, number of included studies, and number of significant studies to the summary output. (issue #3)
 

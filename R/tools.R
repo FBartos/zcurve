@@ -114,5 +114,227 @@ power_to_z  <- function(power, alpha = .05, a = stats::qnorm(alpha/2,lower.tail 
 
 
 # rounding for plot
-.r2d <- function(x)format(round(x, 2), nsmall = 2)
-.rXd <- function(x,X)format(round(x, X), nsmall = X)
+.r2d  <- function(x)format(round(x, 2), nsmall = 2)
+.rXd  <- function(x,X)format(round(x, X), nsmall = X)
+.rXdn <- function(x,X)as.numeric(.rXd(x,X))
+
+### the exported function
+
+#' @title Reports whether x is a zcurve object
+#'
+#' @param x an object to test
+#' @param ... additional arguments
+#' @export is.zcurve
+is.zcurve  <- function(x){
+  inherits(x, "zcurve")
+}
+
+#' Prints estimates from z-curve object
+#' @param x Estimate of a z-curve object
+#' @param ... Additional arguments
+#' @method print.estimates zcurve
+#' @export print.summary.zcurve
+#' @rawNamespace S3method(print, estimates.zcurve)
+#' @seealso [zcurve()]
+print.estimates.zcurve <- function(x){
+  
+  est_names  <- names(x[1:(length(x)-1)])
+  est_values <- .rXdn(unlist(x[1:(length(x)-1)]), x$round.coef)
+  names(est_values) <- est_names
+  print(est_values)
+  
+}
+
+#' @title z-curve estimates
+#'
+#' @description The following functions extract estimates 
+#' from the z-curve object.
+#' 
+#' @param{object} the z-curve object
+#' @param{round.coef} rounding for the printed values
+#'
+#' @export ERR
+#' @export EDR
+#' @export ODR
+#' @export Soric
+#' @export file_drawer_ration
+#' @export expected_n
+#' @export missing_n
+#' @export significant_n
+#' @export included_n
+#' @name zcurve.estimates
+#'
+#' @details Technically, ODR, significant n, and included n 
+#' are not z-curve estimates but they are grouped in this 
+#' category for convenience.
+#' @seealso [zcurve()]
+NULL
+
+#' @rdname zcurve.estimates
+ERR   <- function(object, round.coef = 3){
+  
+  if(!is.zcurve(object))stop("The functions requires an 'zcurve' object.")
+
+  sum <- summary(object)$coefficients
+
+  val <- list()
+  val[["Estimate"]] <- sum["ERR",1]
+  
+  if(!is.null(object[["boot"]])){
+    val[["l.CI"]] <- sum["ERR", "l.CI"]
+    val[["u.CI"]] <- sum["ERR", "u.CI"]
+  }
+
+  val[["round.coef"]] <- round.coef
+  
+  class(val) <- "estimates.zcurve"
+  return(val)
+}
+#' @rdname zcurve.estimates
+EDR   <- function(object, round.coef = 3){
+  
+  if(!is.zcurve(object))stop("The functions requires an 'zcurve' object.")
+  
+  sum <- summary(object)$coefficients
+  
+  val <- list()
+  val[["Estimate"]] <- sum["EDR",1]
+  
+  if(!is.null(object[["boot"]])){
+    val[["l.CI"]] <- sum["EDR", "l.CI"]
+    val[["u.CI"]] <- sum["EDR", "u.CI"]
+  }
+  
+  val[["round.coef"]] <- round.coef
+  
+  class(val) <- "estimates.zcurve"
+  return(val)
+}
+#' @rdname zcurve.estimates
+ODR   <- function(object, round.coef = 3){
+  
+  if(!is.zcurve(object))stop("The functions requires an 'zcurve' object.")
+  
+  sum <- summary(object)$model
+  prt <- stats::prop.test(sum$N_sig, sum$N_all)
+  
+  val <- list()
+  val[["Estimate"]] <- prt$estimate
+  val[["l.CI"]] <- prt$conf.int[1]
+  val[["u.CI"]] <- prt$conf.int[2]
+
+  val[["round.coef"]] <- round.coef
+  
+  class(val) <- "estimates.zcurve"
+  return(val)
+}
+#' @rdname zcurve.estimates
+Soric <- function(object, round.coef = 3){
+  
+  if(!is.zcurve(object))stop("The functions requires an 'zcurve' object.")
+  
+  sum <- summary(object, all = TRUE)$coefficients
+  
+  val <- list()
+  val[["Estimate"]] <- sum["Soric FDR",1]
+  
+  if(!is.null(object[["boot"]])){
+    val[["l.CI"]] <- sum["Soric FDR", "l.CI"]
+    val[["u.CI"]] <- sum["Soric FDR", "u.CI"]
+  }
+  
+  val[["round.coef"]] <- round.coef
+  
+  class(val) <- "estimates.zcurve"
+  return(val)
+}
+#' @rdname zcurve.estimates
+file_drawer_ration <- function(object, round.coef = 3){
+  
+  if(!is.zcurve(object))stop("The functions requires an 'zcurve' object.")
+  
+  sum <- summary(object, all = TRUE)$coefficients
+  
+  val <- list()
+  val[["Estimate"]] <- sum["File Drawer R",1]
+  
+  if(!is.null(object[["boot"]])){
+    val[["l.CI"]] <- sum["File Drawer R", "l.CI"]
+    val[["u.CI"]] <- sum["File Drawer R", "u.CI"]
+  }
+  
+  val[["round.coef"]] <- round.coef
+  
+  class(val) <- "estimates.zcurve"
+  return(val)
+}
+#' @rdname zcurve.estimates
+expected_n         <- function(object, round.coef = 0){
+  
+  if(!is.zcurve(object))stop("The functions requires an 'zcurve' object.")
+  
+  sum <- summary(object, all = TRUE)$coefficients
+  
+  val <- list()
+  val[["Estimate"]] <- sum["Expected N",1]
+  
+  if(!is.null(object[["boot"]])){
+    val[["l.CI"]] <- sum["Expected N", "l.CI"]
+    val[["u.CI"]] <- sum["Expected N", "u.CI"]
+  }
+  
+  val[["round.coef"]] <- round.coef
+  
+  class(val) <- "estimates.zcurve"
+  return(val)
+}
+#' @rdname zcurve.estimates
+missing_n          <- function(object, round.coef = 0){
+  
+  if(!is.zcurve(object))stop("The functions requires an 'zcurve' object.")
+  
+  sum <- summary(object, all = TRUE)$coefficients
+  
+  val <- list()
+  val[["Estimate"]] <- sum["Missing N",1]
+  
+  if(!is.null(object[["boot"]])){
+    val[["l.CI"]] <- sum["Missing N", "l.CI"]
+    val[["u.CI"]] <- sum["Missing N", "u.CI"]
+  }
+  
+  val[["round.coef"]] <- round.coef
+  
+  class(val) <- "estimates.zcurve"
+  return(val)
+}
+#' @rdname zcurve.estimates
+significant_n      <- function(object){
+  
+  if(!is.zcurve(object))stop("The functions requires an 'zcurve' object.")
+  
+  sum <- summary(object)$model
+  
+  val <- list()
+  val[["N"]] <- sum$N_sig
+  
+  val[["round.coef"]] <- 0
+  
+  class(val) <- "estimates.zcurve"
+  return(val)
+}
+#' @rdname zcurve.estimates
+included_n         <- function(object){
+  
+  if(!is.zcurve(object))stop("The functions requires an 'zcurve' object.")
+  
+  sum <- summary(object)$model
+  
+  val <- list()
+  val[["N"]] <- sum$N_used
+
+  val[["round.coef"]] <- 0
+  
+  class(val) <- "estimates.zcurve"
+  return(val)
+}
