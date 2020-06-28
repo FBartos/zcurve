@@ -4,7 +4,7 @@
 \alias{print.estimates.zcurve}
 \title{Prints estimates from z-curve object}
 \usage{
-\method{print.estimates}{zcurve}(x)
+\method{print.estimates}{zcurve}(x, ...)
 }
 \arguments{
 \item{x}{Estimate of a z-curve object}

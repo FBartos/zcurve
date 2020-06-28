@@ -8,8 +8,6 @@ is.zcurve(x)
 }
 \arguments{
 \item{x}{an object to test}
-
-\item{...}{additional arguments}
 }
 \description{
 Reports whether x is a zcurve object

@@ -32,9 +32,9 @@ significant_n(object)
 included_n(object)
 }
 \arguments{
-\item{{object}}{the z-curve object}
+\item{object}{the z-curve object}
 
-\item{{round.coef}}{rounding for the printed values}
+\item{round.coef}{rounding for the printed values}
 }
 \description{
 The following functions extract estimates

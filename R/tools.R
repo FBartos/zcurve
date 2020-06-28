@@ -123,7 +123,6 @@ power_to_z  <- function(power, alpha = .05, a = stats::qnorm(alpha/2,lower.tail 
 #' @title Reports whether x is a zcurve object
 #'
 #' @param x an object to test
-#' @param ... additional arguments
 #' @export is.zcurve
 is.zcurve  <- function(x){
   inherits(x, "zcurve")
@@ -136,7 +135,7 @@ is.zcurve  <- function(x){
 #' @export print.summary.zcurve
 #' @rawNamespace S3method(print, estimates.zcurve)
 #' @seealso [zcurve()]
-print.estimates.zcurve <- function(x){
+print.estimates.zcurve <- function(x, ...){
   
   est_names  <- names(x[1:(length(x)-1)])
   est_values <- .rXdn(unlist(x[1:(length(x)-1)]), x$round.coef)
@@ -150,8 +149,8 @@ print.estimates.zcurve <- function(x){
 #' @description The following functions extract estimates 
 #' from the z-curve object.
 #' 
-#' @param{object} the z-curve object
-#' @param{round.coef} rounding for the printed values
+#' @param object the z-curve object
+#' @param round.coef rounding for the printed values
 #'
 #' @export ERR
 #' @export EDR
