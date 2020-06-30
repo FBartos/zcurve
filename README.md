@@ -24,7 +24,7 @@ validation studies, and limitations.
 You can install the current version of zcurve from CRAN with:
 
 ``` r
-instal.packages("zcurve")
+install.packages("zcurve")
 ```
 
 or the development version from [GitHub](https://github.com/) with:
