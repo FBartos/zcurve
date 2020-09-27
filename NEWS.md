@@ -1,17 +1,20 @@
-# zcurve 1.0.5
-Adding convenience functions for extracting the z-curve estimates directly from the fitted object. (issue #3)
+## version 1.0.6
+- Fixing the formatting of the NEWS.md file.
 
-# zcurve 1.0.4
-Adding observed discovery rate, number of included studies, and number of significant studies to the summary output. (issue #3)
+## version 1.0.5
+- Adding convenience functions for extracting the z-curve estimates directly from the fitted object. (issue #3)
 
-# zcurve 1.0.3
-Fixing a help file entry and making sure of proper control specification '[[]]' vs '$' list accesssing.
+## version 1.0.4
+- Adding observed discovery rate, number of included studies, and number of significant studies to the summary output. (issue #3)
 
-# zcurve 1.0.2
-Fixing a bug when producing figure with no non-significant z-scores.
+## version 1.0.3
+- Fixing a help file entry and making sure of proper control specification '[[]]' vs '$' list accessing.
 
-# zcurve 1.0.1
-Added check for suppling p-values as z-scores. (issue #2)
+## version 1.0.2
+- Fixing a bug when producing figure with no non-significant z-scores.
 
-# zcurve 1.0.
-The relase version of the package.
+## version 1.0.1
+- Added check for supplying p-values as z-scores. (issue #2)
+
+## version 1.0.
+- The release version of the package.

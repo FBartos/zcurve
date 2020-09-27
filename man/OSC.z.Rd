@@ -5,7 +5,9 @@
 \alias{OSC.z}
 \title{Z-scores from subset of original studies featured in OSC 2015
 reproducibility project}
-\format{A vector with 90 observations}
+\format{
+A vector with 90 observations
+}
 \usage{
 OSC.z
 }
