@@ -1,3 +1,6 @@
+## version 1.0.7
+- Fixing incorrect passing of the significance level when the lower fitting range is not equal to alpha.
+
 ## version 1.0.6
 - Fixing the formatting of the NEWS.md file.
 

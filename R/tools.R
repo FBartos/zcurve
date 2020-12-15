@@ -60,35 +60,31 @@ power_to_z  <- function(power, alpha = .05, a = stats::qnorm(alpha/2,lower.tail 
   if(!all(sapply(p, function(x)x >= 0 & x <= 1)))stop("p-values must be >= 0 & <= 1")
   stats::qnorm(p/2, lower.tail = F)
 }
-# expected number of unpublished studies
-.get_E_null <- function(N_fit, weights, Pow){
-  sum((N_fit*weights)*(1/Pow-1))
+.get_pop_weights <- function(weights, mu, a){
+  scaling_power <- c(z_to_power(mu, a = a), 1)
+  pop_weights   <- (weights + weights*(1-scaling_power)/(scaling_power)) / sum(weights + weights*(1-scaling_power)/(scaling_power))
+  return(pop_weights)
 }
-# observed number of p-values > b
-.get_O_high <- function(N_sig, N_fit){
-  N_sig - N_fit
+.get_EDR    <- function(power, pop_weights){
+  sum(pop_weights * power)
+  # 1/sum(weights / power) # old formula based on estimated weights
 }
-.get_EDR    <- function(N_sig, E_null){
-  (N_sig)/(E_null + N_sig)
-}
-.get_ERR    <- function(N_fit, weights, Pow, O_high, N_sig){
-  (sum(N_fit*weights*Pow) + O_high)/N_sig
-}
-.get_Z0     <- function(weights, N_fit, N_sig){
-  weights[1]*(N_fit/N_sig)
+.get_ERR    <- function(power, pop_weights){
+  sum(pop_weights * power^2) / sum(pop_weights * power)
+  # sum(weights * power)  # old formula based on estimated weights
 }
 
-.get_estimates <- function(z, a, N_fit, mu, weights){
-  N_sig  <- length(z[z > a])
-
-  Pow    <- z_to_power(z = mu, a = a)
-
-  E_null <- .get_E_null(N_fit = N_fit, weights = weights, Pow = Pow)
-  O_high <- .get_O_high(N_sig = N_sig, N_fit = N_fit)
-
-  EDR <- .get_EDR(N_sig = N_sig, E_null = E_null)
-  ERR <- .get_ERR(N_fit = N_fit, weights = weights, Pow = Pow, O_high = O_high, N_sig = N_sig)
-  Z0  <- .get_Z0(weights = weights, N_fit = N_fit, N_sig = N_sig)
+.get_estimates <- function(mu, weights, prop_high, sig_level, a){
+  
+  power   <- c(z_to_power(z = mu, alpha = sig_level), 1)  # power 
+  weights <- c(weights*(1-prop_high), prop_high)          # estimated weights
+  
+  pop_weights <- .get_pop_weights(weights, mu, a)         # transformed into the overall weights
+  
+  EDR <- .get_EDR(power, pop_weights)
+  ERR <- .get_ERR(power, pop_weights)
+  
+  Z0  <- weights[1]
 
   estimates <- c(
     "ERR" = ERR,

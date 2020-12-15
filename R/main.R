@@ -109,18 +109,17 @@ zcurve       <- function(z, p, method = "EM", bootstrap = 1000, control = NULL){
     z_from_p <- .p_to_z(p)
     z        <- c(z, z_from_p)
   }
-  z     <- abs(z)
-  z_sig <- z[z > control$a]
+  z           <- abs(z)
   object$data <- z
   
   # only run the algorithm with some significant results
-  if(sum(z_sig < control$b) < 10)stop("There must be at least 10 z-scores in the fitting range.")
+  if(sum(z > control$a & z < control$b) < 10)stop("There must be at least 10 z-scores in the fitting range but a much larger number is recommended.")
   
   # use apropriate algorithm
   if(method == "EM"){
-    fit <- .zcurve_EM(z_sig = z_sig, control = control)
+    fit <- .zcurve_EM(z = z, control = control)
   }else if(method == "density"){
-    fit <- .zcurve_density(z_sig = z_sig, control = control)
+    fit <- .zcurve_density(z = z, control = control)
   }
   object$fit <- fit
   
@@ -140,24 +139,22 @@ zcurve       <- function(z, p, method = "EM", bootstrap = 1000, control = NULL){
   if(bootstrap != FALSE){
     # use apropriate algorithm
     if(method == "EM"){
-      fit_boot <- .zcurve_EM_boot(z_sig = z_sig, control = control, fit = fit, bootstrap = bootstrap)
+      fit_boot <- .zcurve_EM_boot(z = z, control = control, fit = fit, bootstrap = bootstrap)
     }else if(method == "density"){
-      fit_boot <- .zcurve_density_boot(z_sig = z_sig, control = control, bootstrap = bootstrap)
+      fit_boot <- .zcurve_density_boot(z = z, control = control, bootstrap = bootstrap)
     }
     object$boot <- fit_boot
   }
   
   
   # estimates
-  object$coefficients <- .get_estimates(z = z, a = control$a,
-                                        N_fit = fit$N_fit, fit$mu, fit$weights)
+  object$coefficients <- .get_estimates(mu = fit$mu, weights = fit$weights, prop_high = fit$prop_high, sig_level = control$sig_level, a = control$a)
   
   
   # boot estimates
   if(bootstrap != FALSE){
     object$coefficients_boot <- data.frame(t(sapply(1:bootstrap, function(i){
-      .get_estimates(z = z, a = control$a,
-                     N_fit = fit_boot$N_fit[i], mu = fit_boot$mu[i,], weights = fit_boot$weights[i,])
+      .get_estimates(mu = fit_boot$mu[i,], weights = fit_boot$weights[i,], prop_high = fit_boot$prop_high[i], sig_level = control$sig_level, a = control$a)
     })))
   }
   
@@ -231,7 +228,7 @@ summary.zcurve       <- function(object, type = "results", all = FALSE, ERR.adj 
     iter_text <- object$fit$iter
   }
   
-  temp_N_sig     <- sum(object$data > object$control$a)
+  temp_N_sig     <- sum(object$data > stats::qnorm(object$control$sig_level/2, lower.tail = FALSE))
   temp_N_obs     <- length(object$data)
   temp_N_used    <- sum(object$data > object$control$a & object$data < object$control$b)
     
@@ -278,26 +275,32 @@ summary.zcurve       <- function(object, type = "results", all = FALSE, ERR.adj 
       temp_sig_level <- object$control$sig_level
       
       if(!is.null(object$boot)){
-        TAB <- rbind(TAB,
-                     "Soric FDR" = c("Estimate"     = .get_Soric_FDR(TAB["EDR","Estimate"], temp_sig_level),
-                                     "l.CI"         = .get_Soric_FDR(TAB["EDR","u.CI"], temp_sig_level),
-                                     "u.CI"         = .get_Soric_FDR(TAB["EDR","l.CI"], temp_sig_level)),
-                     "File Drawer R" = c("Estimate" = .get_file_drawer_R(TAB["EDR","Estimate"]),
-                                         "l.CI"     = .get_file_drawer_R(TAB["EDR","u.CI"]),
-                                         "u.CI"     = .get_file_drawer_R(TAB["EDR","l.CI"])),
-                     "Expected N" = c("Estimate"    = .get_expected_N(TAB["EDR","Estimate"], temp_N_sig),
-                                      "l.CI"        = .get_expected_N(TAB["EDR","u.CI"], temp_N_sig),
-                                      "u.CI"        = .get_expected_N(TAB["EDR","l.CI"], temp_N_sig)),
-                     "Missing N" = c("Estimate"     = .get_missing_N(TAB["EDR","Estimate"], temp_N_sig, temp_N_obs),
-                                     "l.CI"         = .get_missing_N(TAB["EDR","u.CI"], temp_N_sig, temp_N_obs),
-                                     "u.CI"         = .get_missing_N(TAB["EDR","l.CI"], temp_N_sig, temp_N_obs))
+        TAB <- rbind(
+          TAB,
+          "Soric FDR"     = c(
+            "Estimate"     = .get_Soric_FDR(TAB["EDR","Estimate"], temp_sig_level),
+            "l.CI"         = .get_Soric_FDR(TAB["EDR","u.CI"],     temp_sig_level),
+            "u.CI"         = .get_Soric_FDR(TAB["EDR","l.CI"],     temp_sig_level)),
+          "File Drawer R" = c(
+            "Estimate"     = .get_file_drawer_R(TAB["EDR","Estimate"]),
+            "l.CI"         = .get_file_drawer_R(TAB["EDR","u.CI"]),
+            "u.CI"         = .get_file_drawer_R(TAB["EDR","l.CI"])),
+          "Expected N"    = c(
+            "Estimate"     = .get_expected_N(TAB["EDR","Estimate"], temp_N_sig),
+            "l.CI"         = .get_expected_N(TAB["EDR","u.CI"],     temp_N_sig),
+            "u.CI"         = .get_expected_N(TAB["EDR","l.CI"],     temp_N_sig)),
+          "Missing N"     = c(
+            "Estimate"     = .get_missing_N(TAB["EDR","Estimate"], temp_N_sig, temp_N_obs),
+            "l.CI"         = .get_missing_N(TAB["EDR","u.CI"],     temp_N_sig, temp_N_obs),
+            "u.CI"         = .get_missing_N(TAB["EDR","l.CI"],     temp_N_sig, temp_N_obs))
         )
       }else{
-        TAB <- rbind(TAB,
-                     "Soric FDR" = c("Estimate"     = .get_Soric_FDR(TAB["EDR","Estimate"], temp_sig_level)),
-                     "File Drawer R" = c("Estimate" = .get_file_drawer_R(TAB["EDR","Estimate"])),
-                     "Expected N" = c("Estimate"    = .get_expected_N(TAB["EDR","Estimate"], temp_N_sig)),
-                     "Missing N" = c("Estimate"     = .get_missing_N(TAB["EDR","Estimate"], temp_N_sig, temp_N_obs)))
+        TAB <- rbind(
+          TAB,
+          "Soric FDR"     = c("Estimate" = .get_Soric_FDR(TAB["EDR","Estimate"], temp_sig_level)),
+          "File Drawer R" = c("Estimate" = .get_file_drawer_R(TAB["EDR","Estimate"])),
+          "Expected N"    = c("Estimate" = .get_expected_N(TAB["EDR","Estimate"], temp_N_sig)),
+          "Missing N"     = c("Estimate" = .get_missing_N(TAB["EDR","Estimate"], temp_N_sig, temp_N_obs)))
       }
     }
     
@@ -556,9 +559,11 @@ plot.zcurve          <- function(x, annotation = FALSE, CI = FALSE, extrapolate 
   }
   # significance line
   if(x.anno*x_max < x$control$a){
-    graphics::lines(rep(x$control$a,2), c(0, (min(y.anno) - .025)*y_max), col = "red", lty = 1, lwd = 2)     
+    graphics::lines(rep(x$control$a,2),                                      c(0, (min(y.anno) - .025)*y_max), col = "blue", lty = 2, lwd = 1)
+    graphics::lines(rep(qnorm(x$control$sig_level/2, lower.tail = FALSE),2), c(0, (min(y.anno) - .025)*y_max), col = "red",  lty = 1, lwd = 2)    
   }else{
-    graphics::abline(v = x$control$a, col = "red", lty = 1, lwd = 2) 
+    graphics::abline(v = x$control$a,                                      col = "blue", lty = 2, lwd = 1)
+    graphics::abline(v = qnorm(x$control$sig_level/2, lower.tail = FALSE), col = "red",  lty = 1, lwd = 2) 
   }
   # predicted densities
   graphics::lines(x_seq, y_den, lty = 1, col = "blue", lwd = 5)

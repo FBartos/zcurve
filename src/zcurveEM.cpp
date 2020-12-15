@@ -205,13 +205,28 @@ NumericVector select_x(NumericVector x, double a, double b){
   NumericVector x_new  = x[x_true1 & x_true2];
   return x_new;
 }
+double get_prop_high(NumericVector x, double select_sig, double b){
+  double a = R::pnorm(select_sig/2, 0, 1, false, false);
+  
+  LogicalVector x_sig_true = x > a;
+  NumericVector x_sig      = x[x_sig_true];
+  
+  LogicalVector x_high_true = x > b;
+  NumericVector x_high      = x[x_high_true];
+  
+  double prop_high = (1.0 * x_high.length()) / (1.0 * x_sig.length());
+  return prop_high;
+}
+
 
 // [[Rcpp::export(.zcurve_EM_fit_RCpp)]]
-List zcurve_EM_fit_RCpp(NumericVector x, int type, NumericVector mu, NumericVector sigma, NumericVector theta, double a, double b,
+List zcurve_EM_fit_RCpp(NumericVector x, int type, NumericVector mu, NumericVector sigma, NumericVector theta, double a, double b, double sig_level,
                  int max_iter, double criterion) {
 
+  double prop_high = get_prop_high(x, sig_level, b);
   x = select_x(x,a,b);
-
+  
+  
   NumericMatrix log_lik (x.size(), mu.size());
   NumericMatrix lik (x.size(), mu.size());
   NumericVector l_row_sum (mu.size());
@@ -245,16 +260,17 @@ List zcurve_EM_fit_RCpp(NumericVector x, int type, NumericVector mu, NumericVect
   ret["mu"]        = mu;
   ret["weights"]   = theta;
   ret["sigma"]     = sigma;
-  ret["N_fit"]     = x.length();
+  ret["prop_high"] = prop_high;
 
   return ret;
 }
 // [[Rcpp::export(.zcurve_EM_fit_fast_RCpp)]]
-List zcurve_EM_fit_fast_RCpp(NumericVector x, NumericVector mu, NumericVector sigma, NumericVector theta, double a, double b,
+List zcurve_EM_fit_fast_RCpp(NumericVector x, NumericVector mu, NumericVector sigma, NumericVector theta, double a, double b, double sig_level,
                  int max_iter, double criterion) {
 
+  double prop_high = get_prop_high(x, sig_level, b);
   x = select_x(x,a,b);
-
+  
   NumericMatrix log_lik (x.size(), mu.size());
   NumericMatrix lik (x.size(), mu.size());
   NumericVector l_row_sum (mu.size());
@@ -287,7 +303,7 @@ List zcurve_EM_fit_fast_RCpp(NumericVector x, NumericVector mu, NumericVector si
   ret["mu"]        = mu;
   ret["weights"]   = theta;
   ret["sigma"]     = sigma;
-  ret["N_fit"]     = x.length();
+  ret["prop_high"] = prop_high;
 
   return ret;
 }
@@ -295,14 +311,14 @@ List zcurve_EM_fit_fast_RCpp(NumericVector x, NumericVector mu, NumericVector si
 List zcurve_EM_start_RCpp(NumericVector x, int type, int K,
                    NumericVector mu, NumericVector sigma,NumericVector mu_alpha, double mu_max,
                    NumericVector theta_alpha,
-                   double a, double b,
+                   double a, double b, double sig_level,
                    int fit_reps, int max_iter, double criterion) {
 
-  NumericMatrix mu_reps      (fit_reps, K);
-  NumericMatrix weights_reps (fit_reps, K);
-  IntegerVector iter_reps    (fit_reps);
-  NumericVector Q_reps       (fit_reps);
-  IntegerVector N_fit_reps   (fit_reps);
+  NumericMatrix mu_reps        (fit_reps, K);
+  NumericMatrix weights_reps   (fit_reps, K);
+  IntegerVector iter_reps      (fit_reps);
+  NumericVector Q_reps         (fit_reps);
+  NumericVector prop_high_reps (fit_reps);
 
   NumericVector temp_theta  (K);
   NumericVector temp_mu     (K);
@@ -311,7 +327,7 @@ List zcurve_EM_start_RCpp(NumericVector x, int type, int K,
   NumericVector new_weights (K);
   int new_iter;
   double new_Q;
-  int new_N_fit;
+  double new_prop_high;
 
   for(int i = 0; i < fit_reps; i++){
     temp_theta = dirichlet_rng(theta_alpha);
@@ -321,20 +337,20 @@ List zcurve_EM_start_RCpp(NumericVector x, int type, int K,
       temp_mu = random_mu(mu_alpha, mu_max);
     }
 
-    List temp_fit = zcurve_EM_fit_RCpp(x, type, temp_mu, sigma, temp_theta, a, b,
+    List temp_fit = zcurve_EM_fit_RCpp(x, type, temp_mu, sigma, temp_theta, a, b, sig_level,
                                 max_iter, criterion);
 
-    new_mu      = temp_fit["mu"];
-    new_weights = temp_fit["weights"];
-    new_iter    = temp_fit["iter"];
-    new_Q       = temp_fit["Q"];
-    new_N_fit   = temp_fit["N_fit"];
+    new_mu        = temp_fit["mu"];
+    new_weights   = temp_fit["weights"];
+    new_iter      = temp_fit["iter"];
+    new_Q         = temp_fit["Q"];
+    new_prop_high = temp_fit["prop_high"];
 
     mu_reps(i,_)      = new_mu;
     weights_reps(i,_) = new_weights;
     iter_reps[i]      = new_iter;
     Q_reps[i]         = new_Q;
-    N_fit_reps[i]     = new_N_fit;
+    prop_high_reps[i] = new_prop_high;
   }
 
   List ret;
@@ -342,7 +358,7 @@ List zcurve_EM_start_RCpp(NumericVector x, int type, int K,
   ret["Q"]         = Q_reps;
   ret["mu"]        = mu_reps;
   ret["weights"]   = weights_reps;
-  ret["N_fit"]     = N_fit_reps;
+  ret["prop_high"] = prop_high_reps;
 
   return ret;
 }
@@ -350,13 +366,14 @@ List zcurve_EM_start_RCpp(NumericVector x, int type, int K,
 // [[Rcpp::export(.zcurve_EM_boot_RCpp)]]
 List zcurve_EM_boot_RCpp(NumericVector x, int type,
                   NumericVector mu, NumericVector sigma, NumericVector theta,
-                  double a, double b,
+                  double a, double b, double sig_level,
                   int bootstrap, int max_iter, double criterion){
-  NumericMatrix mu_reps      (bootstrap, mu.size());
-  NumericMatrix weights_reps (bootstrap, mu.size());
-  IntegerVector iter_reps    (bootstrap);
-  NumericVector Q_reps       (bootstrap);
-  IntegerVector N_fit_reps   (bootstrap);
+  
+  NumericMatrix mu_reps       (bootstrap, mu.size());
+  NumericMatrix weights_reps  (bootstrap, mu.size());
+  IntegerVector iter_reps     (bootstrap);
+  NumericVector Q_reps        (bootstrap);
+  NumericVector prop_high_reps (bootstrap);
 
   NumericVector temp_x;
 
@@ -364,25 +381,25 @@ List zcurve_EM_boot_RCpp(NumericVector x, int type,
   NumericVector new_weights (mu.size());
   int new_iter;
   double new_Q;
-  int new_N_fit;
+  double new_prop_high;
 
   for(int i = 0; i < bootstrap; i++){
     temp_x = sample(x, x.size(), true);
 
-    List temp_fit = zcurve_EM_fit_RCpp(temp_x, type, mu, sigma, theta, a, b,
+    List temp_fit = zcurve_EM_fit_RCpp(temp_x, type, mu, sigma, theta, a, b, sig_level,
                                 max_iter, criterion);
 
-    new_mu      = temp_fit["mu"];
-    new_weights = temp_fit["weights"];
-    new_iter    = temp_fit["iter"];
-    new_Q       = temp_fit["Q"];
-    new_N_fit   = temp_fit["N_fit"];
+    new_mu        = temp_fit["mu"];
+    new_weights   = temp_fit["weights"];
+    new_iter      = temp_fit["iter"];
+    new_Q         = temp_fit["Q"];
+    new_prop_high = temp_fit["prop_high"];
 
     mu_reps(i,_)      = new_mu;
     weights_reps(i,_) = new_weights;
     iter_reps[i]      = new_iter;
     Q_reps[i]         = new_Q;
-    N_fit_reps[i]     = new_N_fit;
+    prop_high_reps[i] = new_prop_high;
   }
 
   List ret;
@@ -390,7 +407,7 @@ List zcurve_EM_boot_RCpp(NumericVector x, int type,
   ret["Q"]         = Q_reps;
   ret["mu"]        = mu_reps;
   ret["weights"]   = weights_reps;
-  ret["N_fit"]     = N_fit_reps;
+  ret["prop_high"] = prop_high_reps;
 
   return ret;
 }
@@ -399,14 +416,14 @@ List zcurve_EM_boot_RCpp(NumericVector x, int type,
 List zcurve_EM_start_fast_RCpp(NumericVector x, int K,
                    NumericVector mu, NumericVector sigma, NumericVector mu_alpha, double mu_max,
                    NumericVector theta_alpha,
-                   double a, double b,
+                   double a, double b, double sig_level,
                    int fit_reps, int max_iter, double criterion) {
 
-  NumericMatrix mu_reps      (fit_reps, K);
-  NumericMatrix weights_reps (fit_reps, K);
-  IntegerVector iter_reps    (fit_reps);
-  NumericVector Q_reps       (fit_reps);
-  IntegerVector N_fit_reps   (fit_reps);
+  NumericMatrix mu_reps        (fit_reps, K);
+  NumericMatrix weights_reps   (fit_reps, K);
+  IntegerVector iter_reps      (fit_reps);
+  NumericVector Q_reps         (fit_reps);
+  NumericVector prop_high_reps (fit_reps);
 
   NumericVector temp_theta  (K);
   NumericVector temp_mu     (K);
@@ -415,26 +432,26 @@ List zcurve_EM_start_fast_RCpp(NumericVector x, int K,
   NumericVector new_weights (K);
   int new_iter;
   double new_Q;
-  int new_N_fit;
+  double new_prop_high;
 
   for(int i = 0; i < fit_reps; i++){
     temp_theta = dirichlet_rng(theta_alpha);
     temp_mu    = mu;
 
-    List temp_fit = zcurve_EM_fit_fast_RCpp(x, temp_mu, sigma, temp_theta, a, b,
+    List temp_fit = zcurve_EM_fit_fast_RCpp(x, temp_mu, sigma, temp_theta, a, b, sig_level,
                                 max_iter, criterion);
 
-    new_mu      = temp_fit["mu"];
-    new_weights = temp_fit["weights"];
-    new_iter    = temp_fit["iter"];
-    new_Q       = temp_fit["Q"];
-    new_N_fit   = temp_fit["N_fit"];
+    new_mu        = temp_fit["mu"];
+    new_weights   = temp_fit["weights"];
+    new_iter      = temp_fit["iter"];
+    new_Q         = temp_fit["Q"];
+    new_prop_high = temp_fit["prop_high"];
 
     mu_reps(i,_)      = new_mu;
     weights_reps(i,_) = new_weights;
     iter_reps[i]      = new_iter;
     Q_reps[i]         = new_Q;
-    N_fit_reps[i]     = new_N_fit;
+    prop_high_reps[i] = new_prop_high;
   }
 
   List ret;
@@ -442,7 +459,7 @@ List zcurve_EM_start_fast_RCpp(NumericVector x, int K,
   ret["Q"]         = Q_reps;
   ret["mu"]        = mu_reps;
   ret["weights"]   = weights_reps;
-  ret["N_fit"]     = N_fit_reps;
+  ret["prop_high"] = prop_high_reps;
 
   return ret;
 }
@@ -450,13 +467,13 @@ List zcurve_EM_start_fast_RCpp(NumericVector x, int K,
 // [[Rcpp::export(.zcurve_EM_boot_fast_RCpp)]]
 List zcurve_EM_boot_fast_RCpp(NumericVector x,
                   NumericVector mu, NumericVector sigma, NumericVector theta,
-                  double a, double b,
+                  double a, double b, double sig_level,
                   int bootstrap, int max_iter, double criterion){
-  NumericMatrix mu_reps      (bootstrap, mu.size());
-  NumericMatrix weights_reps (bootstrap, mu.size());
-  IntegerVector iter_reps    (bootstrap);
-  NumericVector Q_reps       (bootstrap);
-  NumericVector N_fit_reps   (bootstrap);
+  NumericMatrix mu_reps        (bootstrap, mu.size());
+  NumericMatrix weights_reps   (bootstrap, mu.size());
+  IntegerVector iter_reps      (bootstrap);
+  NumericVector Q_reps         (bootstrap);
+  NumericVector prop_high_reps (bootstrap);
 
   NumericVector temp_x;
 
@@ -464,25 +481,25 @@ List zcurve_EM_boot_fast_RCpp(NumericVector x,
   NumericVector new_weights (mu.size());
   int new_iter;
   double new_Q;
-  int new_N_fit;
+  double new_prop_high;
 
   for(int i = 0; i < bootstrap; i++){
     temp_x = sample(x, x.size(), true);
 
-    List temp_fit = zcurve_EM_fit_fast_RCpp(temp_x, mu, sigma, theta, a, b,
+    List temp_fit = zcurve_EM_fit_fast_RCpp(temp_x, mu, sigma, theta, a, b, sig_level,
                                 max_iter, criterion);
 
-    new_mu      = temp_fit["mu"];
-    new_weights = temp_fit["weights"];
-    new_iter    = temp_fit["iter"];
-    new_Q       = temp_fit["Q"];
-    new_N_fit   = temp_fit["N_fit"];
+    new_mu        = temp_fit["mu"];
+    new_weights   = temp_fit["weights"];
+    new_iter      = temp_fit["iter"];
+    new_Q         = temp_fit["Q"];
+    new_prop_high = temp_fit["prop_high"];
 
     mu_reps(i,_)      = new_mu;
     weights_reps(i,_) = new_weights;
     iter_reps[i]      = new_iter;
     Q_reps[i]         = new_Q;
-    N_fit_reps[i]     = new_N_fit;
+    prop_high_reps[i] = new_prop_high;
   }
 
   List ret;
@@ -490,7 +507,7 @@ List zcurve_EM_boot_fast_RCpp(NumericVector x,
   ret["Q"]         = Q_reps;
   ret["mu"]        = mu_reps;
   ret["weights"]   = weights_reps;
-  ret["N_fit"]     = N_fit_reps;
+  ret["prop_high"] = prop_high_reps;
 
   return ret;
 }

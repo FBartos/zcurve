@@ -1,16 +1,16 @@
 # wrapper
-.zcurve_density          <- function(z_sig, control) {
+.zcurve_density          <- function(z, control) {
   
   if(control$version == 2){
-    temp_fit <- .zcurve_density_ver2(z_sig, control)
+    temp_fit <- .zcurve_density_ver2(z, control)
   }else if(control$version == 1){
-    temp_fit <- .zcurve_density_ver1(z_sig, control)
+    temp_fit <- .zcurve_density_ver1(z, control)
   }
   
   return(temp_fit)
   
 }
-.zcurve_density_boot     <- function(z_sig, control, bootstrap){
+.zcurve_density_boot     <- function(z, control, bootstrap){
   
   temp_ncol <- ifelse(control$version == 2, length(control$mu), control$K)
   results <-  list(
@@ -28,19 +28,19 @@
   )
   
   for(i in 1:bootstrap){
-    z_sig_boot <- sample(z_sig, replace = TRUE)
+    z_boot <- sample(z, replace = TRUE)
     
     if(control$version == 2){
-      temp_fit <- .zcurve_density_ver2(z_sig_boot, control)
+      temp_fit <- .zcurve_density_ver2(z_boot, control)
       results$FDR_max[i]   <- temp_fit$FDR_max
     }else if(control$version == 1){
-      temp_fit <- .zcurve_density_ver1(z_sig_boot, control)
+      temp_fit <- .zcurve_density_ver1(z_boot, control)
     }
     
     
     results$mu[i,]       <- temp_fit$mu
     results$weights[i,]  <- temp_fit$weights
-    results$N_fit[i]     <- temp_fit$N_fit
+    results$prop_high[i] <- temp_fit$prop_high
     results$objective[i] <- temp_fit$objective
     results$iter[i]      <- temp_fit$iter
 
@@ -52,12 +52,13 @@
 
 
 # original z-curve1.0
-.zcurve_density_ver1         <- function(z_sig, control) {
+.zcurve_density_ver1         <- function(z, control) {
   
-  ncomp  <- control$K
-  bw <- control$bw
-  cv <- control$a
-  Z  <- z_sig
+  prop_high <- sum(z > control$b) / sum(z > stats::qnorm(control$sig_level/2, lower.tail = FALSE))
+  ncomp     <- control$K
+  bw        <- control$bw
+  cv        <- control$a
+  Z         <- z[z > control$a & z < control$b]
 
   augZ = c(subset(Z,Z<Inf),2*cv-subset(Z,Z<Inf)) 	#5. Augmented Z for density estimation to avoid asymtote to zero at cv.
   DensityEstimate = stats::density(augZ,n=100,bw=bw,from=1.96,to=6) #6. Get Densities using Kernel.Density.Function
@@ -97,7 +98,7 @@
     list(
       "mu"        = Z.Means,
       "weights"   = Z.w,
-      "N_fit"     = sum(z_sig < control$b),
+      "prop_high" = prop_high,
       "objective" = auto$objective,
       "converged" = auto$convergence,
       "message"   = auto$message,
@@ -169,13 +170,14 @@ NULL
 
 
 # z-curve 2.0 (KD2)
-.zcurve_density_ver2      <- function(z_sig, control) {
+.zcurve_density_ver2      <- function(z, control) {
 
-  z.val.input <- z_sig
-  z.val.input[z.val.input > control$MAX.INP.Z] = control$MAX.INP.Z
-
+  prop_high   <- sum(z > control$b) / sum(z > stats::qnorm(control$sig_level/2, lower.tail = FALSE))
+  z.val.input <- z
+  
   Z.INT = z.val.input[z.val.input >= control$a & z.val.input <= control$b + 1]
 
+  # depriciated, probablyt part of max.FDR estimation trial
   z.extreme = sum(z.val.input > control$b)/sum(z.val.input > control$a)
 
   densy = .zcurve_density_get_densities(Z.INT, z.val.input, control)
@@ -245,7 +247,7 @@ NULL
     list(
       "mu"        = para.val$mu,
       "weights"   = para.val$weights,
-      "N_fit"     = sum(z_sig < control$b),
+      "prop_high" = prop_high,
       "objective" = para.val$objective,
       "converged" = para.val$converged,
       "message"   = para.val$message,
@@ -347,12 +349,10 @@ NULL
     control$compute_FDR     <- FALSE	          # Compute Maximum FDR, Slows Things Down Considerably
 
     control$model           <- "KD2"
-    
-    # check whether this is needed
-    control$MAX.INP.Z       <- 100	            # values greater than MAX.INP.Z will be set to maximum
+
 
     ### probably to be removed
-    control$PLOT = F
+    control$PLOT     = F
     control$FDR.PLOT = F
     #"FDR.PLOT" = FALSE	   # Make a screen plot of the FDR
     #"PLOT" = FALSE		     # Show Fitting of Density Distribution
@@ -393,9 +393,6 @@ NULL
       control$compute_FDR     <- FALSE	          # Compute Maximum FDR, Slows Things Down Considerably
       
       control$model           <- "KD2"
-      
-      # check whether this is needed
-      control$MAX.INP.Z       <- 100	            # values greater than MAX.INP.Z will be set to maximum
       
       ### probably to be removed
       control$PLOT = F
@@ -517,10 +514,6 @@ NULL
   }
   if(is.null(control[["model"]])){
     control$model           <- NULL
-  }
-  # check whether this is needed
-  if(is.null(control[["MAX.INP.Z"]])){
-    control$MAX.INP.Z       <- 100	            # values greater than MAX.INP.Z will be set to maximum
   }
   ### probably to be removed
   if(is.null(control[["PLOT"]])){
