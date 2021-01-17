@@ -70,7 +70,7 @@ zcurve       <- function(z, p, method = "EM", bootstrap = 1000, control = NULL){
   if(!missing(z)){
     if(!is.numeric(z))stop("Wrong z-scores input: Data are not nummeric.")
     if(!is.vector(z))stop("Wrong z-scores input: Data are not a vector")
-    if(max(z) < 1 )stop("It looks like you are entering p-values rather than Z-scores. To use p-values, explicitly name your argument 'zcurve(p = [vector of p-values])'")
+    if(all(z <= 1 & z >= 0))stop("It looks like you are entering p-values rather than z-scores. To use p-values, explicitly name your argument 'zcurve(p = [vector of p-values])'")
     input_type <- c(input_type, "z")
   }else{
     z <- NULL
@@ -559,11 +559,11 @@ plot.zcurve          <- function(x, annotation = FALSE, CI = FALSE, extrapolate 
   }
   # significance line
   if(x.anno*x_max < x$control$a){
-    graphics::lines(rep(x$control$a,2),                                      c(0, (min(y.anno) - .025)*y_max), col = "blue", lty = 2, lwd = 1)
-    graphics::lines(rep(qnorm(x$control$sig_level/2, lower.tail = FALSE),2), c(0, (min(y.anno) - .025)*y_max), col = "red",  lty = 1, lwd = 2)    
+    graphics::lines(rep(x$control$a,2),                                             c(0, (min(y.anno) - .025)*y_max), col = "blue", lty = 2, lwd = 1)
+    graphics::lines(rep(stats::qnorm(x$control$sig_level/2, lower.tail = FALSE),2), c(0, (min(y.anno) - .025)*y_max), col = "red",  lty = 1, lwd = 2)    
   }else{
-    graphics::abline(v = x$control$a,                                      col = "blue", lty = 2, lwd = 1)
-    graphics::abline(v = qnorm(x$control$sig_level/2, lower.tail = FALSE), col = "red",  lty = 1, lwd = 2) 
+    graphics::abline(v = x$control$a,                                             col = "blue", lty = 2, lwd = 1)
+    graphics::abline(v = stats::qnorm(x$control$sig_level/2, lower.tail = FALSE), col = "red",  lty = 1, lwd = 2) 
   }
   # predicted densities
   graphics::lines(x_seq, y_den, lty = 1, col = "blue", lwd = 5)

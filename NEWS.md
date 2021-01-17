@@ -1,3 +1,6 @@
+## version 1.0.8
+- Fixing an input test of z-scores (checking whether p-values weren't used by a mistake) being triggered when all z-scores were negative.
+
 ## version 1.0.7
 - Fixing incorrect passing of the significance level when the lower fitting range is not equal to alpha.
 
