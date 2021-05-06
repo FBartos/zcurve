@@ -4,7 +4,12 @@
 \alias{z_to_power}
 \title{Compute power corresponding to z-scores}
 \usage{
-z_to_power(z, alpha = 0.05, a = stats::qnorm(alpha/2, lower.tail = FALSE))
+z_to_power(
+  z,
+  alpha = 0.05,
+  a = stats::qnorm(alpha/2, lower.tail = FALSE),
+  two.sided = TRUE
+)
 }
 \arguments{
 \item{z}{A vector of z-scores}
@@ -12,6 +17,8 @@ z_to_power(z, alpha = 0.05, a = stats::qnorm(alpha/2, lower.tail = FALSE))
 \item{alpha}{Level of significance alpha}
 
 \item{a}{Or, alternatively a z-score corresponding to \code{alpha}}
+
+\item{two.sided}{Whether directionality of the effect size should be taken into account.}
 }
 \description{
 A function for computing power of two-sided tests

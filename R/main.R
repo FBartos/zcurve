@@ -262,11 +262,10 @@ summary.zcurve       <- function(object, type = "results", all = FALSE, ERR.adj 
     
     # adjust CIs
     if(!is.null(object$boot)){
-      TAB["ERR", "l.CI"] <- ifelse(TAB["ERR", "l.CI"] - ERR.adj < object$control$sig_level, object$control$sig_level, TAB["ERR", "l.CI"] - ERR.adj)
+      TAB["ERR", "l.CI"] <- ifelse(TAB["ERR", "l.CI"] - ERR.adj < object$control$sig_level/2, object$control$sig_level/2, TAB["ERR", "l.CI"] - ERR.adj)
       TAB["ERR", "u.CI"] <- ifelse(TAB["ERR", "u.CI"] + ERR.adj > 1, 1, TAB["ERR", "u.CI"] + ERR.adj)
       TAB["EDR", "l.CI"] <- ifelse(TAB["EDR", "l.CI"] - EDR.adj < object$control$sig_level, object$control$sig_level, TAB["EDR", "l.CI"] - EDR.adj)
       TAB["EDR", "u.CI"] <- ifelse(TAB["EDR", "u.CI"] + EDR.adj > 1, 1, TAB["EDR", "u.CI"] + EDR.adj)
-      TAB["EDR", "u.CI"] <- ifelse(TAB["EDR", "u.CI"] > TAB["ERR", "u.CI"], TAB["ERR", "u.CI"], TAB["EDR", "u.CI"])
     }
     
     # additional stats

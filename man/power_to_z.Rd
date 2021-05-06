@@ -8,6 +8,7 @@ power_to_z(
   power,
   alpha = 0.05,
   a = stats::qnorm(alpha/2, lower.tail = FALSE),
+  two.sided = TRUE,
   nleqslv_control = list(xtol = 1e-15, maxit = 300, stepmax = 0.5)
 )
 }
@@ -17,6 +18,8 @@ power_to_z(
 \item{alpha}{Level of significance alpha}
 
 \item{a}{Or, alternatively a z-score corresponding to \code{alpha}}
+
+\item{two.sided}{Whether directionality of the effect size should be taken into account.}
 
 \item{nleqslv_control}{A named list of control parameters passed to the
 \link[nleqslv]{nleqslv} function used for solving the inverse of

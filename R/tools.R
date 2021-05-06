@@ -8,18 +8,23 @@
 #' @param z A vector of z-scores
 #' @param alpha Level of significance alpha
 #' @param a Or, alternatively a z-score corresponding to \code{alpha}
-#'
+#' @param two.sided Whether directionality of the effect size should be taken into account.
+#' 
 #' @export z_to_power
 #'
 #' @examples # mean powers corresponding to the mean components of KD2
 #' z_to_power(0:6, alpha = .05)
-z_to_power  <- function(z, alpha = .05, a = stats::qnorm(alpha/2,lower.tail = FALSE)){
+z_to_power  <- function(z, alpha = .05, a = stats::qnorm(alpha/2,lower.tail = FALSE), two.sided = TRUE){
   if(!all(sapply(z, function(x)x >= 0)))stop("z must be >= 0")
   if(a  < 0)stop("a must be >= 0")
   if(is.null(a) & is.null(alpha))stop("Either 'alpha' or 'a' must be provided")
   if(is.null(alpha) & !is.null(a))alpha <- stats::pnorm(a, lower.tail = FALSE)*2
   if(alpha < 0 | alpha > 1)stop("alpha must be >= 0 & <= 1")
-  1 - stats::pnorm(a, z, 1) + stats::pnorm(-a, z, 1)
+  if(two.sided){
+    return(1 - stats::pnorm(a, z, 1) + stats::pnorm(-a, z, 1))    
+  }else{
+    return(1 - stats::pnorm(a, z, 1))    
+  }
 }
 
 
@@ -31,6 +36,7 @@ z_to_power  <- function(z, alpha = .05, a = stats::qnorm(alpha/2,lower.tail = FA
 #' @param power A vector of powers
 #' @param alpha Level of significance alpha
 #' @param a Or, alternatively a z-score corresponding to \code{alpha}
+#' @param two.sided Whether directionality of the effect size should be taken into account.
 #' @param nleqslv_control A named list of control parameters passed to the 
 #' \link[nleqslv]{nleqslv} function used for solving the inverse of 
 #' \link[=z_to_power]{z_to_power} function.  
@@ -39,19 +45,19 @@ z_to_power  <- function(z, alpha = .05, a = stats::qnorm(alpha/2,lower.tail = FA
 #'
 #' @examples # z-scores corresponding to the (aproximate) power of components of EM2
 #' power_to_z(c(0.05, 0.20, 0.40, 0.60, 0.80, 0.974, 0.999), alpha = .05)
-power_to_z  <- function(power, alpha = .05, a = stats::qnorm(alpha/2,lower.tail = FALSE),
+power_to_z  <- function(power, alpha = .05, a = stats::qnorm(alpha/2,lower.tail = FALSE), two.sided = TRUE,
                         nleqslv_control = list(xtol = 1e-15, maxit = 300, stepmax = .5)){
   if(a  < 0)stop("a must be >= 0")
   if(is.null(a) & is.null(alpha))stop("Either 'alpha' or 'a' must be provided")
   if(is.null(alpha) & !is.null(a))alpha <- stats::pnorm(a, lower.tail = FALSE)*2
   if(alpha < 0 | alpha > 1)stop("alpha must be >= 0 & <= 1")
   if(!all(sapply(power, function(x)x >= alpha & x <= 1)))stop("power must be >= alpha & <= 1")
-  sapply(power, function(pow)nleqslv::nleqslv(.5, .solve_power_to_z, power = pow, a = a, control = nleqslv_control)$x)
+  sapply(power, function(pow)nleqslv::nleqslv(.5, .solve_power_to_z, power = pow, a = a, two.sided = two.sided, control = nleqslv_control)$x)
 }
 
-.solve_power_to_z <- function(x, power, a){
+.solve_power_to_z <- function(x, power, a, two.sided){
   y = numeric(1)
-  y = z_to_power(z = x, a = a) - power
+  y = z_to_power(z = x, a = a, two.sided = two.sided) - power
   y
 }
 
@@ -69,20 +75,21 @@ power_to_z  <- function(power, alpha = .05, a = stats::qnorm(alpha/2,lower.tail 
   sum(pop_weights * power)
   # 1/sum(weights / power) # old formula based on estimated weights
 }
-.get_ERR    <- function(power, pop_weights){
-  sum(pop_weights * power^2) / sum(pop_weights * power)
+.get_ERR    <- function(power2, power1, pop_weights){
+  sum(pop_weights * power2 * power1) / sum(pop_weights * power2)
   # sum(weights * power)  # old formula based on estimated weights
 }
 
 .get_estimates <- function(mu, weights, prop_high, sig_level, a){
   
-  power   <- c(z_to_power(z = mu, alpha = sig_level), 1)  # power 
+  power2  <- c(z_to_power(z = mu, alpha = sig_level), 1)                     # power - two-sided
+  power1  <- c(z_to_power(z = mu, alpha = sig_level, two.sided = FALSE), 1)  # power - one-sided
   weights <- c(weights*(1-prop_high), prop_high)          # estimated weights
   
   pop_weights <- .get_pop_weights(weights, mu, a)         # transformed into the overall weights
   
-  EDR <- .get_EDR(power, pop_weights)
-  ERR <- .get_ERR(power, pop_weights)
+  EDR <- .get_EDR(power2, pop_weights)
+  ERR <- .get_ERR(power2, power1, pop_weights)
   
   Z0  <- weights[1]
 

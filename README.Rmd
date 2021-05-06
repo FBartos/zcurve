@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 This package implements z-curves - methods for estimating expected discovery 
 and replicability rates on bases of test-statistics of published studies. The package 
 provides functions for fitting the new density and EM version (Bartoš & Schimmack, in 
-preparation) as well as the original density z-curve (Brunner & Schimmack, 2019). 
+preparation) as well as the original density z-curve (Brunner & Schimmack, 2020). 
 Furthermore, the package provides summarizing and plotting functions for the 
 fitted z-curve objects. See the aforementioned articles for more information about 
 the z-curves, expected discovery and replicability rates, validation 
@@ -98,7 +98,7 @@ plot(fit, CI = TRUE, annotation = TRUE, main = "OSC 2015")
 
 Other versions of the z-curves may be fitted by changing the method argument in the 'zcurve' function.
 Set 'method = "density"' to fit the new version of z-curve using density method (KD2). The original 
-version of the density method as implemented in Brunner and Schimmack (2019) can be fitted by adding
+version of the density method as implemented in Brunner and Schimmack (2020) can be fitted by adding
 'list(model = "KD1")' to the 'control' argument of 'zcurve'.
 
 (We omit bootstrapping to speed the fitting process in this case)
@@ -130,7 +130,7 @@ citation(package = "zcurve")
 ## Sources
 Bartoš, F., & Schimmack, U. (2020, January 10). Z-Curve.2.0: Estimating Replication Rates and Discovery Rates. https://doi.org/10.31234/osf.io/urgtn
 
-Brunner, J. & Schimmack, U. (2019). Estimating Population Mean Power Under Conditions of Heterogeneity and Selection for Significance. Meta Psychology, in press.
+Brunner, J., & Schimmack, U. (2020). Estimating population mean power under conditions of heterogeneity and selection for significance. Meta-Psychology, 4.
 
 Open Science Collaboration. (2015). Estimating the reproducibility of psychological science. Science, 349(6251), aac4716.
 

@@ -1,3 +1,6 @@
+## version 1.0.9
+- Changing the ERR estimates to be take the directionality of the expected replication into account.
+
 ## version 1.0.8
 - Fixing an input test of z-scores (checking whether p-values weren't used by a mistake) being triggered when all z-scores were negative.
 
