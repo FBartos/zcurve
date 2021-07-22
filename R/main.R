@@ -62,28 +62,35 @@
 #' # see '?control_EM' and '?control_density' for more information about different
 #' # z-curves specifications
 #' @seealso [summary.zcurve()], [plot.zcurve()], [control_EM], [control_density]
-zcurve       <- function(z, p, method = "EM", bootstrap = 1000, control = NULL){
+zcurve       <- function(z, z.lb, z.ub, p, p.lb, p.ub, method = "EM", bootstrap = 1000, control = NULL){
   
   # check input
   input_type <- NULL
-  if(missing(z) & missing(p))stop("No data input")
+  if((!missing(z.lb) & missing(z.ub)) | (!missing(z.ub) & missing(z.lb)))
+    stop("Both lower and upper bound for z-scores needs to be supplied.")
+  if((!missing(p.lb) & missing(p.ub)) | (!missing(p.ub) & missing(p.lb)))
+    stop("Both lower and upper bound for p-values needs to be supplied.")
+  if(missing(z) & missing(p) & missing(z.lb) & missing(p.lb))
+    stop("No data input")
   if(!missing(z)){
-    if(!is.numeric(z))stop("Wrong z-scores input: Data are not nummeric.")
-    if(!is.vector(z))stop("Wrong z-scores input: Data are not a vector")
-    if(all(z <= 1 & z >= 0))stop("It looks like you are entering p-values rather than z-scores. To use p-values, explicitly name your argument 'zcurve(p = [vector of p-values])'")
+    if(!is.numeric(z))
+      stop("Wrong z-scores input: Data are not nummeric.")
+    if(!is.vector(z))
+      stop("Wrong z-scores input: Data are not a vector")
+    if(all(z <= 1 & z >= 0))
+      stop("It looks like you are entering p-values rather than z-scores. To use p-values, explicitly name your argument 'zcurve(p = [vector of p-values])'")
     input_type <- c(input_type, "z")
-  }else{
-    z <- NULL
   }
   if(!missing(p)){
-    if(!is.numeric(p))stop("Wrong p-values input: Data are not nummeric.")
-    if(!is.vector(p))stop("Wrong p-values input: Data are not a vector") 
+    if(!is.numeric(p))
+      stop("Wrong p-values input: Data are not nummeric.")
+    if(!is.vector(p))
+      stop("Wrong p-values input: Data are not a vector") 
     input_type <- c(input_type, "p")
-  }else{
-    p <- NULL
   }
-  
-  if(!method %in% c("EM", "density"))stop("Wrong method, select a supported option")
+
+  if(!method %in% c("EM", "density"))
+    stop("Wrong method, select a supported option")
   if(!is.numeric(bootstrap))bootstrap <- FALSE
   if(bootstrap <= 0)        bootstrap <- FALSE
   
@@ -95,29 +102,68 @@ zcurve       <- function(z, p, method = "EM", bootstrap = 1000, control = NULL){
   object$input_type <- input_type
   
   
+  # prepare data
+  if(!missing(z)){
+    z <- abs(z)
+  }else{
+    z <- numeric()   
+  }
+  if(!missing(p)){
+    z <- c(z, .p_to_z(p))
+  }
+  
+  if(!missing(z.lb)){
+    lb          <- abs(z.lb)
+    ub          <- abs(z.ub)
+    censoring.z <- TRUE
+  }else{
+    lb          <- NULL
+    ub          <- NULL
+    censoring.z <- FALSE
+  }
+  if(!missing(p.lb)){
+    lb          <- c(lb, .p_to_z(p.ub))
+    ub          <- c(ub, .p_to_z(p.lb))
+    censoring.p <- TRUE
+  }else{
+    censoring.p <- FALSE
+  }
+  censoring   <- censoring.z | censoring.p
+  
+  object$data           <- z
+  object$data_censoring <- data.frame(lb = lb, ub = ub)
+
+  
   # update control
   if(method == "EM"){
     control <- .zcurve_EM.control(control)
+    if(censoring){
+      control$type <- 3
+    }
   }else if(method == "density"){
     control <- .zcurve_density.control(control)
+    if(censoring){
+      stop("Censoring is not available for the density algorithm.")
+    }
   }
   object$control <- control
   
   
-  # prepare data
-  if(!is.null(p)){
-    z_from_p <- .p_to_z(p)
-    z        <- c(z, z_from_p)
-  }
-  z           <- abs(z)
-  object$data <- z
-  
   # only run the algorithm with some significant results
-  if(sum(z > control$a & z < control$b) < 10)stop("There must be at least 10 z-scores in the fitting range but a much larger number is recommended.")
+  if(sum(z > control$a & z < control$b) + nrow(object$data_censoring) < 10)
+    stop("There must be at least 10 z-scores in the fitting range but a much larger number is recommended.")
+  
+  
+  # restrict censoring to the fitting range
+  if(!is.null(lb)){
+    lb <- ifelse(lb < control$a, control$a, lb)
+    ub <- ifelse(ub > control$b, control$b, ub)
+  }
+  
   
   # use apropriate algorithm
   if(method == "EM"){
-    fit <- .zcurve_EM(z = z, control = control)
+    fit <- .zcurve_EM(z = z, lb = lb, ub = ub, control = control)
   }else if(method == "density"){
     fit <- .zcurve_density(z = z, control = control)
   }
@@ -129,17 +175,20 @@ zcurve       <- function(z, p, method = "EM", bootstrap = 1000, control = NULL){
     object$converged <- ifelse(fit$iter < control$max_iter, TRUE, FALSE)
   }else if(method == "density"){
     object$converged <- fit$converged
-    if(fit$message == "singular convergence (7)")object$converged <- TRUE
-    if(fit$message == "both X-convergence and relative convergence (5)")object$converged <- TRUE
+    if(fit$message == "singular convergence (7)")
+      object$converged <- TRUE
+    if(fit$message == "both X-convergence and relative convergence (5)")
+      object$converged <- TRUE
   }
-  if(object$converged == FALSE)warning("Model did not converge.")
+  if(object$converged == FALSE)
+    warning("Model did not converge.")
   
   
   # do bootstrap
   if(bootstrap != FALSE){
     # use apropriate algorithm
     if(method == "EM"){
-      fit_boot <- .zcurve_EM_boot(z = z, control = control, fit = fit, bootstrap = bootstrap)
+      fit_boot <- .zcurve_EM_boot(z = z, lb = lb, ub = ub, control = control, fit = fit, bootstrap = bootstrap)
     }else if(method == "density"){
       fit_boot <- .zcurve_density_boot(z = z, control = control, bootstrap = bootstrap)
     }
@@ -229,7 +278,7 @@ summary.zcurve       <- function(object, type = "results", all = FALSE, ERR.adj 
   }
   
   temp_N_sig     <- sum(object$data > stats::qnorm(object$control$sig_level/2, lower.tail = FALSE))
-  temp_N_obs     <- length(object$data)
+  temp_N_obs     <- length(object$data) + nrow(object$data_censoring)
   temp_N_used    <- sum(object$data > object$control$a & object$data < object$control$b)
     
   model <- list(

@@ -1,4 +1,4 @@
-.zcurve_EM          <- function(z, control){
+.zcurve_EM          <- function(z, lb, ub, control){
 
   # get starting value z-curves
   if(control$type == 1){
@@ -30,6 +30,22 @@
                                        fit_reps    = control$fit_reps,
                                        max_iter    = control$max_iter_start,
                                        criterion   = control$criterion_start)
+  }else if(control$type == 3){
+    fit_start <- .zcurve_EMc_start_fast_RCpp(x           = z,
+                                             lb          = lb,
+                                             ub          = ub,
+                                             K           = control$K,
+                                             mu          = control$mu,
+                                             sigma       = control$sigma,
+                                             mu_alpha    = control$mu_alpha,
+                                             mu_max      = control$mu_max,
+                                             theta_alpha = control$theta_alpha,
+                                             a           = control$a,
+                                             b           = control$b,
+                                             sig_level   = control$sig_level,
+                                             fit_reps    = control$fit_reps,
+                                             max_iter    = control$max_iter_start,
+                                             criterion   = control$criterion_start)
   }
 
   # fit final z-curve
@@ -54,6 +70,18 @@
                                 sig_level  = control$sig_level,
                                 max_iter   = control$max_iter,
                                 criterion  = control$criterion)
+  }else if(control$type == 3){
+    fit  <- .zcurve_EMc_fit_fast_RCpp(x          = z,
+                                      lb         = lb,
+                                      ub         = ub,
+                                      mu         = fit_start$mu[which.max(fit_start$Q),],
+                                      sigma      = control$sigma,
+                                      theta      = fit_start$weights[which.max(fit_start$Q),],
+                                      a          = control$a,
+                                      b          = control$b,
+                                      sig_level  = control$sig_level,
+                                      max_iter   = control$max_iter,
+                                      criterion  = control$criterion)
   }
 
   return(
@@ -68,7 +96,7 @@
   )
 
 }
-.zcurve_EM_boot     <- function(z, control, fit, bootstrap){
+.zcurve_EM_boot     <- function(z, lb, ub, control, fit, bootstrap){
 
   if(control$type == 1){
     fit_boot <- .zcurve_EM_boot_fast_RCpp(x    = z,
@@ -94,8 +122,20 @@
                                      bootstrap = bootstrap,
                                      criterion = control$criterion_boot,
                                      max_iter  = control$max_iter_boot)
+  }else if(control$type == 3){
+    fit_boot <- .zcurve_EMc_boot_fast_RCpp(x         = z,
+                                           lb        = lb,
+                                           ub        = ub,
+                                           mu        = fit$mu,
+                                           sigma     = control$sigma,
+                                           theta     = fit$weights,
+                                           a         = control$a,
+                                           b         = control$b,
+                                           sig_level = control$sig_level,
+                                           bootstrap = bootstrap,
+                                           criterion = control$criterion_boot,
+                                           max_iter  = control$max_iter_boot)
   }
-
   return(
     list(
       "mu"        = fit_boot$mu,
