@@ -102,7 +102,8 @@ zcurve       <- function(z, z.lb, z.ub, p, p.lb, p.ub, method = "EM", bootstrap 
   object$input_type <- input_type
   
   
-  # prepare data
+  ### prepare data
+  # get point estimates on the same scale
   if(!missing(z)){
     z <- abs(z)
   }else{
@@ -111,57 +112,58 @@ zcurve       <- function(z, z.lb, z.ub, p, p.lb, p.ub, method = "EM", bootstrap 
   if(!missing(p)){
     z <- c(z, .p_to_z(p))
   }
-  
+  # get censoring on the same scale
   if(!missing(z.lb)){
     lb          <- abs(z.lb)
     ub          <- abs(z.ub)
-    censoring.z <- TRUE
   }else{
     lb          <- NULL
     ub          <- NULL
-    censoring.z <- FALSE
   }
   if(!missing(p.lb)){
     lb          <- c(lb, .p_to_z(p.ub))
     ub          <- c(ub, .p_to_z(p.lb))
-    censoring.p <- TRUE
-  }else{
-    censoring.p <- FALSE
   }
-  censoring   <- censoring.z | censoring.p
   
-  object$data           <- z
-  object$data_censoring <- data.frame(lb = lb, ub = ub)
-
-  
-  # update control
+  # create control
   if(method == "EM"){
     control <- .zcurve_EM.control(control)
-    if(censoring){
-      control$type <- 3
-    }
   }else if(method == "density"){
     control <- .zcurve_density.control(control)
-    if(censoring){
+  }
+  
+  
+  # restrict censoring to the fitting range &  treat extremely censored values as extremely significant values
+  if(!is.null(lb)){
+    z  <- c(z, lb[lb >= control$b])
+
+    ub <- ub[lb < control$b]
+    lb <- lb[lb < control$b]
+  }
+  if(length(lb) > 0){
+    lb <- ifelse(lb < control$a, control$a, lb)
+    ub <- ifelse(ub > control$b, control$b, ub)
+    
+    # update control
+    if(method == "EM"){
+      control$type <- 3
+    }else if(method == "density"){
       stop("Censoring is not available for the density algorithm.")
     }
+  }else{
+    censoring <- FALSE
   }
-  object$control <- control
-  
+
+  object$data           <- z
+  object$data_censoring <- data.frame(lb = lb, ub = ub)
+  object$control        <- control
   
   # only run the algorithm with some significant results
   if(sum(z > control$a & z < control$b) + nrow(object$data_censoring) < 10)
     stop("There must be at least 10 z-scores in the fitting range but a much larger number is recommended.")
   
   
-  # restrict censoring to the fitting range
-  if(!is.null(lb)){
-    lb <- ifelse(lb < control$a, control$a, lb)
-    ub <- ifelse(ub > control$b, control$b, ub)
-  }
-  
-  
-  # use apropriate algorithm
+  # use appropriate algorithm
   if(method == "EM"){
     fit <- .zcurve_EM(z = z, lb = lb, ub = ub, control = control)
   }else if(method == "density"){
