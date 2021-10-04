@@ -4,7 +4,17 @@
 \alias{zcurve}
 \title{Fit a z-curve}
 \usage{
-zcurve(z, p, method = "EM", bootstrap = 1000, control = NULL)
+zcurve(
+  z,
+  z.lb,
+  z.ub,
+  p,
+  p.lb,
+  p.ub,
+  method = "EM",
+  bootstrap = 1000,
+  control = NULL
+)
 }
 \arguments{
 \item{z}{a vector of z-scores.}
