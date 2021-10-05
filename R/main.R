@@ -135,13 +135,17 @@ zcurve       <- function(z, z.lb, z.ub, p, p.lb, p.ub, method = "EM", bootstrap 
   
   # restrict censoring to the fitting range &  treat extremely censored values as extremely significant values
   if(!is.null(lb)){
+    
+    if(any(lb < control$a))
+      stop("All censored observations must be higher than the fitting range.")
+    
     z  <- c(z, lb[lb >= control$b])
 
     ub <- ub[lb < control$b]
     lb <- lb[lb < control$b]
   }
   if(length(lb) > 0){
-    lb <- ifelse(lb < control$a, control$a, lb)
+    # restrict the upper censoring to the fitting range 
     ub <- ifelse(ub > control$b, control$b, ub)
     
     # update control
@@ -279,9 +283,11 @@ summary.zcurve       <- function(object, type = "results", all = FALSE, ERR.adj 
     iter_text <- object$fit$iter
   }
   
-  temp_N_sig     <- sum(object$data > stats::qnorm(object$control$sig_level/2, lower.tail = FALSE))
+  temp_N_sig     <- sum(object$data > stats::qnorm(object$control$sig_level/2, lower.tail = FALSE)) + 
+    nrow(object$data_censoring[object$data_censoring$lb > object$control$a,]) 
   temp_N_obs     <- length(object$data) + nrow(object$data_censoring)
-  temp_N_used    <- sum(object$data > object$control$a & object$data < object$control$b)
+  temp_N_used    <- sum(object$data > object$control$a & object$data < object$control$b) + 
+    nrow(object$data_censoring[object$data_censoring$lb > object$control$a & object$data_censoring$lb < object$control$b ,])
     
   model <- list(
     "method"    = method_text,
@@ -526,15 +532,32 @@ plot.zcurve          <- function(x, annotation = FALSE, CI = FALSE, extrapolate 
   # set breaks for the histogram
   br1 <- seq(x$control$a, x$control$b, .20)
   br2 <- seq(0, x$control$a, .20)
-  # change the last breake to the cutpoints
+  # change the last break accordingly to the cut points
   br1[length(br1)] <- x$control$b
   br2[length(br2)] <- x$control$a
   
-  # get histograms
+  # use histograms to get counts in each bin
   h1 <- graphics::hist(x$data[x$data > x$control$a & x$data < x$control$b], breaks = br1, plot = F) 
+
+  # add censored observations to the histogram
+  if(length(x$data_censoring) != 0){
+    # spread the censored observation across the z-values
+    cen_counts <- do.call(rbind, lapply(1:nrow(x$data_censoring), function(i){
+      temp_counts <- (x$data_censoring$lb[i] < h1$breaks[-length(h1$breaks)] & x$data_censoring$ub[i] > h1$breaks[-length(h1$breaks)])
+      temp_counts[temp_counts] <- 1/sum(temp_counts)
+      return(temp_counts)
+    }))
+    cen_counts <- apply(cen_counts, 2, sum)
+    
+    # add the counts and standardize the density
+    h1$counts  <- h1$counts + cen_counts
+    h1$density <- (h1$counts / sum(h1$counts)) * (length(h1$counts)/(x$control$b - x$control$a))
+  }
+  
+  # add histogram for non-sig results
   if(length(x$data[x$data < x$control$a])){
     h2 <- graphics::hist(x$data[x$data < x$control$a], breaks = br2, plot = F)
-    # scale the density of nonsignificant z-scores appropriately to the first one
+    # scale the density of non-significant z-scores appropriately to the first one
     h2$density <- h2$density * (x$control$a/(x$control$b - x$control$a))
     h2$density <- h2$density/(
       (length(x$data[x$data > x$control$a & x$data < x$control$b])/(x$control$b - x$control$a))
@@ -544,6 +567,7 @@ plot.zcurve          <- function(x, annotation = FALSE, CI = FALSE, extrapolate 
   }else{
     h2 <- NULL
   }
+  
 
   # compute fitted z-curve density
   x_seq <- seq(0, x$control$b, .01)
