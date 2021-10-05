@@ -10,6 +10,10 @@
 #' @param z a vector of z-scores.
 #' @param p a vector of two-sided p-values, internally transformed to 
 #' z-scores.
+#' @param z.lb a vector with start of censoring intervals of censored z-scores.
+#' @param z.ub a vector with end of censoring intervals of censored z-scores.
+#' @param p.lb a vector with start of censoring intervals of censored two-sided p-values.
+#' @param p.ub a vector with end of censoring intervals of censored two-sided p-values.
 #' @param method the method to be used for fitting. Possible options are
 #' Expectation Maximization \code{"EM"} and density \code{"density"},
 #' defaults to \code{"EM"}.

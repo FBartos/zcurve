@@ -19,8 +19,16 @@ zcurve(
 \arguments{
 \item{z}{a vector of z-scores.}
 
+\item{z.lb}{a vector with start of censoring intervals of censored z-scores.}
+
+\item{z.ub}{a vector with end of censoring intervals of censored z-scores.}
+
 \item{p}{a vector of two-sided p-values, internally transformed to
 z-scores.}
+
+\item{p.lb}{a vector with start of censoring intervals of censored two-sided p-values.}
+
+\item{p.ub}{a vector with end of censoring intervals of censored two-sided p-values.}
 
 \item{method}{the method to be used for fitting. Possible options are
 Expectation Maximization \code{"EM"} and density \code{"density"},
