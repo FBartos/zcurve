@@ -27,10 +27,10 @@ An object of type \code{"zcurve_data"}.
 \description{
 \code{zcurve_data} is used to prepare data for the
 \code{\link[=zcurve]{zcurve()}} function. The function transform strings containing
-reported test statistics \code{"z", "t", "f", "p"} into p-values.
-Test statistics reported as inequalities are transformed into censored
-as well as rounded test-statistics. See details for a detailed
-information
+reported test statistics \code{"z", "t", "f", "p"} into two-sided
+p-values. Test statistics reported as inequalities are as considered
+to be censored as well as test statistics reported with low accuracy
+(i.e., rounded to too few decimals). See details for more information.
 }
 \details{
 By default, the function extract the type of test statistic:

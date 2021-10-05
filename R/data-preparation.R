@@ -2,10 +2,10 @@
 #' 
 #' @description \code{zcurve_data} is used to prepare data for the 
 #' [zcurve()] function. The function transform strings containing 
-#' reported test statistics \code{"z", "t", "f", "p"} into p-values. 
-#' Test statistics reported as inequalities are transformed into censored 
-#' as well as rounded test-statistics. See details for a detailed 
-#' information
+#' reported test statistics \code{"z", "t", "f", "p"} into two-sided 
+#' p-values. Test statistics reported as inequalities are as considered 
+#' to be censored as well as test statistics reported with low accuracy 
+#' (i.e., rounded to too few decimals). See details for more information.
 #' 
 #' @param data a vector strings containing the test statistics.
 #' @param rounded an optional argument specifying rounding to be applied. Defaults 
@@ -62,9 +62,9 @@ zcurve_data <- function(data, rounded = TRUE, stat_precise = 2, p_precise = 3){
   digits    <- ifelse(regexpr("\\.", data) == -1, 0, nchar(data) - regexpr("\\.", data))
   
   # check the input
-  if(any(!stat_type %in% c("t", "z", "p", "f"))){
+  if(any(!stat_type %in% c("t", "z", "p", "f")))
     stop(paste0("Unknown test statistic: ", paste0("'", unique(stat_type[!stat_type %in% c("t", "z", "p", "f")]),"'", collapse = ", "), "."))
-  }
+  
   
   # check that all matches are numeric
   stat_val <- tryCatch(
@@ -91,15 +91,12 @@ zcurve_data <- function(data, rounded = TRUE, stat_precise = 2, p_precise = 3){
     rounded[stat_type != "p" & digits < stat_precise] <- digits[stat_type != "p" & digits < stat_precise]
   }else{
     # use user specify rounding
-    if(length(rounded) != length(data)){
+    if(length(rounded) != length(data))
       stop("The rounding indicator does not match the lenght of data input.")
-    }
-    if(!is.numeric(rounded)){
+    if(!is.numeric(rounded))
       stop("The rounding indicator is not numeric.")
-    }
-    if(any(rounded < 0)){
+    if(any(rounded < 0))
       stop("The rounding indicator must be non-negative.")
-    }
   }
   
   # prepare empty containers

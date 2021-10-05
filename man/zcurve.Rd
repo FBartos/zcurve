@@ -11,6 +11,7 @@ zcurve(
   p,
   p.lb,
   p.ub,
+  data,
   method = "EM",
   bootstrap = 1000,
   control = NULL
@@ -29,6 +30,8 @@ z-scores.}
 \item{p.lb}{a vector with start of censoring intervals of censored two-sided p-values.}
 
 \item{p.ub}{a vector with end of censoring intervals of censored two-sided p-values.}
+
+\item{data}{an object created with \code{\link[=zcurve_data]{zcurve_data()}} function.}
 
 \item{method}{the method to be used for fitting. Possible options are
 Expectation Maximization \code{"EM"} and density \code{"density"},
