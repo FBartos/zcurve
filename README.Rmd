@@ -16,7 +16,9 @@ knitr::opts_chunk$set(
 # zcurve
 
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.com/FBartos/zcurve.svg?branch=master)](https://travis-ci.com/FBartos/zcurve)
+[![R-CRAN-check](https://github.com/FBartos/zcurve/workflows/R-CMD-check/badge.svg)](https://github.com/FBartos/zcurve/actions)
+[![R-tests](https://github.com/FBartos/zcurve/workflows/R-CMD-tests/badge.svg)](https://github.com/FBartos/zcurve/actions)
+[![CRAN status](https://www.r-pkg.org/badges/version/zcurve)](https://CRAN.R-project.org/package=zcurve)
 <!-- badges: end -->
 
 This package implements z-curves - methods for estimating expected discovery 

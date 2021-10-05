@@ -10,6 +10,10 @@
 #' @param z a vector of z-scores.
 #' @param p a vector of two-sided p-values, internally transformed to 
 #' z-scores.
+#' @param z.lb a vector with start of censoring intervals of censored z-scores.
+#' @param z.ub a vector with end of censoring intervals of censored z-scores.
+#' @param p.lb a vector with start of censoring intervals of censored two-sided p-values.
+#' @param p.ub a vector with end of censoring intervals of censored two-sided p-values.
 #' @param method the method to be used for fitting. Possible options are
 #' Expectation Maximization \code{"EM"} and density \code{"density"},
 #' defaults to \code{"EM"}.
@@ -62,28 +66,35 @@
 #' # see '?control_EM' and '?control_density' for more information about different
 #' # z-curves specifications
 #' @seealso [summary.zcurve()], [plot.zcurve()], [control_EM], [control_density]
-zcurve       <- function(z, p, method = "EM", bootstrap = 1000, control = NULL){
+zcurve       <- function(z, z.lb, z.ub, p, p.lb, p.ub, method = "EM", bootstrap = 1000, control = NULL){
   
   # check input
   input_type <- NULL
-  if(missing(z) & missing(p))stop("No data input")
+  if((!missing(z.lb) & missing(z.ub)) | (!missing(z.ub) & missing(z.lb)))
+    stop("Both lower and upper bound for z-scores needs to be supplied.")
+  if((!missing(p.lb) & missing(p.ub)) | (!missing(p.ub) & missing(p.lb)))
+    stop("Both lower and upper bound for p-values needs to be supplied.")
+  if(missing(z) & missing(p) & missing(z.lb) & missing(p.lb))
+    stop("No data input")
   if(!missing(z)){
-    if(!is.numeric(z))stop("Wrong z-scores input: Data are not nummeric.")
-    if(!is.vector(z))stop("Wrong z-scores input: Data are not a vector")
-    if(all(z <= 1 & z >= 0))stop("It looks like you are entering p-values rather than z-scores. To use p-values, explicitly name your argument 'zcurve(p = [vector of p-values])'")
+    if(!is.numeric(z))
+      stop("Wrong z-scores input: Data are not nummeric.")
+    if(!is.vector(z))
+      stop("Wrong z-scores input: Data are not a vector")
+    if(all(z <= 1 & z >= 0))
+      stop("It looks like you are entering p-values rather than z-scores. To use p-values, explicitly name your argument 'zcurve(p = [vector of p-values])'")
     input_type <- c(input_type, "z")
-  }else{
-    z <- NULL
   }
   if(!missing(p)){
-    if(!is.numeric(p))stop("Wrong p-values input: Data are not nummeric.")
-    if(!is.vector(p))stop("Wrong p-values input: Data are not a vector") 
+    if(!is.numeric(p))
+      stop("Wrong p-values input: Data are not nummeric.")
+    if(!is.vector(p))
+      stop("Wrong p-values input: Data are not a vector") 
     input_type <- c(input_type, "p")
-  }else{
-    p <- NULL
   }
-  
-  if(!method %in% c("EM", "density"))stop("Wrong method, select a supported option")
+
+  if(!method %in% c("EM", "density"))
+    stop("Wrong method, select a supported option")
   if(!is.numeric(bootstrap))bootstrap <- FALSE
   if(bootstrap <= 0)        bootstrap <- FALSE
   
@@ -95,29 +106,74 @@ zcurve       <- function(z, p, method = "EM", bootstrap = 1000, control = NULL){
   object$input_type <- input_type
   
   
-  # update control
+  ### prepare data
+  # get point estimates on the same scale
+  if(!missing(z)){
+    z <- abs(z)
+  }else{
+    z <- numeric()   
+  }
+  if(!missing(p)){
+    z <- c(z, .p_to_z(p))
+  }
+  # get censoring on the same scale
+  if(!missing(z.lb)){
+    lb          <- abs(z.lb)
+    ub          <- abs(z.ub)
+  }else{
+    lb          <- NULL
+    ub          <- NULL
+  }
+  if(!missing(p.lb)){
+    lb          <- c(lb, .p_to_z(p.ub))
+    ub          <- c(ub, .p_to_z(p.lb))
+  }
+  
+  # create control
   if(method == "EM"){
     control <- .zcurve_EM.control(control)
   }else if(method == "density"){
     control <- .zcurve_density.control(control)
   }
-  object$control <- control
   
   
-  # prepare data
-  if(!is.null(p)){
-    z_from_p <- .p_to_z(p)
-    z        <- c(z, z_from_p)
+  # restrict censoring to the fitting range &  treat extremely censored values as extremely significant values
+  if(!is.null(lb)){
+    
+    if(any(lb < control$a))
+      stop("All censored observations must be higher than the fitting range.")
+    
+    z  <- c(z, lb[lb >= control$b])
+
+    ub <- ub[lb < control$b]
+    lb <- lb[lb < control$b]
   }
-  z           <- abs(z)
-  object$data <- z
+  if(length(lb) > 0){
+    # restrict the upper censoring to the fitting range 
+    ub <- ifelse(ub > control$b, control$b, ub)
+    
+    # update control
+    if(method == "EM"){
+      control$type <- 3
+    }else if(method == "density"){
+      stop("Censoring is not available for the density algorithm.")
+    }
+  }else{
+    censoring <- FALSE
+  }
+
+  object$data           <- z
+  object$data_censoring <- data.frame(lb = lb, ub = ub)
+  object$control        <- control
   
   # only run the algorithm with some significant results
-  if(sum(z > control$a & z < control$b) < 10)stop("There must be at least 10 z-scores in the fitting range but a much larger number is recommended.")
+  if(sum(z > control$a & z < control$b) + nrow(object$data_censoring) < 10)
+    stop("There must be at least 10 z-scores in the fitting range but a much larger number is recommended.")
   
-  # use apropriate algorithm
+  
+  # use appropriate algorithm
   if(method == "EM"){
-    fit <- .zcurve_EM(z = z, control = control)
+    fit <- .zcurve_EM(z = z, lb = lb, ub = ub, control = control)
   }else if(method == "density"){
     fit <- .zcurve_density(z = z, control = control)
   }
@@ -129,17 +185,20 @@ zcurve       <- function(z, p, method = "EM", bootstrap = 1000, control = NULL){
     object$converged <- ifelse(fit$iter < control$max_iter, TRUE, FALSE)
   }else if(method == "density"){
     object$converged <- fit$converged
-    if(fit$message == "singular convergence (7)")object$converged <- TRUE
-    if(fit$message == "both X-convergence and relative convergence (5)")object$converged <- TRUE
+    if(fit$message == "singular convergence (7)")
+      object$converged <- TRUE
+    if(fit$message == "both X-convergence and relative convergence (5)")
+      object$converged <- TRUE
   }
-  if(object$converged == FALSE)warning("Model did not converge.")
+  if(object$converged == FALSE)
+    warning("Model did not converge.")
   
   
   # do bootstrap
   if(bootstrap != FALSE){
     # use apropriate algorithm
     if(method == "EM"){
-      fit_boot <- .zcurve_EM_boot(z = z, control = control, fit = fit, bootstrap = bootstrap)
+      fit_boot <- .zcurve_EM_boot(z = z, lb = lb, ub = ub, control = control, fit = fit, bootstrap = bootstrap)
     }else if(method == "density"){
       fit_boot <- .zcurve_density_boot(z = z, control = control, bootstrap = bootstrap)
     }
@@ -228,9 +287,11 @@ summary.zcurve       <- function(object, type = "results", all = FALSE, ERR.adj 
     iter_text <- object$fit$iter
   }
   
-  temp_N_sig     <- sum(object$data > stats::qnorm(object$control$sig_level/2, lower.tail = FALSE))
-  temp_N_obs     <- length(object$data)
-  temp_N_used    <- sum(object$data > object$control$a & object$data < object$control$b)
+  temp_N_sig     <- sum(object$data > stats::qnorm(object$control$sig_level/2, lower.tail = FALSE)) + 
+    nrow(object$data_censoring[object$data_censoring$lb > object$control$a,]) 
+  temp_N_obs     <- length(object$data) + nrow(object$data_censoring)
+  temp_N_used    <- sum(object$data > object$control$a & object$data < object$control$b) + 
+    nrow(object$data_censoring[object$data_censoring$lb > object$control$a & object$data_censoring$lb < object$control$b ,])
     
   model <- list(
     "method"    = method_text,
@@ -475,15 +536,32 @@ plot.zcurve          <- function(x, annotation = FALSE, CI = FALSE, extrapolate 
   # set breaks for the histogram
   br1 <- seq(x$control$a, x$control$b, .20)
   br2 <- seq(0, x$control$a, .20)
-  # change the last breake to the cutpoints
+  # change the last break accordingly to the cut points
   br1[length(br1)] <- x$control$b
   br2[length(br2)] <- x$control$a
   
-  # get histograms
+  # use histograms to get counts in each bin
   h1 <- graphics::hist(x$data[x$data > x$control$a & x$data < x$control$b], breaks = br1, plot = F) 
+
+  # add censored observations to the histogram
+  if(length(x$data_censoring) != 0){
+    # spread the censored observation across the z-values
+    cen_counts <- do.call(rbind, lapply(1:nrow(x$data_censoring), function(i){
+      temp_counts <- (x$data_censoring$lb[i] < h1$breaks[-length(h1$breaks)] & x$data_censoring$ub[i] > h1$breaks[-length(h1$breaks)])
+      temp_counts[temp_counts] <- 1/sum(temp_counts)
+      return(temp_counts)
+    }))
+    cen_counts <- apply(cen_counts, 2, sum)
+    
+    # add the counts and standardize the density
+    h1$counts  <- h1$counts + cen_counts
+    h1$density <- (h1$counts / sum(h1$counts)) * (length(h1$counts)/(x$control$b - x$control$a))
+  }
+  
+  # add histogram for non-sig results
   if(length(x$data[x$data < x$control$a])){
     h2 <- graphics::hist(x$data[x$data < x$control$a], breaks = br2, plot = F)
-    # scale the density of nonsignificant z-scores appropriately to the first one
+    # scale the density of non-significant z-scores appropriately to the first one
     h2$density <- h2$density * (x$control$a/(x$control$b - x$control$a))
     h2$density <- h2$density/(
       (length(x$data[x$data > x$control$a & x$data < x$control$b])/(x$control$b - x$control$a))
@@ -493,6 +571,7 @@ plot.zcurve          <- function(x, annotation = FALSE, CI = FALSE, extrapolate 
   }else{
     h2 <- NULL
   }
+  
 
   # compute fitted z-curve density
   x_seq <- seq(0, x$control$b, .01)

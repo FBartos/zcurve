@@ -5,8 +5,10 @@
 
 <!-- badges: start -->
 
-[![Travis build
-status](https://travis-ci.com/FBartos/zcurve.svg?branch=master)](https://travis-ci.com/FBartos/zcurve)
+[![R-CRAN-check](https://github.com/FBartos/zcurve/workflows/R-CMD-check/badge.svg)](https://github.com/FBartos/zcurve/actions)
+[![R-tests](https://github.com/FBartos/zcurve/workflows/R-CMD-tests/badge.svg)](https://github.com/FBartos/zcurve/actions)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/zcurve)](https://CRAN.R-project.org/package=zcurve)
 <!-- badges: end -->
 
 This package implements z-curves - methods for estimating expected
@@ -139,7 +141,7 @@ arguments as ‘xlab’, ‘ylab’, ‘main’, ‘cex.axis’, ‘cex.lab’. 
 an annotation with the main test statistics can be added to the plot by
 specifying ‘annotation = TRUE’ and the pointwise confidence intervals of
 the plot by specifying “CI = TRUE”. For more options regarding the
-annotation see ’?plot.zcurve".
+annotation see ’?plot.zcurve”.
 
 ``` r
 plot(fit, CI = TRUE, annotation = TRUE, main = "OSC 2015")
@@ -194,8 +196,8 @@ be also used for constructing custom z-curves by changing the location
 of the mean components, their number or many other settings. However, it
 is important to bear in mind that those custom models need to be
 validated first on simulation studies prior to their usage. For more
-information about the control settings see ‘?control\_EM’,
-‘?control\_density’, and ‘?control\_density\_v1’.
+information about the control settings see ‘?control_EM’,
+‘?control_density’, and ‘?control_density_v1’.
 
 If you encounter any problems or bugs, please, contact me at
 f.bartos96\[at\]gmail.com or submit an issue at
@@ -208,7 +210,7 @@ citation(package = "zcurve")
 #> To cite the zcurve package in publications use:
 #> 
 #> Bartoš F, Schimmack U (2020). "zcurve: An R Package for Fitting
-#> Z-curves." R package version 1.0.8, <URL:
+#> Z-curves." R package version 1.0.9, <URL:
 #> https://CRAN.R-project.org/package=zcurve>.
 #> 
 #> A BibTeX entry for LaTeX users is
@@ -217,7 +219,7 @@ citation(package = "zcurve")
 #>     title = {zcurve: An R Package for Fitting Z-curves},
 #>     author = {František Bartoš and Ulrich Schimmack},
 #>     year = {2020},
-#>     note = {R package version 1.0.8},
+#>     note = {R package version 1.0.9},
 #>     url = {https://CRAN.R-project.org/package=zcurve},
 #>   }
 ```
