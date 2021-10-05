@@ -5,3 +5,7 @@
 ^NEWS\.md$
 ^\.travis\.yml$
 ^trash/
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$
