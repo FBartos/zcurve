@@ -32,3 +32,4 @@ Suggests:
     vdiffr
 Language: en-US
 RdMacros: Rdpack
+URL: https://fbartos.github.io/zcurve
