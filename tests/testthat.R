@@ -1,5 +1,5 @@
 library(testthat)
 library(vdiffr)
-library(RoBMA)
+library(zcurve)
 
-test_check("RoBMA")
+test_check("zcurve")
