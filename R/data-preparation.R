@@ -2,7 +2,7 @@
 #' 
 #' @description \code{zcurve_data} is used to prepare data for the 
 #' [zcurve()] function. The function transform strings containing 
-#' reported test statistics \code{"z", "t", "f", "p"} into two-sided 
+#' reported test statistics \code{"z", "t", "f", "chi", "p"} into two-sided 
 #' p-values. Test statistics reported as inequalities are as considered 
 #' to be censored as well as test statistics reported with low accuracy 
 #' (i.e., rounded to too few decimals). See details for more information.
@@ -21,6 +21,7 @@
 #' @details By default, the function extract the type of test statistic:
 #' \itemize{
 #'  \item{\code{"F(df1, df2)=x"}}{F-statistic with df1 and df2 degrees of freedom,}
+#'  \item{\code{"chi(df)=x"}}{Chi-square statistic with df degrees of freedom,}
 #'  \item{\code{"t(df)=x"}}{for t-statistic with df degrees of freedom,}
 #'  \item{\code{"z=x"}}{for z-statistic,}
 #'  \item{\code{"p=x"}}{for p-value.}
@@ -53,17 +54,21 @@ zcurve_data <- function(data, rounded = TRUE, stat_precise = 2, p_precise = 3){
   data <- tolower(data) 
   data <- gsub(" ", "", data) 
   
+  # deal with chi^2
+  data <- gsub("pchisq", "c", data)
+  data <- gsub("chi", "c", data)
+  
   # extract the values
   stat_type <- substr(data, 1, 1)
   stat_val  <- substr(data, regexpr("[=]|[<]|[>]", data) + 1, nchar(data))
-  stat_df1  <- ifelse(stat_type %in% c("t", "f"), substr(data, regexpr("\\(", data) + 1, regexpr("[,]|[\\)]", data) - 1), NA)
+  stat_df1  <- ifelse(stat_type %in% c("t", "f", "c"), substr(data, regexpr("\\(", data) + 1, regexpr("[,]|[\\)]", data) - 1), NA)
   stat_df2  <- ifelse(stat_type == "f",           substr(data, regexpr(",", data) + 1, regexpr("[\\)]", data) - 1), NA)
   censored  <- grepl("<", data) | grepl(">", data)
   digits    <- ifelse(regexpr("\\.", data) == -1, 0, nchar(data) - regexpr("\\.", data))
   
   # check the input
-  if(any(!stat_type %in% c("t", "z", "p", "f")))
-    stop(paste0("Unknown test statistic: ", paste0("'", unique(stat_type[!stat_type %in% c("t", "z", "p", "f")]),"'", collapse = ", "), "."))
+  if(any(!stat_type %in% c("t", "z", "p", "f", "c")))
+    stop(paste0("Unknown test statistic: ", paste0("'", unique(stat_type[!stat_type %in% c("t", "z", "p", "f", "c")]),"'", collapse = ", "), "."))
   
   
   # check that all matches are numeric
@@ -112,6 +117,7 @@ zcurve_data <- function(data, rounded = TRUE, stat_precise = 2, p_precise = 3){
         switch(
           stat_type[i],
           "f" = stats::pf(stat_val[i], df1 = stat_df1[i], df2 = stat_df2[i], lower.tail = FALSE),
+          "c" = stats::pchisq(stat_val[i], df = stat_df1[i], lower.tail = FALSE),
           "t" = stats::pt(abs(stat_val[i]), df = stat_df1[i], lower.tail = FALSE) * 2,
           "z" = stats::pnorm(abs(stat_val[i]), lower.tail = FALSE) * 2,
           "p" = stat_val[i]
@@ -124,6 +130,7 @@ zcurve_data <- function(data, rounded = TRUE, stat_precise = 2, p_precise = 3){
         switch(
           stat_type[i],
           "f" = stats::pf(stat_val[i], df1 = stat_df1[i], df2 = stat_df2[i], lower.tail = FALSE),
+          "c" = stats::pchisq(stat_val[i], df = stat_df1[i], lower.tail = FALSE),
           "t" = stats::pt(abs(stat_val[i]), df = stat_df1[i], lower.tail = FALSE) * 2,
           "z" = stats::pnorm(abs(stat_val[i]), lower.tail = FALSE) * 2,
           "p" = stat_val[i]
@@ -137,6 +144,7 @@ zcurve_data <- function(data, rounded = TRUE, stat_precise = 2, p_precise = 3){
         switch(
           stat_type[i],
           "f" = stats::pf(stat_val[i] - 0.5 * 10^-digits[i] , df1 = stat_df1[i], df2 = stat_df2[i], lower.tail = FALSE),
+          "c" = stats::pchisq(stat_val[i] - 0.5 * 10^-digits[i], df = stat_df1[i], lower.tail = FALSE),
           "t" = stats::pt(abs(stat_val[i]) - 0.5 * 10^-digits[i], df = stat_df1[i], lower.tail = FALSE) * 2,
           "z" = stats::pnorm(abs(stat_val[i]) - 0.5 * 10^-digits[i], lower.tail = FALSE) * 2,
           "p" = stat_val[i] + 0.5 * 10^-digits[i]
@@ -147,6 +155,7 @@ zcurve_data <- function(data, rounded = TRUE, stat_precise = 2, p_precise = 3){
         switch(
           stat_type[i],
           "f" = stats::pf(stat_val[i] + 0.5 * 10^-digits[i] , df1 = stat_df1[i], df2 = stat_df2[i], lower.tail = FALSE),
+          "c" = stats::pchisq(stat_val[i] + 0.5 * 10^-digits[i], df = stat_df1[i], lower.tail = FALSE),
           "t" = stats::pt(abs(stat_val[i]) + 0.5 * 10^-digits[i], df = stat_df1[i], lower.tail = FALSE) * 2,
           "z" = stats::pnorm(abs(stat_val[i]) + 0.5 * 10^-digits[i], lower.tail = FALSE) * 2,
           "p" = stat_val[i] - 0.5 * 10^-digits[i]
@@ -159,6 +168,7 @@ zcurve_data <- function(data, rounded = TRUE, stat_precise = 2, p_precise = 3){
         switch(
           stat_type[i],
           "f" = stats::pf(stat_val[i] - 0.5 * 10^-digits[i] , df1 = stat_df1[i], df2 = stat_df2[i], lower.tail = FALSE),
+          "c" = stats::pchisq(stat_val[i] - 0.5 * 10^-digits[i], df = stat_df1[i], lower.tail = FALSE),
           "t" = stats::pt(abs(stat_val[i]) - 0.5 * 10^-digits[i], df = stat_df1[i], lower.tail = FALSE) * 2,
           "z" = stats::pnorm(abs(stat_val[i]) - 0.5 * 10^-digits[i], lower.tail = FALSE) * 2,
           "p" = stat_val[i] + 0.5 * 10^-digits[i]
