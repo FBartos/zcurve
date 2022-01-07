@@ -64,6 +64,7 @@ jobs:
           while read -r cmd
           do
             eval sudo $cmd
+          apt-get install libcurl4-openssl-dev
           done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
 
       - name: Install dependencies
