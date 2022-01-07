@@ -1,3 +1,6 @@
+## version 2.1.2
+- Fixing number of statistically significant studies displayed in the annotation of z-curve plot.
+
 ## version 2.1.1
 - Allowing to pass the xlim and ylim arguments to the z-curve plot function.
 

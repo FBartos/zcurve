@@ -735,10 +735,10 @@ plot.zcurve          <- function(x, annotation = FALSE, CI = FALSE, extrapolate 
     graphics::text(x.anno, y_max*y.anno[1] , paste0("Range: ",.r2d(min(x$data))," to ",.r2d(max(x$data))),
                    adj = c(0, 0), cex = cex.anno)
     
-    graphics::text(x.anno, y_max*y.anno[2] , paste0(length(x$data), " tests, ", sum(x$data >= x$control$a), " significant"),
+    graphics::text(x.anno, y_max*y.anno[2] , paste0(x_summary$model$N_all, " tests, ", x_summary$model$N_sig, " significant"),
                    adj = c(0, 0), cex = cex.anno)
     
-    obs_proportion <- stats::prop.test(sum(x$data >= x$control$a), length(x$data))
+    obs_proportion <- stats::prop.test(x_summary$model$N_sig, x_summary$model$N_all)
     graphics::text(x.anno, y_max*y.anno[3] , paste0("Observed discovery rate:"),
                    adj = c(0, 0), cex = cex.anno)
     graphics::text(x.anno, y_max*y.anno[4] , paste0(.r2d(obs_proportion$estimate), "  95% CI [", .r2d(obs_proportion$conf.int[1]), " ,",
