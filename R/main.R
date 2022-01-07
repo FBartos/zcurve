@@ -536,7 +536,7 @@ print.summary.zcurve <- function(x, ...){
 #'   of annotations relative to the figure's width.
 #' @param cex.anno A number specifying the size of the annotation text.
 #' @param ... Additional arguments including \code{main}, \code{xlab},
-#' \code{ylab}, \code{cex.axis}, \code{cex.lab}
+#' \code{ylab}, \code{xlim}, \code{ylim}, \code{cex.axis}, \code{cex.lab}
 #'
 #' @method plot zcurve
 #' @export plot.zcurve
@@ -576,6 +576,16 @@ plot.zcurve          <- function(x, annotation = FALSE, CI = FALSE, extrapolate 
     ylab <- "Density"
   }else{
     ylab <- additional$ylab
+  }
+  if(is.null(additional$xlim)){
+    xlim <- NULL
+  }else{
+    xlim <- additional$xlim
+  }
+  if(is.null(additional$ylim)){
+    ylim <- NULL
+  }else{
+    ylim <- additional$ylim
   }
   if(is.null(additional$cex.axis)){
     cex.axis <- 1
@@ -666,11 +676,25 @@ plot.zcurve          <- function(x, annotation = FALSE, CI = FALSE, extrapolate 
   }
   
   
+  # overwrite xmin, xmax, ymin, ymax if xlim and ylim are specified
+  if(!is.null(ylim)){
+    y_min <- ylim[1]
+    y_max <- ylim[2]
+  }else{
+    y_min <- 0
+  }
+  if(!is.null(xlim)){
+    x_min <- xlim[1]
+    x_max <- xlim[2]
+  }else{
+    x_min <- 0
+  }
+  
   # plot z-scores used for fitting
   graphics::plot(h1,
                  freq = FALSE, density = 0, angle = 0, border = "blue",
-                 xlim = c(0, x_max),
-                 ylim = c(0, y_max),
+                 xlim = c(x_min, x_max),
+                 ylim = c(y_min, y_max),
                  ylab = ylab,
                  xlab = xlab,
                  main = main,
@@ -682,8 +706,8 @@ plot.zcurve          <- function(x, annotation = FALSE, CI = FALSE, extrapolate 
     graphics::par(new=TRUE)
     graphics::plot(h2,
                    freq = FALSE, density = 0, angle = 0, border ="grey30",
-                   xlim = c(0, x_max),
-                   ylim = c(0, y_max),
+                   xlim = c(x_min, x_max),
+                   ylim = c(y_min, y_max),
                    axes = FALSE, ann = FALSE, lwd = 1, las = 1)  
   }
   # add the density estimate if the model was estimated by density

@@ -1,3 +1,6 @@
+## version 2.1.1
+- Allowing to pass the xlim and ylim arguments to the z-curve plot function.
+
 ## version 2.1.0
 - Adding 'zcurve_data' function to transform different tests statistics into a z-curve data object.
 

@@ -37,7 +37,7 @@ of annotations relative to the figure's width.}
 \item{cex.anno}{A number specifying the size of the annotation text.}
 
 \item{...}{Additional arguments including \code{main}, \code{xlab},
-\code{ylab}, \code{cex.axis}, \code{cex.lab}}
+\code{ylab}, \code{xlim}, \code{ylim}, \code{cex.axis}, \code{cex.lab}}
 }
 \description{
 Plot fitted z-curve object
