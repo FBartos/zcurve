@@ -9,11 +9,12 @@ zcurve_data(data, rounded = TRUE, stat_precise = 2, p_precise = 3)
 \arguments{
 \item{data}{a vector strings containing the test statistics.}
 
-\item{rounded}{an optional argument specifying rounding to be applied. Defaults
-to \code{TRUE} which automatically extracts the number of decimals from input.
-Another option is \code{FALSE} to treat all input as exact values or a numeric
-vector with values specifying precision of the input (with 0 representing exact
-values).}
+\item{rounded}{an optional argument specifying whether de-rounding should be applied.
+Defaults to \code{FALSE} to treat all input as exact values or a numeric
+vector with values specifying precision of the input. The other option,
+\code{FALSE}, automatically extracts the number of decimals from input
+and treats the input as censored if it does not surpass the \code{stat_precise} and
+the \code{p_precise} thresholds.}
 
 \item{stat_precise}{an integer specifying the numerical precision of
 \code{"z", "t", "f"} statistics treated as exact values.}

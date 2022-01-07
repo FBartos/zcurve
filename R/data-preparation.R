@@ -8,11 +8,12 @@
 #' (i.e., rounded to too few decimals). See details for more information.
 #' 
 #' @param data a vector strings containing the test statistics.
-#' @param rounded an optional argument specifying rounding to be applied. Defaults 
-#' to \code{TRUE} which automatically extracts the number of decimals from input. 
-#' Another option is \code{FALSE} to treat all input as exact values or a numeric 
-#' vector with values specifying precision of the input (with 0 representing exact 
-#' values).
+#' @param rounded an optional argument specifying whether de-rounding should be applied. 
+#' Defaults to \code{FALSE} to treat all input as exact values or a numeric 
+#' vector with values specifying precision of the input. The other option, 
+#' \code{FALSE}, automatically extracts the number of decimals from input 
+#' and treats the input as censored if it does not surpass the \code{stat_precise} and 
+#' the \code{p_precise} thresholds.
 #' @param stat_precise an integer specifying the numerical precision of 
 #' \code{"z", "t", "f"} statistics treated as exact values.
 #' @param p_precise an integer specifying the numerical precision of 
@@ -55,8 +56,8 @@ zcurve_data <- function(data, rounded = TRUE, stat_precise = 2, p_precise = 3){
   data <- gsub(" ", "", data) 
   
   # deal with chi^2
-  data <- gsub("pchisq", "c", data)
-  data <- gsub("chi", "c", data)
+  data <- gsub("chi2", "c", data)
+  data <- gsub("chi",  "c", data)
   
   # extract the values
   stat_type <- substr(data, 1, 1)
@@ -217,6 +218,7 @@ print.zcurve_data <- function(x, ...){
 #' @export  head.zcurve_data
 #' @rawNamespace S3method(head, zcurve_data)
 #' @seealso [zcurve_data()]
+#' @importFrom utils head
 head.zcurve_data <- function(x, ...){
   cat(paste0("Object of class z-curve data with ", nrow(x$precise), " precise and ", nrow(x$censored), " censored p-values.\n\n"))
   cat("Precise p-values:\n")

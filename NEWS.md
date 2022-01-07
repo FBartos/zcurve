@@ -1,3 +1,9 @@
+## version 2.1.0
+- Adding 'zcurve_data' function to transform different tests statistics into a z-curve data object.
+
+## version 2.0.0
+- Adding the possibility to fit z-curve to censored/rounded input.
+
 ## version 1.0.9
 - Changing the ERR estimates to be take the directionality of the expected replication into account.
 
