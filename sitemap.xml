@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://fbartos.github.io/zcurve/404.html</loc>
+  </url>
+  <url>
+    <loc>https://fbartos.github.io/zcurve/authors.html</loc>
+  </url>
+  <url>
     <loc>https://fbartos.github.io/zcurve/index.html</loc>
+  </url>
+  <url>
+    <loc>https://fbartos.github.io/zcurve/news/index.html</loc>
   </url>
   <url>
     <loc>https://fbartos.github.io/zcurve/reference/OSC.z.html</loc>
@@ -14,6 +23,12 @@
   </url>
   <url>
     <loc>https://fbartos.github.io/zcurve/reference/control_density_v1.html</loc>
+  </url>
+  <url>
+    <loc>https://fbartos.github.io/zcurve/reference/head.zcurve_data.html</loc>
+  </url>
+  <url>
+    <loc>https://fbartos.github.io/zcurve/reference/index.html</loc>
   </url>
   <url>
     <loc>https://fbartos.github.io/zcurve/reference/is.zcurve.html</loc>
@@ -34,6 +49,9 @@
     <loc>https://fbartos.github.io/zcurve/reference/print.zcurve.html</loc>
   </url>
   <url>
+    <loc>https://fbartos.github.io/zcurve/reference/print.zcurve_data.html</loc>
+  </url>
+  <url>
     <loc>https://fbartos.github.io/zcurve/reference/summary.zcurve.html</loc>
   </url>
   <url>
@@ -43,9 +61,12 @@
     <loc>https://fbartos.github.io/zcurve/reference/zcurve-package.html</loc>
   </url>
   <url>
+    <loc>https://fbartos.github.io/zcurve/reference/zcurve.estimates.html</loc>
+  </url>
+  <url>
     <loc>https://fbartos.github.io/zcurve/reference/zcurve.html</loc>
   </url>
   <url>
-    <loc>https://fbartos.github.io/zcurve/reference/zcurve.estimates.html</loc>
+    <loc>https://fbartos.github.io/zcurve/reference/zcurve_data.html</loc>
   </url>
 </urlset>
