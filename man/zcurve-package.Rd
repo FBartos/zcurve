@@ -11,7 +11,7 @@ An implementation of z-curves - a method for estimating expected discovery and r
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://fbartos.github.io/zcurve}
+  \item \url{https://fbartos.github.io/zcurve/}
 }
 
 }
