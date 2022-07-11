@@ -329,7 +329,7 @@ zcurve_clustered <- function(data, method = "w", bootstrap = 1000, control = NUL
 
 .boot_id <- function(data){
   
-  unique_id <- data$id
+  unique_id <- unique(data$id)
   
   if(length(unique_id) == nrow(data)){
     return(data)
@@ -340,10 +340,10 @@ zcurve_clustered <- function(data, method = "w", bootstrap = 1000, control = NUL
     
     temp_data <- data[data$id == id,]
     
-    if(nrow(data) == 1){
+    if(nrow(temp_data) == 1){
       boot_out[[id]] <- temp_data
     }else{
-      boot_out[[id]] <- temp_data[sample(1, nrow(temp_data)),]
+      boot_out[[id]] <- temp_data[sample(nrow(temp_data), 1),]
     }
   }
   boot_out <- do.call(rbind, boot_out)

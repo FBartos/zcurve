@@ -176,12 +176,12 @@ test_that("z-curve clustered works", {
       "model: EM via EM (bootstrapped)"                                                                      ,
       ""                                                                                                     ,
       "    Estimate  l.CI  u.CI"                                                                             ,
-      "ERR    0.787 0.757 0.817"                                                                             ,
-      "EDR    0.756 0.706 0.806"                                                                             ,
+      "ERR    0.760 0.695 0.829"                                                                             ,
+      "EDR    0.722 0.632 0.823"                                                                             ,
       ""                                                                                                     ,
-      "Model converged in 57 + 283 iterations"                                                               ,
+      "Model converged in 57 + 450.85 iterations"                                                               ,
       "Fitted using 299 zcurve-data-values. 480 supplied, 299 significant (ODR = 0.62, 95% CI [0.58, 0.67]).",
-      "Q = -372.68, 95% CI[-372.68, -372.68]"  
+      "Q = -236.27, 95% CI[-251.36, -224.63]"  
     ))
   
   expect_equal(
@@ -192,12 +192,12 @@ test_that("z-curve clustered works", {
       "model: EM via EM (weighted)"                                                                          ,
       ""                                                                                                     ,
       "    Estimate  l.CI  u.CI"                                                                             ,
-      "ERR    0.787 0.709 0.833"                                                                             ,
-      "EDR    0.756 0.646 0.826"                                                                             ,
+      "ERR    0.787 0.702 0.856"                                                                             ,
+      "EDR    0.756 0.639 0.860"                                                                             ,
       ""                                                                                                     ,
-      "Model converged in 70 + 1732 iterations"                                                              ,
+      "Model converged in 73 + 1444 iterations"                                                              ,
       "Fitted using 299 zcurve-data-values. 480 supplied, 299 significant (ODR = 0.62, 95% CI [0.58, 0.67]).",
-      "Q = -534.48, 95% CI[-589.91, -491.13]"
+      "Q = -534.48, 95% CI[-577.26, -492.85]" 
     ))
   
   expect_doppelganger("z-curve clustered rounded", function(){
@@ -223,12 +223,12 @@ test_that("z-curve clustered works", {
       "model: EM via EM (bootstrapped)"                                                                      ,
       ""                                                                                                     ,
       "    Estimate  l.CI  u.CI"                                                                             ,
-      "ERR    0.788 0.758 0.818"                                                                             ,
-      "EDR    0.758 0.708 0.808"                                                                             ,
+      "ERR    0.767 0.691 0.831"                                                                             ,
+      "EDR    0.730 0.627 0.825"                                                                             ,
       ""                                                                                                     ,
-      "Model converged in 61 + 237 iterations"                                                               ,
+      "Model converged in 66 + 629.95 iterations"                                                            ,
       "Fitted using 299 zcurve-data-values. 500 supplied, 299 significant (ODR = 0.60, 95% CI [0.55, 0.64]).",
-      "Q = -321.87, 95% CI[-321.87, -321.87]" 
+      "Q = -199.02, 95% CI[-209.72, -191.18]"  
     ))
   
   expect_equal(
@@ -239,12 +239,12 @@ test_that("z-curve clustered works", {
       "model: EM via EM (weighted)"                                                                          ,
       ""                                                                                                     ,
       "    Estimate  l.CI  u.CI"                                                                             ,
-      "ERR    0.788 0.693 0.853"                                                                             ,
-      "EDR    0.758 0.628 0.857"                                                                             ,
+      "ERR    0.788 0.689 0.846"                                                                             ,
+      "EDR    0.758 0.465 0.845"                                                                             ,
       ""                                                                                                     ,
-      "Model converged in 73 + 835 iterations"                                                               ,
+      "Model converged in 73 + 359 iterations"                                                               ,
       "Fitted using 299 zcurve-data-values. 500 supplied, 299 significant (ODR = 0.60, 95% CI [0.55, 0.64]).",
-      "Q = -492.28, 95% CI[-529.94, -455.77]"    
+      "Q = -492.28, 95% CI[-522.56, -439.34]"
     ))
   
   expect_doppelganger("z-curve clustered precise", function(){
@@ -270,12 +270,12 @@ test_that("z-curve clustered works", {
       "model: EM via EM (bootstrapped)"                                                                      ,
       ""                                                                                                     ,
       "    Estimate  l.CI  u.CI"                                                                             ,
-      "ERR    0.788 0.758 0.818"                                                                             ,
-      "EDR    0.758 0.708 0.808"                                                                             ,
+      "ERR    0.769 0.703 0.835"                                                                             ,
+      "EDR    0.733 0.639 0.831"                                                                             ,
       ""                                                                                                     ,
-      "Model converged in 86 + 118 iterations"                                                               ,
+      "Model converged in 72 + 430.1 iterations"                                                             ,
       "Fitted using 299 zcurve-data-values. 489 supplied, 299 significant (ODR = 0.61, 95% CI [0.57, 0.65]).",
-      "Q = -520.30, 95% CI[-520.30, -520.30]"
+      "Q = -319.14, 95% CI[-340.91, -306.78]"  
     ))
   
   expect_equal(
@@ -286,12 +286,12 @@ test_that("z-curve clustered works", {
       "model: EM via EM (weighted)"                                                                          ,
       ""                                                                                                     ,
       "    Estimate  l.CI  u.CI"                                                                             ,
-      "ERR    0.788 0.685 0.851"                                                                             ,
-      "EDR    0.758 0.587 0.853"                                                                             ,
+      "ERR    0.788 0.694 0.856"                                                                             ,
+      "EDR    0.757 0.490 0.860"                                                                             ,
       ""                                                                                                     ,
-      "Model converged in 67 + 232 iterations"                                                               ,
+      "Model converged in 59 + 238 iterations"                                                               ,
       "Fitted using 299 zcurve-data-values. 489 supplied, 299 significant (ODR = 0.61, 95% CI [0.57, 0.65]).",
-      "Q = -688.10, 95% CI[-774.76, -639.30]" 
+      "Q = -688.11, 95% CI[-763.86, -648.74]"  
     ))
   
   expect_doppelganger("z-curve clustered mixed", function(){
