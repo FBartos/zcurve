@@ -121,12 +121,12 @@ test_that("z-curve EM censoring works", {
       "model: EM via EM"                                                                           ,
       ""                                                                                           ,
       "    Estimate  l.CI  u.CI"                                                                   ,
-      "ERR    0.961 0.915 1.000"                                                                   ,
-      "EDR    0.957 0.889 1.000"                                                                   ,
+      "ERR    0.961 0.910 1.000"                                                                   ,
+      "EDR    0.957 0.884 1.000"                                                                   ,
       ""                                                                                           ,
       "Model converged in 70 + 223 iterations"                                                     ,
       "Fitted using 165 z-values. 200 supplied, 200 significant (ODR = 1.00, 95% CI [0.98, 1.00]).",
-      "Q = -319.22, 95% CI[-332.77, -303.93]"
+      "Q = -319.22, 95% CI[-346.77, -288.55]"
     ))
   
   # plot
@@ -145,14 +145,160 @@ test_that("z-curve EM censoring works", {
       "model: EM via EM"                                                                         ,
       ""                                                                                         ,
       "    Estimate  l.CI  u.CI"                                                                 ,
-      "ERR    0.968 0.938 0.998"                                                                 ,
-      "EDR    0.965 0.915 1.000"                                                                 ,
+      "ERR    0.968 0.908 1.000"                                                                 ,
+      "EDR    0.965 0.879 1.000"                                                                 ,
       ""                                                                                         ,
-      "Model converged in 88 + 63 iterations"                                                    ,
+      "Model converged in 85 + 89 iterations"                                                    ,
       "Fitted using 82 -values. 100 supplied, 100 significant (ODR = 1.00, 95% CI [0.95, 1.00]).",
-      "Q = -205.22, 95% CI[-205.22, -205.22]"  
+      "Q = -205.22, 95% CI[-228.49, -179.08]"  
     ))
   
   # plot
   expect_doppelganger("z-curve cens EM", function()plot(fit.cens, CI = TRUE))
+})
+test_that("z-curve clustered works", {
+  
+  set.seed(1)
+  z    <- abs(c(rnorm(300, 3, 1), rnorm(200, 1, 1)))
+  id   <- sample(500, 500, TRUE)
+  
+  # rounded
+  data <- paste0("z = ",round(z, 2))
+  data <- zcurve_data(data, id)
+  fitb <- suppressWarnings(zcurve_clustered(data = data, method = "b", bootstrap = 20))
+  fitw <- suppressWarnings(zcurve_clustered(data = data, method = "w", bootstrap = 20))
+  
+  expect_equal(
+    capture_output_lines(summary(fitb), print = TRUE, width = 150),
+    c("Call:"                                                                                                ,
+      "zcurve_clustered(data = data, method = \"b\", bootstrap = 20)"                                        ,
+      ""                                                                                                     ,
+      "model: EM via EM (bootstrapped)"                                                                      ,
+      ""                                                                                                     ,
+      "    Estimate  l.CI  u.CI"                                                                             ,
+      "ERR    0.787 0.757 0.817"                                                                             ,
+      "EDR    0.756 0.706 0.806"                                                                             ,
+      ""                                                                                                     ,
+      "Model converged in 57 + 283 iterations"                                                               ,
+      "Fitted using 299 zcurve-data-values. 480 supplied, 299 significant (ODR = 0.62, 95% CI [0.58, 0.67]).",
+      "Q = -372.68, 95% CI[-372.68, -372.68]"  
+    ))
+  
+  expect_equal(
+    capture_output_lines(summary(fitw), print = TRUE, width = 150),
+    c("Call:"                                                                                                ,
+      "zcurve_clustered(data = data, method = \"w\", bootstrap = 20)"                                        ,
+      ""                                                                                                     ,
+      "model: EM via EM (weighted)"                                                                          ,
+      ""                                                                                                     ,
+      "    Estimate  l.CI  u.CI"                                                                             ,
+      "ERR    0.787 0.709 0.833"                                                                             ,
+      "EDR    0.756 0.646 0.826"                                                                             ,
+      ""                                                                                                     ,
+      "Model converged in 70 + 1732 iterations"                                                              ,
+      "Fitted using 299 zcurve-data-values. 480 supplied, 299 significant (ODR = 0.62, 95% CI [0.58, 0.67]).",
+      "Q = -534.48, 95% CI[-589.91, -491.13]"
+    ))
+  
+  expect_doppelganger("z-curve clustered rounded", function(){
+    oldpar <- graphics::par(no.readonly = TRUE)
+    on.exit(graphics::par(mfrow = oldpar[["mfrow"]]))
+    par(mfrow = c(1, 2))
+    plot(fitb)
+    plot(fitw)
+  })
+
+  
+  # precise
+  data <- paste0("z = ",z)
+  data <- zcurve_data(data, id)
+  fitb <- suppressWarnings(zcurve_clustered(data = data, method = "b", bootstrap = 20))
+  fitw <- suppressWarnings(zcurve_clustered(data = data, method = "w", bootstrap = 20))
+  
+  expect_equal(
+    capture_output_lines(summary(fitb), print = TRUE, width = 150),
+    c("Call:"                                                                                                ,
+      "zcurve_clustered(data = data, method = \"b\", bootstrap = 20)"                                        ,
+      ""                                                                                                     ,
+      "model: EM via EM (bootstrapped)"                                                                      ,
+      ""                                                                                                     ,
+      "    Estimate  l.CI  u.CI"                                                                             ,
+      "ERR    0.788 0.758 0.818"                                                                             ,
+      "EDR    0.758 0.708 0.808"                                                                             ,
+      ""                                                                                                     ,
+      "Model converged in 61 + 237 iterations"                                                               ,
+      "Fitted using 299 zcurve-data-values. 500 supplied, 299 significant (ODR = 0.60, 95% CI [0.55, 0.64]).",
+      "Q = -321.87, 95% CI[-321.87, -321.87]" 
+    ))
+  
+  expect_equal(
+    capture_output_lines(summary(fitw), print = TRUE, width = 150),
+    c("Call:"                                                                                                ,
+      "zcurve_clustered(data = data, method = \"w\", bootstrap = 20)"                                        ,
+      ""                                                                                                     ,
+      "model: EM via EM (weighted)"                                                                          ,
+      ""                                                                                                     ,
+      "    Estimate  l.CI  u.CI"                                                                             ,
+      "ERR    0.788 0.693 0.853"                                                                             ,
+      "EDR    0.758 0.628 0.857"                                                                             ,
+      ""                                                                                                     ,
+      "Model converged in 73 + 835 iterations"                                                               ,
+      "Fitted using 299 zcurve-data-values. 500 supplied, 299 significant (ODR = 0.60, 95% CI [0.55, 0.64]).",
+      "Q = -492.28, 95% CI[-529.94, -455.77]"    
+    ))
+  
+  expect_doppelganger("z-curve clustered precise", function(){
+    oldpar <- graphics::par(no.readonly = TRUE)
+    on.exit(graphics::par(mfrow = oldpar[["mfrow"]]))
+    par(mfrow = c(1, 2))
+    plot(fitb)
+    plot(fitw)
+  })
+  
+  
+  # mixed
+  data <- paste0("z = ",c(round(z[1:100], 1), round(z[101:200], 2), z[201:500]))
+  data <- zcurve_data(data, id)
+  fitb <- suppressWarnings(zcurve_clustered(data = data, method = "b", bootstrap = 20))
+  fitw <- suppressWarnings(zcurve_clustered(data = data, method = "w", bootstrap = 20))
+  
+  expect_equal(
+    capture_output_lines(summary(fitb), print = TRUE, width = 150),
+    c("Call:"                                                                                                ,
+      "zcurve_clustered(data = data, method = \"b\", bootstrap = 20)"                                        ,
+      ""                                                                                                     ,
+      "model: EM via EM (bootstrapped)"                                                                      ,
+      ""                                                                                                     ,
+      "    Estimate  l.CI  u.CI"                                                                             ,
+      "ERR    0.788 0.758 0.818"                                                                             ,
+      "EDR    0.758 0.708 0.808"                                                                             ,
+      ""                                                                                                     ,
+      "Model converged in 86 + 118 iterations"                                                               ,
+      "Fitted using 299 zcurve-data-values. 489 supplied, 299 significant (ODR = 0.61, 95% CI [0.57, 0.65]).",
+      "Q = -520.30, 95% CI[-520.30, -520.30]"
+    ))
+  
+  expect_equal(
+    capture_output_lines(summary(fitw), print = TRUE, width = 150),
+    c("Call:"                                                                                                ,
+      "zcurve_clustered(data = data, method = \"w\", bootstrap = 20)"                                        ,
+      ""                                                                                                     ,
+      "model: EM via EM (weighted)"                                                                          ,
+      ""                                                                                                     ,
+      "    Estimate  l.CI  u.CI"                                                                             ,
+      "ERR    0.788 0.685 0.851"                                                                             ,
+      "EDR    0.758 0.587 0.853"                                                                             ,
+      ""                                                                                                     ,
+      "Model converged in 67 + 232 iterations"                                                               ,
+      "Fitted using 299 zcurve-data-values. 489 supplied, 299 significant (ODR = 0.61, 95% CI [0.57, 0.65]).",
+      "Q = -688.10, 95% CI[-774.76, -639.30]" 
+    ))
+  
+  expect_doppelganger("z-curve clustered mixed", function(){
+    oldpar <- graphics::par(no.readonly = TRUE)
+    on.exit(graphics::par(mfrow = oldpar[["mfrow"]]))
+    par(mfrow = c(1, 2))
+    plot(fitb)
+    plot(fitw)
+  })
 })
