@@ -104,7 +104,7 @@ zcurve       <- function(z, z.lb, z.ub, p, p.lb, p.ub, data, method = "EM", boot
         stop("Wrong p-values input: Data are not a vector") 
       input_type <- c(input_type, "p")
     }
-  }else if(class(data) == "zcurve_data"){
+  }else if(inherits(data, "zcurve_data")){
     input_type <- "zcurve-data"
   }else{
     stop("The 'data' input must be created by the `zcurve_data()` function. See `?zcurve_data()` for more information.")
@@ -175,13 +175,13 @@ zcurve       <- function(z, z.lb, z.ub, p, p.lb, p.ub, data, method = "EM", boot
     
   }else{
     
-    if(length(data$precise) != 0){
+    if(nrow(data$precise) != 0){
       object$data <- .p_to_z(data$precise$p)
     }else{
       object$data <- numeric()
     }
     
-    if(length(data$censored) != 0){
+    if(nrow(data$censored) != 0){
       
       lb <- .p_to_z(data$censored$p.ub)
       ub <- .p_to_z(data$censored$p.lb)
@@ -316,7 +316,7 @@ print.zcurve         <- function(x, ...){
 #' @seealso [zcurve()]
 summary.zcurve       <- function(object, type = "results", all = FALSE, ERR.adj = .03, EDR.adj = .05, round.coef = 3, ...){
 
-  if(object$method == "EM"){
+  if(substr(object$method, 1, 2) == "EM"){
     if(!is.null(object$boot)){
       fit_index <- c(object$fit$Q, unname(stats::quantile(object$boot$Q, c(.025, .975))))
     }else{
@@ -609,7 +609,7 @@ plot.zcurve          <- function(x, annotation = FALSE, CI = FALSE, extrapolate 
   h1 <- graphics::hist(x$data[x$data > x$control$a & x$data < x$control$b], breaks = br1, plot = F) 
 
   # add censored observations to the histogram
-  if(length(x$data_censoring) != 0){
+  if(nrow(x$data_censoring) != 0){
     # spread the censored observation across the z-values
     cen_counts <- do.call(rbind, lapply(1:nrow(x$data_censoring), function(i){
       temp_counts <- (x$data_censoring$lb[i] < h1$breaks[-length(h1$breaks)] & x$data_censoring$ub[i] > h1$breaks[-length(h1$breaks)])

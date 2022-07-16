@@ -1,6 +1,6 @@
 Package: zcurve
 Title: An Implementation of Z-Curves
-Version: 2.1.2
+Version: 2.2.1
 Authors@R: c(
     person("František", "Bartoš", email = "f.bartos96@gmail.com", role = c("aut", "cre")),
     person("Ulrich", "Schimmack", email = "ulrich.schimmack@utoronto.ca", role = c("aut")))
@@ -17,7 +17,7 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.0
 Imports: 
     Rcpp (>= 1.0.2),
     nleqslv,

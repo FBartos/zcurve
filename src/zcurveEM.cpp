@@ -162,6 +162,25 @@ NumericMatrix compute_u_log_lik_c(NumericVector x, NumericVector lb, NumericVect
   
   return ll;
 }
+NumericMatrix compute_u_log_lik_w_c(NumericVector x, NumericVector x_w, NumericVector lb, NumericVector ub, NumericVector b_w, NumericVector mu, NumericVector sigma, double a, double b){
+  
+  NumericMatrix ll_o(mu.size(), x.size());
+  NumericMatrix ll_c(mu.size(), lb.size());
+  
+  for(int k = 0; k < mu.size(); k++){
+    ll_o(k,_) = zdist_lpdf(x,mu[k],sigma[k],a,b) * x_w;
+  }
+  
+  for(int k = 0; k < mu.size(); k++){
+    for(int i = 0; i < lb.size(); i++){
+      ll_c(k,i) = zdist_cens_lpdf(lb[i],ub[i],mu[k],sigma[k],a,b) * b_w[i];  
+    }
+  }
+  
+  NumericMatrix ll = transpose(cbind(ll_o, ll_c));
+  
+  return ll;
+}
 NumericMatrix weight_u_log_lik(NumericMatrix ull, NumericVector theta){
   NumericMatrix ll(ull.nrow(), ull.ncol());
 
@@ -239,6 +258,12 @@ NumericVector select_x(NumericVector x, double a, double b){
   NumericVector x_new  = x[x_true1 & x_true2];
   return x_new;
 }
+NumericVector select_x_w(NumericVector x, NumericVector x_w, double a, double b){
+  LogicalVector x_true1 = x > a;
+  LogicalVector x_true2 = x < b;
+  NumericVector x_w_new  = x_w[x_true1 & x_true2];
+  return x_w_new;
+}
 double get_prop_high(NumericVector x, double select_sig, double b){
   
   double a = R::pnorm(select_sig/2, 0, 1, false, false);
@@ -263,6 +288,19 @@ double get_prop_high_cens(NumericVector x, double select_sig, double b, int n_ce
   NumericVector x_high      = x[x_high_true];
   
   double prop_high = (1.0 * x_high.length()) / (1.0 * (x_sig.length() + n_censored));
+  return prop_high;
+}
+double get_prop_high_cens_w(NumericVector x, NumericVector x_w, double select_sig, double b, int n_censored){
+  
+  double a = R::pnorm(select_sig/2, 0, 1, false, false);
+  
+  LogicalVector x_sig_true = x > a;
+  NumericVector x_w_sig    = x_w[x_sig_true];
+  
+  LogicalVector x_high_true = x > b;
+  NumericVector x_w_high    = x_w[x_high_true];
+  
+  double prop_high = (1.0 * sum(x_w_high)) / (1.0 * (sum(x_w_sig) + n_censored));
   return prop_high;
 }
 
@@ -374,6 +412,51 @@ List zcurve_EMc_fit_fast_RCpp(NumericVector x, NumericVector lb, NumericVector u
   
   
   NumericMatrix u_log_lik =  compute_u_log_lik_c(x, lb, ub, mu, sigma, a, b);
+  do{
+    // E-step
+    log_lik   = weight_u_log_lik(u_log_lik, theta);
+    lik       = exp_matrix(log_lik);
+    l_row_sum = compute_l_row_sum(lik);
+    p         = compute_p(lik,l_row_sum);
+    
+    // M-step
+    theta = update_theta(p);
+    
+    Q[i+1] = sum(log(l_row_sum));
+    ++i;
+    
+  } while ((fabs(Q[i]-Q[i-1]) >= criterion) && (i < max_iter));
+  
+  List ret;
+  ret["iter"]      = i;
+  ret["Q"]         = Q[i];
+  ret["mu"]        = mu;
+  ret["weights"]   = theta;
+  ret["sigma"]     = sigma;
+  ret["prop_high"] = prop_high;
+  
+  return ret;
+}
+// [[Rcpp::export(.zcurve_EMc_fit_fast_w_RCpp)]]
+List zcurve_EMc_fit_fast_w_RCpp(NumericVector x, NumericVector x_w, NumericVector lb, NumericVector ub, NumericVector b_w,
+                              NumericVector mu, NumericVector sigma, NumericVector theta, double a, double b, double sig_level,
+                              int max_iter, double criterion) {
+  
+  double prop_high =  get_prop_high_cens_w(x, x_w, sig_level, b, sum(b_w));
+  x_w = select_x_w(x,x_w,a,b);
+  x   = select_x(x,a,b);
+  
+  NumericMatrix log_lik (x.size(), mu.size());
+  NumericMatrix lik (x.size(), mu.size());
+  NumericVector l_row_sum (mu.size());
+  NumericMatrix p (x.size(), mu.size());
+  NumericVector Q (max_iter+1);
+  
+  int i= 0;
+  Q[i] = 0;
+  
+  
+  NumericMatrix u_log_lik =  compute_u_log_lik_w_c(x, x_w, lb, ub, b_w, mu, sigma, a, b);
   do{
     // E-step
     log_lik   = weight_u_log_lik(u_log_lik, theta);
@@ -657,7 +740,7 @@ List zcurve_EMc_start_fast_RCpp(NumericVector x,  NumericVector lb, NumericVecto
 }
 
 // [[Rcpp::export(.zcurve_EMc_boot_fast_RCpp)]]
-List zcurve_EMc_boot_fast_RCpp(NumericVector x, NumericVector lb, NumericVector ub,
+List zcurve_EMc_boot_fast_RCpp(NumericVector x, NumericVector lb, NumericVector ub, IntegerVector indx,
                               NumericVector mu, NumericVector sigma, NumericVector theta,
                               double a, double b, double sig_level,
                               int bootstrap, int max_iter, double criterion){
@@ -667,7 +750,14 @@ List zcurve_EMc_boot_fast_RCpp(NumericVector x, NumericVector lb, NumericVector 
   NumericVector Q_reps         (bootstrap);
   NumericVector prop_high_reps (bootstrap);
   
+  IntegerVector temp_indx;
+  LogicalVector is_temp_indx_x;
+  LogicalVector is_temp_indx_b;
+  IntegerVector temp_indx_x;
+  IntegerVector temp_indx_b;
   NumericVector temp_x;
+  NumericVector temp_lb;
+  NumericVector temp_ub;
   
   NumericVector new_mu      (mu.size());
   NumericVector new_weights (mu.size());
@@ -676,10 +766,92 @@ List zcurve_EMc_boot_fast_RCpp(NumericVector x, NumericVector lb, NumericVector 
   double new_prop_high;
   
   for(int i = 0; i < bootstrap; i++){
-    temp_x = sample(x, x.size(), true);
     
-    List temp_fit = zcurve_EMc_fit_fast_RCpp(temp_x, lb, ub, mu, sigma, theta, a, b, sig_level,
+    temp_indx   = sample(indx, x.size() + lb.size(), true);
+    
+    is_temp_indx_x = temp_indx > 0;
+    is_temp_indx_b = temp_indx < 0;
+    
+    temp_indx_x = temp_indx[is_temp_indx_x];
+    temp_indx_b = temp_indx[is_temp_indx_b];
+    
+    temp_x   = x[temp_indx_x-1];
+    
+    temp_lb  = lb[temp_indx_b*(-1)-1];    
+    temp_ub  = ub[temp_indx_b*(-1)-1];
+    
+    List temp_fit = zcurve_EMc_fit_fast_RCpp(temp_x, temp_lb, temp_ub, mu, sigma, theta, a, b, sig_level,
                                             max_iter, criterion);
+    
+    new_mu        = temp_fit["mu"];
+    new_weights   = temp_fit["weights"];
+    new_iter      = temp_fit["iter"];
+    new_Q         = temp_fit["Q"];
+    new_prop_high = temp_fit["prop_high"];
+    
+    mu_reps(i,_)      = new_mu;
+    weights_reps(i,_) = new_weights;
+    iter_reps[i]      = new_iter;
+    Q_reps[i]         = new_Q;
+    prop_high_reps[i] = new_prop_high;
+  }
+  
+  List ret;
+  ret["iter"]      = iter_reps;
+  ret["Q"]         = Q_reps;
+  ret["mu"]        = mu_reps;
+  ret["weights"]   = weights_reps;
+  ret["prop_high"] = prop_high_reps;
+  
+  return ret;
+}
+// [[Rcpp::export(.zcurve_EMc_boot_fast_w_RCpp)]]
+List zcurve_EMc_boot_fast_w_RCpp(NumericVector x, NumericVector x_w, NumericVector lb, NumericVector ub, NumericVector b_w, IntegerVector indx,
+                                 NumericVector mu, NumericVector sigma, NumericVector theta,
+                                 double a, double b, double sig_level,
+                                 int bootstrap, int max_iter, double criterion){
+  NumericMatrix mu_reps        (bootstrap, mu.size());
+  NumericMatrix weights_reps   (bootstrap, mu.size());
+  IntegerVector iter_reps      (bootstrap);
+  NumericVector Q_reps         (bootstrap);
+  NumericVector prop_high_reps (bootstrap);
+  
+  IntegerVector temp_indx;
+  LogicalVector is_temp_indx_x;
+  LogicalVector is_temp_indx_b;
+  IntegerVector temp_indx_x;
+  IntegerVector temp_indx_b;
+  NumericVector temp_x;
+  NumericVector temp_x_w;
+  NumericVector temp_lb;
+  NumericVector temp_ub;
+  NumericVector temp_b_w;
+  
+  NumericVector new_mu      (mu.size());
+  NumericVector new_weights (mu.size());
+  int new_iter;
+  double new_Q;
+  double new_prop_high;
+  
+  for(int i = 0; i < bootstrap; i++){
+    
+    temp_indx   = sample(indx, x.size() + lb.size(), true);
+    
+    is_temp_indx_x = temp_indx > 0;
+    is_temp_indx_b = temp_indx < 0;
+    
+    temp_indx_x = temp_indx[is_temp_indx_x];
+    temp_indx_b = temp_indx[is_temp_indx_b];
+    
+    temp_x   = x[temp_indx_x-1];
+    temp_x_w = x_w[temp_indx_x-1];
+
+    temp_lb  = lb[temp_indx_b*(-1)-1];    
+    temp_ub  = ub[temp_indx_b*(-1)-1];
+    temp_b_w = b_w[temp_indx_b*(-1)-1];
+    
+    List temp_fit = zcurve_EMc_fit_fast_w_RCpp(temp_x, temp_x_w, temp_lb, temp_ub, temp_b_w, mu, sigma, theta, a, b, sig_level,
+                                             max_iter, criterion);
     
     new_mu        = temp_fit["mu"];
     new_weights   = temp_fit["weights"];
