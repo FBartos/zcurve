@@ -22,7 +22,7 @@ be specified using the method and control arguments. See
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">zcurve</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.1</span>
       </span>
     </div>
 
@@ -57,51 +57,72 @@ be specified using the <code>method</code> and <code>control</code> arguments. S
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">zcurve</span><span class="op">(</span>
-  <span class="va">z</span>,
-  <span class="va">z.lb</span>,
-  <span class="va">z.ub</span>,
-  <span class="va">p</span>,
-  <span class="va">p.lb</span>,
-  <span class="va">p.ub</span>,
-  <span class="va">data</span>,
-  method <span class="op">=</span> <span class="st">"EM"</span>,
-  bootstrap <span class="op">=</span> <span class="fl">1000</span>,
-  control <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">zcurve</span><span class="op">(</span></span>
+<span>  <span class="va">z</span>,</span>
+<span>  <span class="va">z.lb</span>,</span>
+<span>  <span class="va">z.ub</span>,</span>
+<span>  <span class="va">p</span>,</span>
+<span>  <span class="va">p.lb</span>,</span>
+<span>  <span class="va">p.ub</span>,</span>
+<span>  <span class="va">data</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"EM"</span>,</span>
+<span>  bootstrap <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  control <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>z</dt>
 <dd><p>a vector of z-scores.</p></dd>
+
+
 <dt>z.lb</dt>
 <dd><p>a vector with start of censoring intervals of censored z-scores.</p></dd>
+
+
 <dt>z.ub</dt>
 <dd><p>a vector with end of censoring intervals of censored z-scores.</p></dd>
+
+
 <dt>p</dt>
 <dd><p>a vector of two-sided p-values, internally transformed to
 z-scores.</p></dd>
+
+
 <dt>p.lb</dt>
 <dd><p>a vector with start of censoring intervals of censored two-sided p-values.</p></dd>
+
+
 <dt>p.ub</dt>
 <dd><p>a vector with end of censoring intervals of censored two-sided p-values.</p></dd>
+
+
 <dt>data</dt>
 <dd><p>an object created with <code><a href="zcurve_data.html">zcurve_data()</a></code> function.</p></dd>
+
+
 <dt>method</dt>
 <dd><p>the method to be used for fitting. Possible options are
 Expectation Maximization <code>"EM"</code> and density <code>"density"</code>,
 defaults to <code>"EM"</code>.</p></dd>
+
+
 <dt>bootstrap</dt>
 <dd><p>the number of bootstraps for estimating CI. To skip
 bootstrap specify <code>FALSE</code>.</p></dd>
+
+
 <dt>control</dt>
 <dd><p>additional options for the fitting algorithm more details in
 <a href="control_EM.html">control EM</a> or <a href="control_density.html">control density</a>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The fitted z-curve object</p>
+    
+
+<p>The fitted z-curve object</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -117,11 +138,11 @@ Bartoš and Schimmack (2020)
     <h2>References</h2>
     <p>Bartoš F, Schimmack U (2020).
 “Z-curve. 2.0: Estimating Replication Rates and Discovery Rates.”
-doi: <a href="https://doi.org/10.31219/osf.io/wr93f" class="external-link">10.31219/osf.io/wr93f</a>
+<a href="https://doi.org/10.31219/osf.io/wr93f" class="external-link">doi:10.31219/osf.io/wr93f</a>
 , submitted for publication.<br><br> Brunner J, Schimmack U (2020).
 “Estimating population mean power under conditions of heterogeneity and selection for significance.”
 <em>Meta-Psychology</em>, <b>4</b>.
-doi: <a href="https://doi.org/10.15626/MP.2018.874" class="external-link">10.15626/MP.2018.874</a>
+<a href="https://doi.org/10.15626/MP.2018.874" class="external-link">doi:10.15626/MP.2018.874</a>
 .</p>
     </div>
     <div id="see-also">
@@ -131,8 +152,8 @@ doi: <a href="https://doi.org/10.15626/MP.2018.874" class="external-link">10.156
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># load data from OSC 2015 reproducibility project</span></span>
-<span class="r-in"><span class="va">OSC.z</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># load data from OSC 2015 reproducibility project</span></span></span>
+<span class="r-in"><span><span class="va">OSC.z</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  2.409175  3.245251  2.164192  3.191229  2.702059  3.137051  8.402858</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [8]  3.718460  4.293275  3.512496  1.973777  7.066053  4.383039  3.536266</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [15]  3.392537  2.194877  3.059374  4.637228  3.982280  2.169338  1.946709</span>
@@ -146,30 +167,30 @@ doi: <a href="https://doi.org/10.15626/MP.2018.874" class="external-link">10.156
 <span class="r-out co"><span class="r-pr">#&gt;</span> [71]  1.951480  2.967738  2.226212  2.290368  2.967738  2.780638  2.612054</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [78] 10.000000  2.652070 10.000000  2.725494  2.652070  3.042724  2.652070</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [85]  2.970656  2.257129  2.386708  3.403461  2.120072  2.688852</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># fit an EM z-curve (with disabled bootstrap due to examples times limits)</span></span>
-<span class="r-in"><span class="va">m.EM</span> <span class="op">&lt;-</span> <span class="fu">zcurve</span><span class="op">(</span><span class="va">OSC.z</span>, method <span class="op">=</span> <span class="st">"EM"</span>, bootstrap <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># a version with 1000 boostraped samples would looked like:</span></span>
-<span class="r-in"><span class="va">m.EM</span> <span class="op">&lt;-</span> <span class="fu">zcurve</span><span class="op">(</span><span class="va">OSC.z</span>, method <span class="op">=</span> <span class="st">"EM"</span>, bootstrap <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># or KD2 z-curve (use larger bootstrap for real inference)</span></span>
-<span class="r-in"><span class="va">m.D</span> <span class="op">&lt;-</span> <span class="fu">zcurve</span><span class="op">(</span><span class="va">OSC.z</span>, method <span class="op">=</span> <span class="st">"density"</span>, bootstrap <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># inspect the results</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.EM</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># fit an EM z-curve (with disabled bootstrap due to examples times limits)</span></span></span>
+<span class="r-in"><span><span class="va">m.EM</span> <span class="op">&lt;-</span> <span class="fu">zcurve</span><span class="op">(</span><span class="va">OSC.z</span>, method <span class="op">=</span> <span class="st">"EM"</span>, bootstrap <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># a version with 1000 boostraped samples would looked like:</span></span></span>
+<span class="r-in"><span><span class="va">m.EM</span> <span class="op">&lt;-</span> <span class="fu">zcurve</span><span class="op">(</span><span class="va">OSC.z</span>, method <span class="op">=</span> <span class="st">"EM"</span>, bootstrap <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># or KD2 z-curve (use larger bootstrap for real inference)</span></span></span>
+<span class="r-in"><span><span class="va">m.D</span> <span class="op">&lt;-</span> <span class="fu">zcurve</span><span class="op">(</span><span class="va">OSC.z</span>, method <span class="op">=</span> <span class="st">"density"</span>, bootstrap <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># inspect the results</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.EM</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> zcurve(z = OSC.z, method = "EM", bootstrap = 1000)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> model: EM via EM</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate  l.CI  u.CI</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ERR    0.615 0.451 0.745</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> EDR    0.389 0.073 0.703</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ERR    0.615 0.439 0.745</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> EDR    0.388 0.077 0.700</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Model converged in 60 + 108 iterations</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Model converged in 15 + 1205 iterations</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Fitted using 73 z-values. 90 supplied, 85 significant (ODR = 0.94, 95% CI [0.87, 0.98]).</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Q = -60.61, 95% CI[-71.36, -47.78]</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.D</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Q = -60.61, 95% CI[-71.49, -47.32]</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.D</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> zcurve(z = OSC.z, method = "density", bootstrap = FALSE)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -182,24 +203,24 @@ doi: <a href="https://doi.org/10.15626/MP.2018.874" class="external-link">10.156
 <span class="r-out co"><span class="r-pr">#&gt;</span> Model converged in 47 iterations</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Fitted using 73 z-values. 90 supplied, 85 significant (ODR = 0.94, 95% CI [0.87, 0.98]).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> RMSE = 0.11</span>
-<span class="r-in"><span class="co"># see '?summary.zcurve' for more output options</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># plot the results</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.EM</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co"># see '?summary.zcurve' for more output options</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># plot the results</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.EM</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="zcurve-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.D</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.D</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="zcurve-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="co"># see '?plot.zcurve' for more plotting options</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># to specify more options, set the control arguments</span></span>
-<span class="r-in"><span class="co"># ei. increase the maximum number of iterations and change alpha level</span></span>
-<span class="r-in"><span class="va">ctr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">  <span class="st">"max_iter"</span> <span class="op">=</span> <span class="fl">9999</span>,</span>
-<span class="r-in">  <span class="st">"alpha"</span>    <span class="op">=</span> <span class="fl">.10</span></span>
-<span class="r-in">  <span class="op">)</span></span>
-<span class="r-in"><span class="va">m1.EM</span> <span class="op">&lt;-</span> <span class="fu">zcurve</span><span class="op">(</span><span class="va">OSC.z</span>, method <span class="op">=</span> <span class="st">"EM"</span>, bootstrap <span class="op">=</span> <span class="cn">FALSE</span>, control <span class="op">=</span> <span class="va">ctr1</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># see '?control_EM' and '?control_density' for more information about different</span></span>
-<span class="r-in"><span class="co"># z-curves specifications</span></span>
+<span class="r-in"><span><span class="co"># see '?plot.zcurve' for more plotting options</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># to specify more options, set the control arguments</span></span></span>
+<span class="r-in"><span><span class="co"># ei. increase the maximum number of iterations and change alpha level</span></span></span>
+<span class="r-in"><span><span class="va">ctr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="st">"max_iter"</span> <span class="op">=</span> <span class="fl">9999</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"alpha"</span>    <span class="op">=</span> <span class="fl">.10</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m1.EM</span> <span class="op">&lt;-</span> <span class="fu">zcurve</span><span class="op">(</span><span class="va">OSC.z</span>, method <span class="op">=</span> <span class="st">"EM"</span>, bootstrap <span class="op">=</span> <span class="cn">FALSE</span>, control <span class="op">=</span> <span class="va">ctr1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># see '?control_EM' and '?control_density' for more information about different</span></span></span>
+<span class="r-in"><span><span class="co"># z-curves specifications</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -214,7 +235,7 @@ doi: <a href="https://doi.org/10.15626/MP.2018.874" class="external-link">10.156
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

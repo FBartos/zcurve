@@ -19,7 +19,7 @@ alpha alpha (or corresponding cut-off z-statistic a)."><!-- mathjax --><script s
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">zcurve</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.1</span>
       </span>
     </div>
 
@@ -51,35 +51,44 @@ alpha <code>alpha</code> (or corresponding cut-off z-statistic <code>a</code>).<
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">power_to_z</span><span class="op">(</span>
-  <span class="va">power</span>,
-  alpha <span class="op">=</span> <span class="fl">0.05</span>,
-  a <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">qnorm</a></span><span class="op">(</span><span class="va">alpha</span><span class="op">/</span><span class="fl">2</span>, lower.tail <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,
-  two.sided <span class="op">=</span> <span class="cn">TRUE</span>,
-  nleqslv_control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>xtol <span class="op">=</span> <span class="fl">1e-15</span>, maxit <span class="op">=</span> <span class="fl">300</span>, stepmax <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">power_to_z</span><span class="op">(</span></span>
+<span>  <span class="va">power</span>,</span>
+<span>  alpha <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>  a <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">qnorm</a></span><span class="op">(</span><span class="va">alpha</span><span class="op">/</span><span class="fl">2</span>, lower.tail <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
+<span>  two.sided <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  nleqslv_control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>xtol <span class="op">=</span> <span class="fl">1e-15</span>, maxit <span class="op">=</span> <span class="fl">300</span>, stepmax <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>power</dt>
 <dd><p>A vector of powers</p></dd>
+
+
 <dt>alpha</dt>
 <dd><p>Level of significance alpha</p></dd>
+
+
 <dt>a</dt>
 <dd><p>Or, alternatively a z-score corresponding to <code>alpha</code></p></dd>
+
+
 <dt>two.sided</dt>
 <dd><p>Whether directionality of the effect size should be taken into account.</p></dd>
+
+
 <dt>nleqslv_control</dt>
 <dd><p>A named list of control parameters passed to the
 <a href="https://rdrr.io/pkg/nleqslv/man/nleqslv.html" class="external-link">nleqslv</a> function used for solving the inverse of
 <a href="z_to_power.html">z_to_power</a> function.</p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># z-scores corresponding to the (aproximate) power of components of EM2</span></span>
-<span class="r-in"><span class="fu">power_to_z</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.20</span>, <span class="fl">0.40</span>, <span class="fl">0.60</span>, <span class="fl">0.80</span>, <span class="fl">0.974</span>, <span class="fl">0.999</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">.05</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># z-scores corresponding to the (aproximate) power of components of EM2</span></span></span>
+<span class="r-in"><span><span class="fu">power_to_z</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.20</span>, <span class="fl">0.40</span>, <span class="fl">0.60</span>, <span class="fl">0.80</span>, <span class="fl">0.974</span>, <span class="fl">0.999</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">.05</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.000197359 1.114571417 1.706298343 2.213272223 2.801581787 3.903097682</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [7] 5.050194967</span>
 </code></pre></div>
@@ -96,7 +105,7 @@ alpha <code>alpha</code> (or corresponding cut-off z-statistic <code>a</code>).<
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

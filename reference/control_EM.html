@@ -21,7 +21,7 @@ Bartoš and Schimmack (2020)'><!-- mathjax --><script src="https://cdnjs.cloudfl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">zcurve</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.1</span>
       </span>
     </div>
 
@@ -60,54 +60,83 @@ Bartoš and Schimmack (2020)</p>
     <dl><dt>model</dt>
 <dd><p>A type of model to be fitted, defaults to <code>"EM"</code>
 for a z-curve with 7 z-scores centered components.</p></dd>
+
+
 <dt>sig_level</dt>
 <dd><p>An alpha level of the test statistics, defaults to
 <code>.05</code></p></dd>
+
+
 <dt>a</dt>
 <dd><p>A beginning of fitting interval, defaults to
 <code>qnorm(sig_level/2,lower.tail = F)</code></p></dd>
+
+
 <dt>b</dt>
 <dd><p>An end of fitting interval, defaults to <code>5</code></p></dd>
+
+
 <dt>mu</dt>
 <dd><p>Means of the components, defaults to
 <code>0:6</code></p></dd>
+
+
 <dt>sigma</dt>
 <dd><p>A standard deviation of the components, defaults to
 <code>rep(1, length(mu))</code></p></dd>
+
+
 <dt>theta_alpha</dt>
 <dd><p>A vector of alpha parameters of a Dirichlet distribution
 for generating random starting values for the weights, defaults to
 <code>rep(.5, length(mu))</code></p></dd>
+
+
 <dt>theta_max</dt>
 <dd><p>Upper limits for weights, defaults to
 <code>rep(1,length(mu))</code></p></dd>
+
+
 <dt>criterion</dt>
 <dd><p>A criterion to terminate the EM algorithm,
 defaults to <code>1e-6</code></p></dd>
+
+
 <dt>criterion_start</dt>
 <dd><p>A criterion to terminate the starting phase
 of the EM algorithm, defaults to <code>1e-3</code></p></dd>
+
+
 <dt>criterion_boot</dt>
 <dd><p>A criterion to terminate the bootstrapping phase
 of the EM algorithm, defaults to <code>1e-5</code></p></dd>
+
+
 <dt>max_iter</dt>
 <dd><p>A maximum number of iterations of the EM algorithm
 (not including the starting iterations) defaults to <code>10000</code></p></dd>
+
+
 <dt>max_iter_start</dt>
 <dd><p>A maximum number of iterations for the
 starting phase of EM algorithm, defaults to <code>100</code></p></dd>
+
+
 <dt>max_iter_boot</dt>
 <dd><p>A maximum number of iterations for the
 booting phase of EM algorithm, defaults to <code>100</code></p></dd>
+
+
 <dt>fit_reps</dt>
 <dd><p>A number of starting fits to get the initial
 position for the EM algorithm, defaults to <code>100</code></p></dd>
+
 </dl></div>
     <div id="references">
     <h2>References</h2>
     <p>Bartoš F, Schimmack U (2020).
 “Z-curve. 2.0: Estimating Replication Rates and Discovery Rates.”
-doi: <a href="https://doi.org/10.31219/osf.io/wr93f" class="external-link">10.31219/osf.io/wr93f</a>
+<a href="https://doi.org/10.31219/osf.io/wr93f" class="external-link">doi:10.31219/osf.io/wr93f</a>
 , submitted for publication.</p>
     </div>
     <div id="see-also">
@@ -117,21 +146,21 @@ doi: <a href="https://doi.org/10.31219/osf.io/wr93f" class="external-link">10.31
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># to increase the number of starting fits</span></span>
-<span class="r-in"><span class="co"># and change the means of the mixture components</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">ctrl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">   fit_reps  <span class="op">=</span> <span class="fl">50</span>,</span>
-<span class="r-in">   mu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1.5</span>, <span class="fl">3</span>, <span class="fl">4.5</span>, <span class="fl">6</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="zcurve.html">zcurve</a></span><span class="op">(</span><span class="va">OSC.z</span>, method <span class="op">=</span> <span class="st">"EM"</span>, control <span class="op">=</span> <span class="va">ctrl</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># to increase the number of starting fits</span></span></span>
+<span class="r-in"><span><span class="co"># and change the means of the mixture components</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">ctrl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>   fit_reps  <span class="op">=</span> <span class="fl">50</span>,</span></span>
+<span class="r-in"><span>   mu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1.5</span>, <span class="fl">3</span>, <span class="fl">4.5</span>, <span class="fl">6</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="zcurve.html">zcurve</a></span><span class="op">(</span><span class="va">OSC.z</span>, method <span class="op">=</span> <span class="st">"EM"</span>, control <span class="op">=</span> <span class="va">ctrl</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> zcurve(z = OSC.z, method = "EM", control = ctrl)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Estimates:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       ERR       EDR </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.5841417 0.4555860 </span>
-<span class="r-in"></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.5841417 0.4555863 </span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -146,7 +175,7 @@ doi: <a href="https://doi.org/10.31219/osf.io/wr93f" class="external-link">10.31
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

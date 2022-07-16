@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">zcurve</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.1</span>
       </span>
     </div>
 
@@ -69,18 +69,17 @@
 <div class="page-header"><h1 id="zcurve">zcurve<a class="anchor" aria-label="anchor" href="#zcurve"></a>
 </h1></div>
 <!-- badges: start -->
-
 <p>This package implements z-curves - methods for estimating expected discovery and replicability rates on bases of test-statistics of published studies. The package provides functions for fitting the new density and EM version (Bartoš &amp; Schimmack, in preparation) as well as the original density z-curve (Brunner &amp; Schimmack, 2020). Furthermore, the package provides summarizing and plotting functions for the fitted z-curve objects. See the aforementioned articles for more information about the z-curves, expected discovery and replicability rates, validation studies, and limitations.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>You can install the current version of zcurve from CRAN with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"zcurve"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"zcurve"</span><span class="op">)</span></span></code></pre></div>
 <p>or the development version from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"FBartos/zcurve"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"FBartos/zcurve"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
@@ -89,125 +88,125 @@
 <p>We included the recoded z-scores from the 90 OSC studies as a dataset in the package (‘OSC.z’). The expectation-maximization (EM) version of the z-curve is implemented as the default method and can be fitted (with 1000 bootstraps) and summarized using ‘zcurve and ’summary’ functions.</p>
 <p>The first argument to the function call is a vector of z-scores. Alternatively, a vector of two-sided p-values can be also used, by specifying “zcurve(p = p.values)”.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">666</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fbartos.github.io/zcurve/">zcurve</a></span><span class="op">)</span>
-<span class="co">#&gt; Please, note the following changes in version 1.0.9 (see NEWS for more details):</span>
-<span class="co">#&gt; - The ERR estimate now takes the directionality of the expected replications into account, which might lead to slight changes in the estimates.</span>
-
-<span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/zcurve.html">zcurve</a></span><span class="op">(</span><span class="va">OSC.z</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>
-<span class="co">#&gt; Call:</span>
-<span class="co">#&gt; zcurve(z = OSC.z)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; model: EM via EM</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     Estimate  l.CI  u.CI</span>
-<span class="co">#&gt; ERR    0.615 0.443 0.740</span>
-<span class="co">#&gt; EDR    0.388 0.070 0.699</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Model converged in 27 + 783 iterations</span>
-<span class="co">#&gt; Fitted using 73 z-values. 90 supplied, 85 significant (ODR = 0.94, 95% CI [0.87, 0.98]).</span>
-<span class="co">#&gt; Q = -60.61, 95% CI[-72.24, -46.24]</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">666</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fbartos.github.io/zcurve/">zcurve</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Please, note the following changes in version 1.0.9 (see NEWS for more details):</span></span>
+<span><span class="co">#&gt; - The ERR estimate now takes the directionality of the expected replications into account, which might lead to slight changes in the estimates.</span></span>
+<span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/zcurve.html">zcurve</a></span><span class="op">(</span><span class="va">OSC.z</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; zcurve(z = OSC.z)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; model: EM via EM</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     Estimate  l.CI  u.CI</span></span>
+<span><span class="co">#&gt; ERR    0.615 0.443 0.740</span></span>
+<span><span class="co">#&gt; EDR    0.388 0.070 0.699</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Model converged in 27 + 783 iterations</span></span>
+<span><span class="co">#&gt; Fitted using 73 z-values. 90 supplied, 85 significant (ODR = 0.94, 95% CI [0.87, 0.98]).</span></span>
+<span><span class="co">#&gt; Q = -60.61, 95% CI[-72.24, -46.24]</span></span></code></pre></div>
 <p>More details from the fitted object can be extracted from the fitted object. For more statistics, as expected number of conducted studies, the file drawer ratio or Sorić’s FDR specify ‘all = TRUE’.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; Call:</span>
-<span class="co">#&gt; zcurve(z = OSC.z)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; model: EM via EM</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;               Estimate  l.CI   u.CI</span>
-<span class="co">#&gt; ERR              0.615 0.443  0.740</span>
-<span class="co">#&gt; EDR              0.388 0.070  0.699</span>
-<span class="co">#&gt; Soric FDR        0.083 0.023  0.705</span>
-<span class="co">#&gt; File Drawer R    1.574 0.430 13.387</span>
-<span class="co">#&gt; Expected N         219   122   1223</span>
-<span class="co">#&gt; Missing N          129    32   1133</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Model converged in 27 + 783 iterations</span>
-<span class="co">#&gt; Fitted using 73 z-values. 90 supplied, 85 significant (ODR = 0.94, 95% CI [0.87, 0.98]).</span>
-<span class="co">#&gt; Q = -60.61, 95% CI[-72.24, -46.24]</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; zcurve(z = OSC.z)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; model: EM via EM</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;               Estimate  l.CI   u.CI</span></span>
+<span><span class="co">#&gt; ERR              0.615 0.443  0.740</span></span>
+<span><span class="co">#&gt; EDR              0.388 0.070  0.699</span></span>
+<span><span class="co">#&gt; Soric FDR        0.083 0.023  0.705</span></span>
+<span><span class="co">#&gt; File Drawer R    1.574 0.430 13.387</span></span>
+<span><span class="co">#&gt; Expected N         219   122   1223</span></span>
+<span><span class="co">#&gt; Missing N          129    32   1133</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Model converged in 27 + 783 iterations</span></span>
+<span><span class="co">#&gt; Fitted using 73 z-values. 90 supplied, 85 significant (ODR = 0.94, 95% CI [0.87, 0.98]).</span></span>
+<span><span class="co">#&gt; Q = -60.61, 95% CI[-72.24, -46.24]</span></span></code></pre></div>
 <p>For more information regarding the fitted model weights add ‘type = “parameters”’.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span>, type <span class="op">=</span> <span class="st">"parameters"</span><span class="op">)</span>
-<span class="co">#&gt; Call:</span>
-<span class="co">#&gt; zcurve(z = OSC.z)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; model: EM via EM</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;   Mean  Weight  l.CI  u.CI</span>
-<span class="co">#&gt; 1 0.000  0.056 0.000 0.445</span>
-<span class="co">#&gt; 2 1.000  0.005 0.000 0.374</span>
-<span class="co">#&gt; 3 2.000  0.734 0.002 0.999</span>
-<span class="co">#&gt; 4 3.000  0.205 0.000 0.640</span>
-<span class="co">#&gt; 5 4.000  0.000 0.000 0.000</span>
-<span class="co">#&gt; 6 5.000  0.000 0.000 0.000</span>
-<span class="co">#&gt; 7 6.000  0.000 0.000 0.000</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Model converged in 27 + 783 iterations</span>
-<span class="co">#&gt; Fitted using 73 z-values. 90 supplied, 85 significant (ODR = 0.94, 95% CI [0.87, 0.98]).</span>
-<span class="co">#&gt; Q = -60.61, 95% CI[-72.24, -46.24]</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span>, type <span class="op">=</span> <span class="st">"parameters"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; zcurve(z = OSC.z)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; model: EM via EM</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   Mean  Weight  l.CI  u.CI</span></span>
+<span><span class="co">#&gt; 1 0.000  0.056 0.000 0.445</span></span>
+<span><span class="co">#&gt; 2 1.000  0.005 0.000 0.374</span></span>
+<span><span class="co">#&gt; 3 2.000  0.734 0.002 0.999</span></span>
+<span><span class="co">#&gt; 4 3.000  0.205 0.000 0.640</span></span>
+<span><span class="co">#&gt; 5 4.000  0.000 0.000 0.000</span></span>
+<span><span class="co">#&gt; 6 5.000  0.000 0.000 0.000</span></span>
+<span><span class="co">#&gt; 7 6.000  0.000 0.000 0.000</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Model converged in 27 + 783 iterations</span></span>
+<span><span class="co">#&gt; Fitted using 73 z-values. 90 supplied, 85 significant (ODR = 0.94, 95% CI [0.87, 0.98]).</span></span>
+<span><span class="co">#&gt; Q = -60.61, 95% CI[-72.24, -46.24]</span></span></code></pre></div>
 <p>The package also provides a convenient plotting method for the z-curve fits.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-5-1.png" width="100%"></p>
 <p>The default plot can be further modified by using classic R plotting arguments as ‘xlab’, ‘ylab’, ‘main’, ‘cex.axis’, ‘cex.lab’. Furthermore, an annotation with the main test statistics can be added to the plot by specifying ‘annotation = TRUE’ and the pointwise confidence intervals of the plot by specifying “CI = TRUE”. For more options regarding the annotation see ’?plot.zcurve”.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span>, CI <span class="op">=</span> <span class="cn">TRUE</span>, annotation <span class="op">=</span> <span class="cn">TRUE</span>, main <span class="op">=</span> <span class="st">"OSC 2015"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span>, CI <span class="op">=</span> <span class="cn">TRUE</span>, annotation <span class="op">=</span> <span class="cn">TRUE</span>, main <span class="op">=</span> <span class="st">"OSC 2015"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-6-1.png" width="100%"></p>
 <p>Other versions of the z-curves may be fitted by changing the method argument in the ‘zcurve’ function. Set ‘method = “density”’ to fit the new version of z-curve using density method (KD2). The original version of the density method as implemented in Brunner and Schimmack (2020) can be fitted by adding ‘list(model = “KD1”)’ to the ‘control’ argument of ‘zcurve’.</p>
 <p>(We omit bootstrapping to speed the fitting process in this case)</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fit.KD2</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/zcurve.html">zcurve</a></span><span class="op">(</span><span class="va">OSC.z</span>, method <span class="op">=</span> <span class="st">"density"</span>, bootstrap <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="va">fit.KD1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/zcurve.html">zcurve</a></span><span class="op">(</span><span class="va">OSC.z</span>, method <span class="op">=</span> <span class="st">"density"</span>, control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>model <span class="op">=</span> <span class="st">"KD1"</span><span class="op">)</span>, bootstrap <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit.KD2</span><span class="op">)</span>
-<span class="co">#&gt; Call:</span>
-<span class="co">#&gt; zcurve(z = OSC.z, method = "density", bootstrap = FALSE)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; model: KD2 via density</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     Estimate</span>
-<span class="co">#&gt; ERR    0.613</span>
-<span class="co">#&gt; EDR    0.506</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Model converged in 47 iterations</span>
-<span class="co">#&gt; Fitted using 73 z-values. 90 supplied, 85 significant (ODR = 0.94, 95% CI [0.87, 0.98]).</span>
-<span class="co">#&gt; RMSE = 0.11</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit.KD1</span><span class="op">)</span>
-<span class="co">#&gt; Call:</span>
-<span class="co">#&gt; zcurve(z = OSC.z, method = "density", bootstrap = FALSE, control = list(model = "KD1"))</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; model: KD1 via density (version 1)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     Estimate</span>
-<span class="co">#&gt; ERR    0.634</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Model converged in 141 iterations</span>
-<span class="co">#&gt; Fitted using 73 z-values. 90 supplied, 85 significant (ODR = 0.94, 95% CI [0.87, 0.98]).</span>
-<span class="co">#&gt; MAE (*1e3) = 0.25</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">fit.KD2</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/zcurve.html">zcurve</a></span><span class="op">(</span><span class="va">OSC.z</span>, method <span class="op">=</span> <span class="st">"density"</span>, bootstrap <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">fit.KD1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/zcurve.html">zcurve</a></span><span class="op">(</span><span class="va">OSC.z</span>, method <span class="op">=</span> <span class="st">"density"</span>, control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>model <span class="op">=</span> <span class="st">"KD1"</span><span class="op">)</span>, bootstrap <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit.KD2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; zcurve(z = OSC.z, method = "density", bootstrap = FALSE)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; model: KD2 via density</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     Estimate</span></span>
+<span><span class="co">#&gt; ERR    0.613</span></span>
+<span><span class="co">#&gt; EDR    0.506</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Model converged in 47 iterations</span></span>
+<span><span class="co">#&gt; Fitted using 73 z-values. 90 supplied, 85 significant (ODR = 0.94, 95% CI [0.87, 0.98]).</span></span>
+<span><span class="co">#&gt; RMSE = 0.11</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit.KD1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; zcurve(z = OSC.z, method = "density", bootstrap = FALSE, control = list(model = "KD1"))</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; model: KD1 via density (version 1)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     Estimate</span></span>
+<span><span class="co">#&gt; ERR    0.634</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Model converged in 141 iterations</span></span>
+<span><span class="co">#&gt; Fitted using 73 z-values. 90 supplied, 85 significant (ODR = 0.94, 95% CI [0.87, 0.98]).</span></span>
+<span><span class="co">#&gt; MAE (*1e3) = 0.25</span></span></code></pre></div>
 <p>The ‘control’ argument can be used to change the number of iterations or reducing the convergence criterion in cases of non-convergence. It can be also used for constructing custom z-curves by changing the location of the mean components, their number or many other settings. However, it is important to bear in mind that those custom models need to be validated first on simulation studies prior to their usage. For more information about the control settings see ‘?control_EM’, ‘?control_density’, and ‘?control_density_v1’.</p>
 <p>If you encounter any problems or bugs, please, contact me at f.bartos96[at]gmail.com or submit an issue at <a href="https://github.com/FBartos/zcurve/issues" class="external-link uri">https://github.com/FBartos/zcurve/issues</a>. If you like the package and use it in your work, please, cite it as:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"zcurve"</span><span class="op">)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; To cite the zcurve package in publications use:</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Bartoš F, Schimmack U (2020). "zcurve: An R Package for Fitting</span>
-<span class="co">#&gt; Z-curves." R package version 1.0.9, &lt;URL:</span>
-<span class="co">#&gt; https://CRAN.R-project.org/package=zcurve&gt;.</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; A BibTeX entry for LaTeX users is</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;   @Misc{,</span>
-<span class="co">#&gt;     title = {zcurve: An R Package for Fitting Z-curves},</span>
-<span class="co">#&gt;     author = {František Bartoš and Ulrich Schimmack},</span>
-<span class="co">#&gt;     year = {2020},</span>
-<span class="co">#&gt;     note = {R package version 1.0.9},</span>
-<span class="co">#&gt;     url = {https://CRAN.R-project.org/package=zcurve},</span>
-<span class="co">#&gt;   }</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"zcurve"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; To cite the zcurve package in publications use:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Bartoš F, Schimmack U (2020). "zcurve: An R Package for Fitting</span></span>
+<span><span class="co">#&gt; Z-curves." R package version 1.0.9, &lt;URL:</span></span>
+<span><span class="co">#&gt; https://CRAN.R-project.org/package=zcurve&gt;.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   @Misc{,</span></span>
+<span><span class="co">#&gt;     title = {zcurve: An R Package for Fitting Z-curves},</span></span>
+<span><span class="co">#&gt;     author = {František Bartoš and Ulrich Schimmack},</span></span>
+<span><span class="co">#&gt;     year = {2020},</span></span>
+<span><span class="co">#&gt;     note = {R package version 1.0.9},</span></span>
+<span><span class="co">#&gt;     url = {https://CRAN.R-project.org/package=zcurve},</span></span>
+<span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="sources">Sources<a class="anchor" aria-label="anchor" href="#sources"></a>
@@ -270,7 +269,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer>

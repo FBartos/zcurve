@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">zcurve</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.1</span>
       </span>
     </div>
 
@@ -47,45 +47,60 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for zcurve</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span>
-  <span class="va">object</span>,
-  type <span class="op">=</span> <span class="st">"results"</span>,
-  all <span class="op">=</span> <span class="cn">FALSE</span>,
-  ERR.adj <span class="op">=</span> <span class="fl">0.03</span>,
-  EDR.adj <span class="op">=</span> <span class="fl">0.05</span>,
-  round.coef <span class="op">=</span> <span class="fl">3</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for zcurve</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"results"</span>,</span>
+<span>  all <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  ERR.adj <span class="op">=</span> <span class="fl">0.03</span>,</span>
+<span>  EDR.adj <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>  round.coef <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>A fitted z-curve object.</p></dd>
+
+
 <dt>type</dt>
 <dd><p>Whether the results <code>"results"</code> or the
 mixture mode parameters <code>"parameters"</code> should be
 returned. Defaults to  <code>"results"</code>.</p></dd>
+
+
 <dt>all</dt>
 <dd><p>Whether additional results, such as file drawer
 ration, expected and missing number of studies, and Soric FDR
 be returned. Defaults to <code>FALSE</code></p></dd>
+
+
 <dt>ERR.adj</dt>
 <dd><p>Confidence intervals adjustment for ERR. Defaults
 to <code>.03</code> as proposed by Bartos &amp; Schimmack (in preparation).</p></dd>
+
+
 <dt>EDR.adj</dt>
 <dd><p>Confidence intervals adjustment for EDR. Defaults
 to <code>.05</code> as proposed by Bartos &amp; Schimmack (in preparation).</p></dd>
+
+
 <dt>round.coef</dt>
 <dd><p>To how many decimals should the coefficient
 be rounded. Defaults to <code>3</code>.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Summary of a z-curve object</p>
+    
+
+<p>Summary of a z-curve object</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -104,7 +119,7 @@ be rounded. Defaults to <code>3</code>.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>
