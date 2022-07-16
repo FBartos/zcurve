@@ -168,12 +168,12 @@ NumericMatrix compute_u_log_lik_w_c(NumericVector x, NumericVector x_w, NumericV
   NumericMatrix ll_c(mu.size(), lb.size());
   
   for(int k = 0; k < mu.size(); k++){
-    ll_o(k,_) = zdist_lpdf(x,mu[k],sigma[k],a,b) + log(x_w);
+    ll_o(k,_) = zdist_lpdf(x,mu[k],sigma[k],a,b) * x_w;
   }
   
   for(int k = 0; k < mu.size(); k++){
     for(int i = 0; i < lb.size(); i++){
-      ll_c(k,i) = zdist_cens_lpdf(lb[i],ub[i],mu[k],sigma[k],a,b) + log(b_w[i]);  
+      ll_c(k,i) = zdist_cens_lpdf(lb[i],ub[i],mu[k],sigma[k],a,b) * b_w[i];  
     }
   }
   
