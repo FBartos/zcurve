@@ -8,7 +8,6 @@
 #' (i.e., rounded to too few decimals). See details for more information.
 #' 
 #' @param data a vector strings containing the test statistics.
-#' @param id a vector identifying observations from the same cluster.
 #' @param rounded an optional argument specifying whether de-rounding should be applied. 
 #' Defaults to \code{FALSE} to treat all input as exact values or a numeric 
 #' vector with values specifying precision of the input. The other option, 
@@ -51,19 +50,7 @@
 #' # inspect the resulting object
 #' data
 #' @seealso [zcurve()], [print.zcurve_data()], [head.zcurve_data()]
-zcurve_data <- function(data, id = NULL, rounded = TRUE, stat_precise = 2, p_precise = 3){
-  
-  if(!is.character(data)){
-    stop("'data' must be a character vector")
-  }
-  
-  if(is.null(id)){
-    id <- 1:length(data)
-  }else if(is.vector(id) && length(data) == length(id)){
-    id <- as.numeric(as.factor(as.character(id)))
-  }else{
-    stop("'id' must be a vector of the same length as the data")
-  }
+zcurve_data <- function(data, rounded = TRUE, stat_precise = 2, p_precise = 3){
   
   data <- tolower(data) 
   data <- gsub(" ", "", data) 
@@ -102,10 +89,10 @@ zcurve_data <- function(data, id = NULL, rounded = TRUE, stat_precise = 2, p_pre
   # set rounding (0 = un-rounded due to automatic conversion)
   if(length(rounded) == 1 && !rounded){
     # deal with the values as precise values
-    rounded <- rep(-1, length(data))
+    rounded <- rep(0, length(data))
   }else if(length(rounded) == 1 && rounded){
     # specify automatic rounding
-    rounded <- rep(-1, length(data))
+    rounded <- rep(FALSE, length(data))
     rounded[stat_type == "p" & digits < p_precise]    <- digits[stat_type == "p" & digits < p_precise]
     rounded[stat_type != "p" & digits < stat_precise] <- digits[stat_type != "p" & digits < stat_precise]
   }else{
@@ -125,7 +112,7 @@ zcurve_data <- function(data, id = NULL, rounded = TRUE, stat_precise = 2, p_pre
   
   # compute and allocate the p-values accordingly
   for(i in seq_along(data)){
-    if(rounded[i] == -1 && !censored[i]){
+    if(rounded[i] == 0 && !censored[i]){
       # precise non-censored values
       p_vals[i] <- tryCatch(
         switch(
@@ -138,7 +125,7 @@ zcurve_data <- function(data, id = NULL, rounded = TRUE, stat_precise = 2, p_pre
         ),
         warning = function(w) stop(paste0("The following input could not be decoded: '", data[i], "'."))
       )
-    }else if(rounded[i] == -1 && censored[i]){
+    }else if(rounded[i] == 0 && censored[i]){
       # precise censored values
       p_vals.ub[i] <- tryCatch(
         switch(
@@ -152,21 +139,15 @@ zcurve_data <- function(data, id = NULL, rounded = TRUE, stat_precise = 2, p_pre
         warning = function(w) stop(paste0("The following input could not be decoded: '", data[i], "'."))
       )
       p_vals.lb[i] <- 0
-    }else if(rounded[i] != -1 && !censored[i]){
+    }else if(rounded[i] != 0 && !censored[i]){
       # rounded non-censored values
-      
-      temp_stat_val.lb <- abs(stat_val[i]) - 0.5 * 10^-digits[i]
-      temp_stat_val.ub <- abs(stat_val[i]) + 0.5 * 10^-digits[i]
-      
-      temp_stat_val.lb <- ifelse(temp_stat_val.lb < 0, 0, temp_stat_val.lb)
-      
       p_vals.ub[i] <- tryCatch(
         switch(
           stat_type[i],
-          "f" = stats::pf(temp_stat_val.lb , df1 = stat_df1[i], df2 = stat_df2[i], lower.tail = FALSE),
-          "c" = stats::pchisq(temp_stat_val.lb, df = stat_df1[i], lower.tail = FALSE),
-          "t" = stats::pt(temp_stat_val.lb, df = stat_df1[i], lower.tail = FALSE) * 2,
-          "z" = stats::pnorm(temp_stat_val.lb, lower.tail = FALSE) * 2,
+          "f" = stats::pf(stat_val[i] - 0.5 * 10^-digits[i] , df1 = stat_df1[i], df2 = stat_df2[i], lower.tail = FALSE),
+          "c" = stats::pchisq(stat_val[i] - 0.5 * 10^-digits[i], df = stat_df1[i], lower.tail = FALSE),
+          "t" = stats::pt(abs(stat_val[i]) - 0.5 * 10^-digits[i], df = stat_df1[i], lower.tail = FALSE) * 2,
+          "z" = stats::pnorm(abs(stat_val[i]) - 0.5 * 10^-digits[i], lower.tail = FALSE) * 2,
           "p" = stat_val[i] + 0.5 * 10^-digits[i]
         ),
         warning = function(w) stop(paste0("The following input could not be decoded: '", data[i], "'."))
@@ -174,26 +155,23 @@ zcurve_data <- function(data, id = NULL, rounded = TRUE, stat_precise = 2, p_pre
       p_vals.lb[i] <- tryCatch(
         switch(
           stat_type[i],
-          "f" = stats::pf(temp_stat_val.ub, df1 = stat_df1[i], df2 = stat_df2[i], lower.tail = FALSE),
-          "c" = stats::pchisq(temp_stat_val.ub, df = stat_df1[i], lower.tail = FALSE),
-          "t" = stats::pt(temp_stat_val.ub, df = stat_df1[i], lower.tail = FALSE) * 2,
-          "z" = stats::pnorm(temp_stat_val.ub, lower.tail = FALSE) * 2,
+          "f" = stats::pf(stat_val[i] + 0.5 * 10^-digits[i] , df1 = stat_df1[i], df2 = stat_df2[i], lower.tail = FALSE),
+          "c" = stats::pchisq(stat_val[i] + 0.5 * 10^-digits[i], df = stat_df1[i], lower.tail = FALSE),
+          "t" = stats::pt(abs(stat_val[i]) + 0.5 * 10^-digits[i], df = stat_df1[i], lower.tail = FALSE) * 2,
+          "z" = stats::pnorm(abs(stat_val[i]) + 0.5 * 10^-digits[i], lower.tail = FALSE) * 2,
           "p" = stat_val[i] - 0.5 * 10^-digits[i]
         ),
         warning = function(w) stop(paste0("The following input could not be decoded: '", data[i], "'."))
       )
-    }else if(rounded[i] != -1 && censored[i]){
+    }else if(rounded[i] != 0 && !censored[i]){
       # rounded censored values
-      
-      temp_stat_val.ub <- abs(stat_val[i]) + 0.5 * 10^-digits[i]
-    
       p_vals.ub[i] <- tryCatch(
         switch(
           stat_type[i],
-          "f" = stats::pf(temp_stat_val.lb , df1 = stat_df1[i], df2 = stat_df2[i], lower.tail = FALSE),
-          "c" = stats::pchisq(temp_stat_val.lb, df = stat_df1[i], lower.tail = FALSE),
-          "t" = stats::pt(temp_stat_val.lb, df = stat_df1[i], lower.tail = FALSE) * 2,
-          "z" = stats::pnorm(temp_stat_val.lb, lower.tail = FALSE) * 2,
+          "f" = stats::pf(stat_val[i] - 0.5 * 10^-digits[i] , df1 = stat_df1[i], df2 = stat_df2[i], lower.tail = FALSE),
+          "c" = stats::pchisq(stat_val[i] - 0.5 * 10^-digits[i], df = stat_df1[i], lower.tail = FALSE),
+          "t" = stats::pt(abs(stat_val[i]) - 0.5 * 10^-digits[i], df = stat_df1[i], lower.tail = FALSE) * 2,
+          "z" = stats::pnorm(abs(stat_val[i]) - 0.5 * 10^-digits[i], lower.tail = FALSE) * 2,
           "p" = stat_val[i] + 0.5 * 10^-digits[i]
         ),
         warning = function(w) stop(paste0("The following input could not be decoded: '", data[i], "'."))
@@ -205,14 +183,12 @@ zcurve_data <- function(data, id = NULL, rounded = TRUE, stat_precise = 2, p_pre
   output <- list(
     precise  = data.frame(
       "input" = data[!is.na(p_vals)],
-      "p"     = p_vals[!is.na(p_vals)],
-      "id"    = id[!is.na(p_vals)]
+      "p"     = p_vals[!is.na(p_vals)]
     ),
     censored = data.frame(
       "input" = data[!is.na(p_vals.lb)],
       "p.lb"  = p_vals.lb[!is.na(p_vals.lb)],
-      "p.ub"  = p_vals.ub[!is.na(p_vals.ub)],
-      "id"    = id[!is.na(p_vals.lb)]
+      "p.ub"  = p_vals.ub[!is.na(p_vals.ub)]
     )
   )
   class(output) <- "zcurve_data"

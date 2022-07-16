@@ -1,10 +1,3 @@
-## version 2.2.1
-- Fixing parameterization of the weighted clustered z-curve models.
-
-## version 2.2.0
-- Implementation of z-curve version that deals with clustered estimates. 
-- Fixing bootstrap of censored data -- now both the censored and uncensored data are bootstrapped.
-
 ## version 2.1.2
 - Fixing number of statistically significant studies displayed in the annotation of z-curve plot.
 
