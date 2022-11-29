@@ -8,7 +8,6 @@
 #' statistics proportionately to the number of repetitions in the clusters, 
 #' and \code{"b"} for a nested bootstrap where only a single study from each 
 #' bootstrap is selected for model fitting.
-#' 
 #' @param data an object created with [zcurve_data()] function.
 #' @param method the method to be used for fitting. Possible options are
 #' down weighting \code{"w"} and nested bootstrap \code{"b"}. 
@@ -26,7 +25,9 @@
 #'
 #' @seealso [zcurve()], [summary.zcurve()], [plot.zcurve()], [control_EM], [control_density]
 #' @export
-zcurve_clustered <- function(data, method = "w", bootstrap = 1000, control = NULL){
+zcurve_clustered <- function(data, method = "b", bootstrap = 1000, control = NULL){
+  
+  warning("Please note that the clustering adjustment is an experimental feature.", immediate. = TRUE)
   
   if(!method %in% c("w", "b"))
     stop("Wrong method, select a supported option.")

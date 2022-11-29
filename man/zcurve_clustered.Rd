@@ -4,7 +4,7 @@
 \alias{zcurve_clustered}
 \title{Fit a z-curve to clustered data}
 \usage{
-zcurve_clustered(data, method = "w", bootstrap = 1000, control = NULL)
+zcurve_clustered(data, method = "b", bootstrap = 1000, control = NULL)
 }
 \arguments{
 \item{data}{an object created with \code{\link[=zcurve_data]{zcurve_data()}} function.}
