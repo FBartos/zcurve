@@ -37,6 +37,10 @@
     .Call(`_zcurve_zcurve_EMc_fit_fast_RCpp`, x, lb, ub, mu, sigma, theta, a, b, sig_level, max_iter, criterion)
 }
 
+.zcurve_EMc_fit_fast_w_RCpp <- function(x, x_w, lb, ub, b_w, mu, sigma, theta, a, b, sig_level, max_iter, criterion) {
+    .Call(`_zcurve_zcurve_EMc_fit_fast_w_RCpp`, x, x_w, lb, ub, b_w, mu, sigma, theta, a, b, sig_level, max_iter, criterion)
+}
+
 .zcurve_EM_start_RCpp <- function(x, type, K, mu, sigma, mu_alpha, mu_max, theta_alpha, a, b, sig_level, fit_reps, max_iter, criterion) {
     .Call(`_zcurve_zcurve_EM_start_RCpp`, x, type, K, mu, sigma, mu_alpha, mu_max, theta_alpha, a, b, sig_level, fit_reps, max_iter, criterion)
 }
@@ -57,7 +61,11 @@
     .Call(`_zcurve_zcurve_EMc_start_fast_RCpp`, x, lb, ub, K, mu, sigma, mu_alpha, mu_max, theta_alpha, a, b, sig_level, fit_reps, max_iter, criterion)
 }
 
-.zcurve_EMc_boot_fast_RCpp <- function(x, lb, ub, mu, sigma, theta, a, b, sig_level, bootstrap, max_iter, criterion) {
-    .Call(`_zcurve_zcurve_EMc_boot_fast_RCpp`, x, lb, ub, mu, sigma, theta, a, b, sig_level, bootstrap, max_iter, criterion)
+.zcurve_EMc_boot_fast_RCpp <- function(x, lb, ub, indx, mu, sigma, theta, a, b, sig_level, bootstrap, max_iter, criterion) {
+    .Call(`_zcurve_zcurve_EMc_boot_fast_RCpp`, x, lb, ub, indx, mu, sigma, theta, a, b, sig_level, bootstrap, max_iter, criterion)
+}
+
+.zcurve_EMc_boot_fast_w_RCpp <- function(x, x_w, lb, ub, b_w, indx, mu, sigma, theta, a, b, sig_level, bootstrap, max_iter, criterion) {
+    .Call(`_zcurve_zcurve_EMc_boot_fast_w_RCpp`, x, x_w, lb, ub, b_w, indx, mu, sigma, theta, a, b, sig_level, bootstrap, max_iter, criterion)
 }
 

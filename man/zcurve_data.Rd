@@ -4,10 +4,12 @@
 \alias{zcurve_data}
 \title{Prepare data for z-curve}
 \usage{
-zcurve_data(data, rounded = TRUE, stat_precise = 2, p_precise = 3)
+zcurve_data(data, id = NULL, rounded = TRUE, stat_precise = 2, p_precise = 3)
 }
 \arguments{
 \item{data}{a vector strings containing the test statistics.}
+
+\item{id}{a vector identifying observations from the same cluster.}
 
 \item{rounded}{an optional argument specifying whether de-rounding should be applied.
 Defaults to \code{FALSE} to treat all input as exact values or a numeric

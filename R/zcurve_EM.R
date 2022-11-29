@@ -71,6 +71,8 @@
                                 max_iter   = control$max_iter,
                                 criterion  = control$criterion)
   }else if(control$type == 3){
+    
+
     fit  <- .zcurve_EMc_fit_fast_RCpp(x          = z,
                                       lb         = lb,
                                       ub         = ub,
@@ -123,9 +125,17 @@
                                      criterion = control$criterion_boot,
                                      max_iter  = control$max_iter_boot)
   }else if(control$type == 3){
+    
+    indx <- c(
+      if(length(z)  > 0) 1:length(z),
+      if(length(lb) > 0) (-length(lb)):-1
+    )
+    
+    
     fit_boot <- .zcurve_EMc_boot_fast_RCpp(x         = z,
                                            lb        = lb,
                                            ub        = ub,
+                                           indx      = indx,
                                            mu        = fit$mu,
                                            sigma     = control$sigma,
                                            theta     = fit$weights,
