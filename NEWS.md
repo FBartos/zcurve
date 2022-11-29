@@ -1,5 +1,5 @@
 ## version 2.3.0
-- Implementation of parallelized bootstrap.
+- Implementation of parallel bootstrap.
 
 ## version 2.2.0
 - Implementation of z-curve version that deals with clustered estimates. 

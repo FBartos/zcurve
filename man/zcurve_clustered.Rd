@@ -4,7 +4,13 @@
 \alias{zcurve_clustered}
 \title{Fit a z-curve to clustered data}
 \usage{
-zcurve_clustered(data, method = "b", bootstrap = 1000, control = NULL)
+zcurve_clustered(
+  data,
+  method = "b",
+  bootstrap = 1000,
+  parallel = FALSE,
+  control = NULL
+)
 }
 \arguments{
 \item{data}{an object created with \code{\link[=zcurve_data]{zcurve_data()}} function.}
@@ -15,6 +21,10 @@ Defaults to \code{"w"}.}
 
 \item{bootstrap}{the number of bootstraps for estimating CI. To skip
 bootstrap specify \code{FALSE}.}
+
+\item{parallel}{whether the bootstrap should be performed in parallel.
+Defaults to \code{FALSE}. The implementation is not completely stable
+and might cause a connection error.}
 
 \item{control}{additional options for the fitting algorithm more details in
 \link[=control_EM]{control EM}.}

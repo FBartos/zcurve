@@ -48,7 +48,37 @@
   
   return(results)
 }
+.zcurve_density_boot.par <- function(z, control, bootstrap){
+  
+  cores        <- zcurve.get_option("max_cores")
+  core_load    <- split(1:bootstrap, rep(1:cores, length.out = bootstrap))
+  core_load    <- sapply(core_load, length)
+  initial_seed <- sample(.Machine$integer.max, 1)
+  
+  cl <- parallel::makePSOCKcluster(cores)
+  parallel::clusterEvalQ(cl, {library("zcurve")})
+  parallel::clusterExport(cl, c("z", "control", "bootstrap", "core_load", "initial_seed"), envir = environment())
+  fit_boot <- parallel::parLapplyLB(cl, 1:cores, function(i){
+    set.seed(initial_seed + i)
+    return(.zcurve_density_boot(z, control, core_load[i]))
+  })
+  parallel::stopCluster(cl)
 
+  
+  results <- list(
+      "mu"        = do.call(rbind, lapply(fit_boot, function(x) x$mu)),
+      "weights"   = do.call(rbind, lapply(fit_boot, function(x) x$weights)),
+      "prop_high" = do.call(c, lapply(fit_boot, function(x) x$prop_high)),
+      "objective" = do.call(c, lapply(fit_boot, function(x) x$objective)),
+      "iter"      = do.call(c, lapply(fit_boot, function(x) x$iter))
+    )
+
+  if(control$version == 2){
+    results$FDR_max = do.call(c, lapply(fit_boot, function(x) x$FDR_max))
+  }
+  
+  return(results)
+}
 
 
 # original z-curve1.0
