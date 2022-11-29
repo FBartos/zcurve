@@ -1,3 +1,6 @@
+## version 2.3.0
+- Implementation of parallelized bootstrap.
+
 ## version 2.2.0
 - Implementation of z-curve version that deals with clustered estimates. 
 - Fixing bootstrap of censored data -- now both the censored and uncensored data are bootstrapped.
