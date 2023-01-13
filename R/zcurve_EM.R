@@ -157,6 +157,33 @@
   )
 
 }
+.zcurve_EM_boot.par <- function(z, lb, ub, control, fit, bootstrap){
+  
+  cores        <- zcurve.get_option("max_cores")
+  core_load    <- split(1:bootstrap, rep(1:cores, length.out = bootstrap))
+  core_load    <- sapply(core_load, length)
+  initial_seed <- sample(.Machine$integer.max, 1)
+  
+  cl <- parallel::makePSOCKcluster(cores)
+  parallel::clusterEvalQ(cl, {library("zcurve")})
+  parallel::clusterExport(cl, c("z", "lb", "ub", "control", "fit", "bootstrap", "core_load", "initial_seed"), envir = environment())
+  fit_boot <- parallel::parLapplyLB(cl, 1:cores, function(i){
+    set.seed(initial_seed + i)
+    return(.zcurve_EM_boot(z, lb, ub, control, fit, core_load[i]))
+  })
+  parallel::stopCluster(cl)
+
+  
+  return(
+    list(
+      "mu"        = do.call(rbind, lapply(fit_boot, function(x) x$mu)),
+      "weights"   = do.call(rbind, lapply(fit_boot, function(x) x$weights)),
+      "Q"         = do.call(c, lapply(fit_boot, function(x) x$Q)),
+      "prop_high" = do.call(c, lapply(fit_boot, function(x) x$prop_high)),
+      "iter"      = do.call(c, lapply(fit_boot, function(x) x$iter))
+    )
+  )
+}
 
 #' @name control_EM
 #' @title Control settings for the zcurve EM algorithm

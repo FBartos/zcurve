@@ -20,6 +20,9 @@
 #' defaults to \code{"EM"}.
 #' @param bootstrap the number of bootstraps for estimating CI. To skip
 #' bootstrap specify \code{FALSE}.
+#' @param parallel  whether the bootstrap should be performed in parallel.
+#' Defaults to \code{FALSE}. The implementation is not completely stable
+#' and might cause a connection error.
 #' @param control additional options for the fitting algorithm more details in
 #' \link[=control_EM]{control EM} or \link[=control_density]{control density}.
 #'
@@ -67,7 +70,7 @@
 #' # see '?control_EM' and '?control_density' for more information about different
 #' # z-curves specifications
 #' @seealso [summary.zcurve()], [plot.zcurve()], [control_EM], [control_density]
-zcurve       <- function(z, z.lb, z.ub, p, p.lb, p.ub, data, method = "EM", bootstrap = 1000, control = NULL){
+zcurve       <- function(z, z.lb, z.ub, p, p.lb, p.ub, data, method = "EM", bootstrap = 1000, parallel = FALSE, control = NULL){
   
   if(!method %in% c("EM", "density"))
     stop("Wrong method, select a supported option")
@@ -253,9 +256,17 @@ zcurve       <- function(z, z.lb, z.ub, p, p.lb, p.ub, data, method = "EM", boot
   if(bootstrap != FALSE){
     # use apropriate algorithm
     if(method == "EM"){
-      fit_boot <- .zcurve_EM_boot(z = object$data, lb = object$data_censoring$lb, ub = object$data_censoring$ub, control = control, fit = fit, bootstrap = bootstrap)
+      if(parallel){
+        fit_boot <- .zcurve_EM_boot.par(z = object$data, lb = object$data_censoring$lb, ub = object$data_censoring$ub, control = control, fit = fit, bootstrap = bootstrap)
+      }else{
+        fit_boot <- .zcurve_EM_boot(z = object$data, lb = object$data_censoring$lb, ub = object$data_censoring$ub, control = control, fit = fit, bootstrap = bootstrap) 
+      }
     }else if(method == "density"){
-      fit_boot <- .zcurve_density_boot(z = object$data, control = control, bootstrap = bootstrap)
+      if(parallel){
+        fit_boot <- .zcurve_density_boot.par(z = object$data, control = control, bootstrap = bootstrap)
+      }else{
+        fit_boot <- .zcurve_density_boot(z = object$data, control = control, bootstrap = bootstrap)
+      }
     }
     object$boot <- fit_boot
   }
