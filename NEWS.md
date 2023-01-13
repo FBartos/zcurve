@@ -1,3 +1,6 @@
+## version 2.4.0
+- Implementation of ggploting function.
+
 ## version 2.3.0
 - Implementation of parallel bootstrap.
 
