@@ -24,7 +24,7 @@ bootstrap is selected for model fitting.'><!-- mathjax --><script src="https://c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">zcurve</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.3.0</span>
       </span>
     </div>
 
@@ -61,7 +61,13 @@ bootstrap is selected for model fitting.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">zcurve_clustered</span><span class="op">(</span><span class="va">data</span>, method <span class="op">=</span> <span class="st">"b"</span>, bootstrap <span class="op">=</span> <span class="fl">1000</span>, control <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">zcurve_clustered</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"b"</span>,</span>
+<span>  bootstrap <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  parallel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  control <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -79,6 +85,12 @@ Defaults to <code>"w"</code>.</p></dd>
 <dt>bootstrap</dt>
 <dd><p>the number of bootstraps for estimating CI. To skip
 bootstrap specify <code>FALSE</code>.</p></dd>
+
+
+<dt>parallel</dt>
+<dd><p>whether the bootstrap should be performed in parallel.
+Defaults to <code>FALSE</code>. The implementation is not completely stable
+and might cause a connection error.</p></dd>
 
 
 <dt>control</dt>
@@ -113,7 +125,7 @@ bootstrap specify <code>FALSE</code>.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
