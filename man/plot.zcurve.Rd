@@ -48,6 +48,7 @@ of annotations relative to the figure's width.}
 Plot fitted z-curve object
 }
 \examples{
+\dontrun{
 # simulate some z-statistics and fit a z-curve
 z <- abs(rnorm(300,3))
 m.EM <- zcurve(z, method = "EM", bootstrap = 100)
@@ -60,6 +61,7 @@ plot(m.EM, annotation = TRUE, CI = TRUE)
 
 # change the location of the annotation to the left
 plot(m.EM, annotation = TRUE, CI = TRUE, x_text = 0)
+}
 }
 \seealso{
 \code{\link[=zcurve]{zcurve()}}

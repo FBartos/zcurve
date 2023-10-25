@@ -66,7 +66,7 @@
 #'   "max_iter" = 9999,
 #'   "alpha"    = .10
 #'   )
-#' \donttest{m1.EM <- zcurve(OSC.z, method = "EM", bootstrap = FALSE, control = ctr1)}
+#' \dontrun{m1.EM <- zcurve(OSC.z, method = "EM", bootstrap = FALSE, control = ctr1)}
 #' # see '?control_EM' and '?control_density' for more information about different
 #' # z-curves specifications
 #' @seealso [summary.zcurve()], [plot.zcurve()], [control_EM], [control_density]
@@ -556,7 +556,7 @@ print.summary.zcurve <- function(x, ...){
 #' @export plot.zcurve
 #' @rawNamespace S3method(plot, zcurve)
 #' 
-#' @examples 
+#' @examples \dontrun{
 #' # simulate some z-statistics and fit a z-curve
 #' z <- abs(rnorm(300,3))
 #' m.EM <- zcurve(z, method = "EM", bootstrap = 100)
@@ -569,6 +569,7 @@ print.summary.zcurve <- function(x, ...){
 #' 
 #' # change the location of the annotation to the left
 #' plot(m.EM, annotation = TRUE, CI = TRUE, x_text = 0)
+#' }
 #' @seealso [zcurve()]
 plot.zcurve          <- function(x, annotation = FALSE, CI = FALSE, extrapolate = FALSE, plot_type = "base",
                                  y.anno = c(.95, .88, .78, .71, .61, .53, .43, .35), x.anno = .6, cex.anno = 1, ...){
