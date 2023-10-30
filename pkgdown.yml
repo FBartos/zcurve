@@ -1,8 +1,8 @@
-pandoc: 2.7.3
+pandoc: 2.19.2
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles: {}
-last_built: 2023-01-13T12:36Z
+last_built: 2023-10-30T08:21Z
 urls:
   reference: https://fbartos.github.io/zcurve/reference
   article: https://fbartos.github.io/zcurve/articles
