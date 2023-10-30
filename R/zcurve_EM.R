@@ -234,7 +234,7 @@
 #'    fit_reps  = 50,
 #'    mu = c(0, 1.5, 3, 4.5, 6)
 #' )
-#' \donttest{zcurve(OSC.z, method = "EM", control = ctrl)}
+#' \dontrun{zcurve(OSC.z, method = "EM", control = ctrl)}
 #' 
 #' @seealso [zcurve()], [control_density]
 NULL

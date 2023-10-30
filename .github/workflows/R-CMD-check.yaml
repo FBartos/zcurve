@@ -6,13 +6,11 @@ on:
       - main
       - master
       - pre-release
-      - censored
   pull_request:
     branches:
       - main
       - master
       - pre-release
-      - censored
 
 name: R-CMD-check
 
@@ -28,7 +26,7 @@ jobs:
         config:
           - {os: windows-latest, r: 'release'}
           - {os: macOS-latest,   r: 'release'}
-          - {os: ubuntu-20.04,   r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+          - {os: ubuntu-latest,  r: 'release'}
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -36,13 +34,13 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - uses: r-lib/actions/setup-r@v1
+      - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
 
-      - uses: r-lib/actions/setup-pandoc@v1
+      - uses: r-lib/actions/setup-pandoc@v2
 
       - name: Query dependencies
         run: |
@@ -64,8 +62,7 @@ jobs:
           while read -r cmd
           do
             eval sudo $cmd
-          apt-get install libcurl4-openssl-dev
-          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
+          sudo apt-get install libcurl4-openssl-dev
 
       - name: Install dependencies
         run: |
@@ -90,7 +87,6 @@ jobs:
         if: runner.os == 'Windows'
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
-          JAGS_ROOT: "/c/progra~1/JAGS/JAGS-4.2.0"
         run: |
           options(crayon.enabled = TRUE)
           rcmdcheck::rcmdcheck(

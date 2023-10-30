@@ -60,6 +60,7 @@ test_that("z-curve EM can be fitted and reproduces OSC results", {
   
   # plot
   expect_doppelganger("z-curve EM", function()plot(fit.EM, main = "OSC (with EM)", annotation = TRUE, CI = TRUE))
+  expect_doppelganger("z-curve EM (ggplot)", suppressWarnings(plot(fit.EM, main = "OSC (with EM)", annotation = TRUE, CI = TRUE, plot_type = "ggplot")))
 
 })
 test_that("z-curve KD2 can be fitted and reproduces OSC results", {
@@ -100,6 +101,7 @@ test_that("z-curve KD2 can be fitted and reproduces OSC results", {
   
   # plot
   expect_doppelganger("z-curve KD2", function()plot(fit.KD2))
+  expect_doppelganger("z-curve KD2 (ggplot)", plot(fit.KD2, plot_type = "ggplot"))
   
 })
 test_that("z-curve EM censoring works", {
@@ -131,6 +133,7 @@ test_that("z-curve EM censoring works", {
   
   # plot
   expect_doppelganger("z-curve mixed EM", function()plot(fit.mixed, CI = TRUE))
+  expect_doppelganger("z-curve mixed EM (ggplot)", plot(fit.mixed, CI = TRUE, plot_type = "ggplot"))
   
   
   # censoring only
@@ -155,6 +158,7 @@ test_that("z-curve EM censoring works", {
   
   # plot
   expect_doppelganger("z-curve cens EM", function()plot(fit.cens, CI = TRUE))
+  expect_doppelganger("z-curve cens EM (ggplot)", plot(fit.cens, CI = TRUE, plot_type = "ggplot"))
 })
 test_that("z-curve clustered works", {
   
@@ -208,7 +212,7 @@ test_that("z-curve clustered works", {
     plot(fitw)
   })
 
-  
+    
   # precise
   data <- paste0("z = ",z)
   data <- zcurve_data(data, id)
@@ -301,4 +305,7 @@ test_that("z-curve clustered works", {
     plot(fitb)
     plot(fitw)
   })
+  
+  expect_doppelganger("z-curve clustered mixed (ggplot-1)", plot(fitb, plot_type = "ggplot"))
+  expect_doppelganger("z-curve clustered mixed (ggplot-2)", plot(fitw, plot_type = "ggplot"))
 })

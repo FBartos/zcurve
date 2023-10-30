@@ -8,5 +8,6 @@
 #' @useDynLib zcurve, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rdpack reprompt
+#' @importFrom rlang .data
 ## usethis namespace: end
 NULL

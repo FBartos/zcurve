@@ -45,7 +45,7 @@ ctrl <- list(
    version   = 1,
    max_iter  = 300
 )
-\donttest{zcurve(OSC.z, method = "density", control = ctrl)}
+\dontrun{zcurve(OSC.z, method = "density", control = ctrl)}
 
 }
 \references{

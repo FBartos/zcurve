@@ -66,7 +66,7 @@
 #'   "max_iter" = 9999,
 #'   "alpha"    = .10
 #'   )
-#' \donttest{m1.EM <- zcurve(OSC.z, method = "EM", bootstrap = FALSE, control = ctr1)}
+#' \dontrun{m1.EM <- zcurve(OSC.z, method = "EM", bootstrap = FALSE, control = ctr1)}
 #' # see '?control_EM' and '?control_density' for more information about different
 #' # z-curves specifications
 #' @seealso [summary.zcurve()], [plot.zcurve()], [control_EM], [control_density]
@@ -540,6 +540,9 @@ print.summary.zcurve <- function(x, ...){
 #' to \code{FALSE}.
 #' @param extrapolate Scale the chart to the extrapolated area. Defaults 
 #' to \code{FALSE}.
+#' @param plot_type Type of plot to by produced. Defaults to \code{"base"} 
+#' for th base plotting function. An alternative is \code{"ggplot"} for a 
+#' ggplot2.
 #' @param y.anno A vector of length 8 specifying the y-positions
 #'   of the individual annotation lines relative to the figure's height.
 #'   Defaults to \code{c(.95, .88, .78, .71, .61, .53, .43, .35)}
@@ -553,7 +556,7 @@ print.summary.zcurve <- function(x, ...){
 #' @export plot.zcurve
 #' @rawNamespace S3method(plot, zcurve)
 #' 
-#' @examples 
+#' @examples \dontrun{
 #' # simulate some z-statistics and fit a z-curve
 #' z <- abs(rnorm(300,3))
 #' m.EM <- zcurve(z, method = "EM", bootstrap = 100)
@@ -566,11 +569,21 @@ print.summary.zcurve <- function(x, ...){
 #' 
 #' # change the location of the annotation to the left
 #' plot(m.EM, annotation = TRUE, CI = TRUE, x_text = 0)
+#' }
 #' @seealso [zcurve()]
-plot.zcurve          <- function(x, annotation = FALSE, CI = FALSE, extrapolate = FALSE,
+plot.zcurve          <- function(x, annotation = FALSE, CI = FALSE, extrapolate = FALSE, plot_type = "base",
                                  y.anno = c(.95, .88, .78, .71, .61, .53, .43, .35), x.anno = .6, cex.anno = 1, ...){
  
-  if(is.null(x$boot))CI <- FALSE
+  if(is.null(x$boot))
+    CI <- FALSE
+  
+  if(substr(tolower(plot_type), 1, 1) == "b"){
+    plot_type <- "base"
+  }else if(substr(tolower(plot_type), 1, 1) == "g"){
+    plot_type <- "ggplot"
+  }else{
+    stop("Unrecognized `plot_type` argument. The possibly options are `base` and `ggplot`.")
+  }
   
   additional <- list(...)
   if(is.null(additional$main)){
@@ -701,86 +714,286 @@ plot.zcurve          <- function(x, annotation = FALSE, CI = FALSE, extrapolate 
     x_min <- 0
   }
   
-  # plot z-scores used for fitting
-  graphics::plot(h1,
-                 freq = FALSE, density = 0, angle = 0, border = "blue",
-                 xlim = c(x_min, x_max),
-                 ylim = c(y_min, y_max),
-                 ylab = ylab,
-                 xlab = xlab,
-                 main = main,
-                 cex.lab = cex.lab,
-                 cex.axis = cex.axis,
-                 lwd = 1, las = 1)
-  # and un-used z-scores
-  if(!is.null(h2)){
-    graphics::par(new=TRUE)
-    graphics::plot(h2,
-                   freq = FALSE, density = 0, angle = 0, border ="grey30",
+  
+  if(plot_type == "base"){
+    
+    # plot z-scores used for fitting
+    graphics::plot(h1,
+                   freq = FALSE, density = 0, angle = 0, border = "blue",
                    xlim = c(x_min, x_max),
                    ylim = c(y_min, y_max),
-                   axes = FALSE, ann = FALSE, lwd = 1, las = 1)  
-  }
-  # add the density estimate if the model was estimated by density
-  if(x$method == "density"){
-    graphics::lines(x$fit$density$x, x$fit$density$y, lty = 1, col = "grey60", lwd = 4)
-  }
-  # significance line
-  if(x.anno*x_max < x$control$a){
-    graphics::lines(rep(x$control$a,2),                                             c(0, (min(y.anno) - .025)*y_max), col = "blue", lty = 2, lwd = 1)
-    graphics::lines(rep(stats::qnorm(x$control$sig_level/2, lower.tail = FALSE),2), c(0, (min(y.anno) - .025)*y_max), col = "red",  lty = 1, lwd = 2)    
-  }else{
-    graphics::abline(v = x$control$a,                                             col = "blue", lty = 2, lwd = 1)
-    graphics::abline(v = stats::qnorm(x$control$sig_level/2, lower.tail = FALSE), col = "red",  lty = 1, lwd = 2) 
-  }
-  # predicted densities
-  graphics::lines(x_seq, y_den, lty = 1, col = "blue", lwd = 5)
-  if(CI & !is.null(x$boot)){
-    graphics::lines(x_seq, y_den_l.CI, lty = 3, col = "blue", lwd = 3)
-    graphics::lines(x_seq, y_den_u.CI, lty = 3, col = "blue", lwd = 3)
-  }
-  # add annotation
-  if(annotation){
-    x_summary <- summary(x)
-    
-    graphics::text(x.anno, y_max*y.anno[1] , paste0("Range: ",.r2d(min(x$data))," to ",.r2d(max(x$data))),
-                   adj = c(0, 0), cex = cex.anno)
-    
-    graphics::text(x.anno, y_max*y.anno[2] , paste0(x_summary$model$N_all, " tests, ", x_summary$model$N_sig, " significant"),
-                   adj = c(0, 0), cex = cex.anno)
-    
-    obs_proportion <- stats::prop.test(x_summary$model$N_sig, x_summary$model$N_all)
-    graphics::text(x.anno, y_max*y.anno[3] , paste0("Observed discovery rate:"),
-                   adj = c(0, 0), cex = cex.anno)
-    graphics::text(x.anno, y_max*y.anno[4] , paste0(.r2d(obs_proportion$estimate), "  95% CI [", .r2d(obs_proportion$conf.int[1]), " ,",
-                                                    .r2d(obs_proportion$conf.int[2]), "]"),
-                   adj = c(0, 0), cex = cex.anno)
-    
-    if(!is.null(x$boot)){
-      graphics::text(x.anno, y_max*y.anno[5] , paste0("Expected discovery rate:"),
-                     adj = c(0, 0), cex = cex.anno)
-      graphics::text(x.anno, y_max*y.anno[6] , paste0(.r2d(x_summary$coefficients["EDR","Estimate"]), "  95% CI [", .r2d(x_summary$coefficients["EDR","l.CI"]), " ,",
-                                                      .r2d(x_summary$coefficients["EDR","u.CI"]), "]"),
-                     adj = c(0, 0), cex = cex.anno)
-      
-      graphics::text(x.anno, y_max*y.anno[7] , paste0("Expected replicability rate:"),
-                     adj = c(0, 0), cex = cex.anno)
-      graphics::text(x.anno, y_max*y.anno[8] , paste0(.r2d(x_summary$coefficients["ERR","Estimate"]), "  95% CI [", .r2d(x_summary$coefficients["ERR","l.CI"]), " ,",
-                                                      .r2d(x_summary$coefficients["ERR","u.CI"]), "]"),
-                     adj = c(0, 0), cex = cex.anno)
-    }else{
-      graphics::text(x.anno, y_max*y.anno[5] , paste0("Expected discovery rate:"),
-                     adj = c(0, 0), cex = cex.anno)
-      graphics::text(x.anno, y_max*y.anno[6] , paste0(.r2d(x_summary$coefficients["EDR","Estimate"])),
-                     adj = c(0, 0), cex = cex.anno)
-      
-      graphics::text(x.anno, y_max*y.anno[7] , paste0("Expected replicability rate:"),
-                     adj = c(0, 0), cex = cex.anno)
-      graphics::text(x.anno, y_max*y.anno[8] , paste0(.r2d(x_summary$coefficients["ERR","Estimate"])),
-                     adj = c(0, 0), cex = cex.anno)
+                   ylab = ylab,
+                   xlab = xlab,
+                   main = main,
+                   cex.lab = cex.lab,
+                   cex.axis = cex.axis,
+                   lwd = 1, las = 1)
+    # and un-used z-scores
+    if(!is.null(h2)){
+      graphics::par(new=TRUE)
+      graphics::plot(h2,
+                     freq = FALSE, density = 0, angle = 0, border ="grey30",
+                     xlim = c(x_min, x_max),
+                     ylim = c(y_min, y_max),
+                     axes = FALSE, ann = FALSE, lwd = 1, las = 1)  
     }
-
+    # add the density estimate if the model was estimated by density
+    if(x$method == "density"){
+      graphics::lines(x$fit$density$x, x$fit$density$y, lty = 1, col = "grey60", lwd = 4)
+    }
+    # significance line
+    if(x.anno*x_max < x$control$a){
+      graphics::lines(rep(x$control$a,2),                                             c(0, (min(y.anno) - .025)*y_max), col = "blue", lty = 2, lwd = 1)
+      graphics::lines(rep(stats::qnorm(x$control$sig_level/2, lower.tail = FALSE),2), c(0, (min(y.anno) - .025)*y_max), col = "red",  lty = 1, lwd = 2)    
+    }else{
+      graphics::abline(v = x$control$a,                                             col = "blue", lty = 2, lwd = 1)
+      graphics::abline(v = stats::qnorm(x$control$sig_level/2, lower.tail = FALSE), col = "red",  lty = 1, lwd = 2) 
+    }
+    # predicted densities
+    graphics::lines(x_seq, y_den, lty = 1, col = "blue", lwd = 5)
+    if(CI & !is.null(x$boot)){
+      graphics::lines(x_seq, y_den_l.CI, lty = 3, col = "blue", lwd = 3)
+      graphics::lines(x_seq, y_den_u.CI, lty = 3, col = "blue", lwd = 3)
+    }
+    # add annotation
+    if(annotation){
+      x_summary <- summary(x)
+      
+      graphics::text(x.anno, y_max*y.anno[1] , paste0("Range: ",.r2d(min(x$data))," to ",.r2d(max(x$data))),
+                     adj = c(0, 0), cex = cex.anno)
+      
+      graphics::text(x.anno, y_max*y.anno[2] , paste0(x_summary$model$N_all, " tests, ", x_summary$model$N_sig, " significant"),
+                     adj = c(0, 0), cex = cex.anno)
+      
+      obs_proportion <- stats::prop.test(x_summary$model$N_sig, x_summary$model$N_all)
+      graphics::text(x.anno, y_max*y.anno[3] , paste0("Observed discovery rate:"),
+                     adj = c(0, 0), cex = cex.anno)
+      graphics::text(x.anno, y_max*y.anno[4] , paste0(.r2d(obs_proportion$estimate), "  95% CI [", .r2d(obs_proportion$conf.int[1]), " ,",
+                                                      .r2d(obs_proportion$conf.int[2]), "]"),
+                     adj = c(0, 0), cex = cex.anno)
+      
+      if(!is.null(x$boot)){
+        graphics::text(x.anno, y_max*y.anno[5] , paste0("Expected discovery rate:"),
+                       adj = c(0, 0), cex = cex.anno)
+        graphics::text(x.anno, y_max*y.anno[6] , paste0(.r2d(x_summary$coefficients["EDR","Estimate"]), "  95% CI [", .r2d(x_summary$coefficients["EDR","l.CI"]), " ,",
+                                                        .r2d(x_summary$coefficients["EDR","u.CI"]), "]"),
+                       adj = c(0, 0), cex = cex.anno)
+        
+        graphics::text(x.anno, y_max*y.anno[7] , paste0("Expected replicability rate:"),
+                       adj = c(0, 0), cex = cex.anno)
+        graphics::text(x.anno, y_max*y.anno[8] , paste0(.r2d(x_summary$coefficients["ERR","Estimate"]), "  95% CI [", .r2d(x_summary$coefficients["ERR","l.CI"]), " ,",
+                                                        .r2d(x_summary$coefficients["ERR","u.CI"]), "]"),
+                       adj = c(0, 0), cex = cex.anno)
+      }else{
+        graphics::text(x.anno, y_max*y.anno[5] , paste0("Expected discovery rate:"),
+                       adj = c(0, 0), cex = cex.anno)
+        graphics::text(x.anno, y_max*y.anno[6] , paste0(.r2d(x_summary$coefficients["EDR","Estimate"])),
+                       adj = c(0, 0), cex = cex.anno)
+        
+        graphics::text(x.anno, y_max*y.anno[7] , paste0("Expected replicability rate:"),
+                       adj = c(0, 0), cex = cex.anno)
+        graphics::text(x.anno, y_max*y.anno[8] , paste0(.r2d(x_summary$coefficients["ERR","Estimate"])),
+                       adj = c(0, 0), cex = cex.anno)
+      }
+    }
     
+    return(invisible())
+    
+  }else if(plot_type == "ggplot"){
+    
+    out <- ggplot2::ggplot() + 
+      ggplot2::scale_x_continuous(
+        name   = xlab,
+        breaks = pretty(c(x_min, x_max)),
+        limits = c(x_min, x_max)) + 
+      ggplot2::scale_y_continuous(
+        name   = ylab,
+        breaks = pretty(c(y_min, y_max)),
+        limits = c(y_min, y_max)) + 
+      ggplot2::ggtitle(main) +
+      ggplot2::theme_classic()
+
+    # add significant z-scores
+    out <- out + ggplot2::geom_rect(
+        data = data.frame(
+          xmin = h1$breaks[-length(h1$breaks)],
+          xmax = h1$breaks[-1],
+          ymin = 0,
+          ymax = h1$density), 
+        mapping = ggplot2::aes(
+          xmin = .data[["xmin"]],
+          xmax = .data[["xmax"]],
+          ymin = .data[["ymin"]],
+          ymax = .data[["ymax"]]),
+        fill = "white", col = "blue")
+    
+    # add non-significant z-scores (if any)
+    if(!is.null(h2)){
+      out <- out + ggplot2::geom_rect(
+        data = data.frame(
+          xmin = h2$breaks[-length(h2$breaks)],
+          xmax = h2$breaks[-1],
+          ymin = 0,
+          ymax = h2$density), 
+        mapping = ggplot2::aes(
+          xmin = .data[["xmin"]],
+          xmax = .data[["xmax"]],
+          ymin = .data[["ymin"]],
+          ymax = .data[["ymax"]]),
+        fill = "white", col = "grey")
+    }
+    
+    # add the density estimate if the model was estimated by density
+    if(x$method == "density"){
+      out <- out + ggplot2::geom_line(
+        data    = data.frame(
+          x = x$fit$density$x,
+          y = x$fit$density$y
+        ),
+        mapping = ggplot2::aes(
+          x = .data[["x"]],
+          y = .data[["y"]]
+        ),
+        linewidth = 1, col = "grey60", linetype = 4)
+    }
+    
+    # significance line
+    if(x.anno*x_max < x$control$a){
+      
+      #do not overdraw the annotation in case it is in the way
+      out <- out + ggplot2::geom_line(
+        data    = data.frame(
+          x = rep(x$control$a,2),
+          y = c(0, (min(y.anno) - .025)*y_max)
+        ),
+        mapping = ggplot2::aes(
+          x = .data[["x"]],
+          y = .data[["y"]]
+        ),
+        linewidth = 1, col = "blue", linetype = 1)
+      out <- out + ggplot2::geom_line(
+        data    = data.frame(
+          x = rep(stats::qnorm(x$control$sig_level/2, lower.tail = FALSE),2),
+          y = c(0, (min(y.anno) - .025)*y_max)
+        ),
+        mapping = ggplot2::aes(
+          x = .data[["x"]],
+          y = .data[["y"]]
+        ),
+        linewidth = 1.5, col = "red", linetype = 2)
+
+      
+    }else{
+      
+      out <- out + ggplot2::geom_vline(
+        xintercept = x$control$a,
+        linewidth = 1, col = "blue", linetype = 1)
+      out <- out + ggplot2::geom_vline(
+        xintercept = stats::qnorm(x$control$sig_level/2, lower.tail = FALSE),
+        linewidth = 1.5, col = "red", linetype = 2)
+      
+    }
+    
+    # predicted densities
+    out <- out + ggplot2::geom_line(
+      data    = data.frame(
+        x = x_seq,
+        y = y_den
+      ),
+      mapping = ggplot2::aes(
+        x = .data[["x"]],
+        y = .data[["y"]]
+      ),
+      linewidth = 2, col = "blue", linetype = 1)
+    
+    if(CI & !is.null(x$boot)){
+      out <- out + ggplot2::geom_line(
+        data    = data.frame(
+          x = x_seq,
+          y = y_den_l.CI
+        ),
+        mapping = ggplot2::aes(
+          x = .data[["x"]],
+          y = .data[["y"]]
+        ),
+        linewidth = 1.75, col = "blue", linetype = 3)
+      out <- out + ggplot2::geom_line(
+        data    = data.frame(
+          x = x_seq,
+          y = y_den_u.CI
+        ),
+        mapping = ggplot2::aes(
+          x = .data[["x"]],
+          y = .data[["y"]]
+        ),
+        linewidth = 1.75, col = "blue", linetype = 3)
+    }
+    
+    # add annotation
+    if(annotation){
+      
+      x_summary         <- summary(x)
+      obs_proportion    <- stats::prop.test(x_summary$model$N_sig, x_summary$model$N_all)
+      ggplot2_base_size <- 5
+      
+      out <- out + ggplot2::geom_text(
+        data    = data.frame(
+          x     = x.anno,
+          y     = y_max*y.anno[1:4],
+          label = c(
+            paste0("Range: ",.r2d(min(x$data))," to ",.r2d(max(x$data))),
+            paste0(x_summary$model$N_all, " tests, ", x_summary$model$N_sig, " significant"),
+            paste0("Observed discovery rate:"),
+            paste0(.r2d(obs_proportion$estimate), "  95% CI [", .r2d(obs_proportion$conf.int[1]), " ,",
+                   .r2d(obs_proportion$conf.int[2]), "]")
+            )
+        ),
+        mapping = ggplot2::aes(
+          x     = .data[["x"]],
+          y     = .data[["y"]],
+          label = .data[["label"]]), 
+        hjust = 0, vjust = 0, size = ggplot2_base_size*cex.anno)
+      
+      if(!is.null(x$boot)){
+        out <- out + ggplot2::geom_text(
+          data    = data.frame(
+            x     = x.anno,
+            y     = y_max*y.anno[5:8],
+            label = c(
+              paste0("Expected discovery rate:"),
+              paste0(.r2d(x_summary$coefficients["EDR","Estimate"]), "  95% CI [", .r2d(x_summary$coefficients["EDR","l.CI"]), " ,",
+                     .r2d(x_summary$coefficients["EDR","u.CI"]), "]"),
+              paste0("Expected replicability rate:"),
+              paste0(.r2d(x_summary$coefficients["ERR","Estimate"]), "  95% CI [", .r2d(x_summary$coefficients["ERR","l.CI"]), " ,",
+                     .r2d(x_summary$coefficients["ERR","u.CI"]), "]")
+            )
+          ),
+          mapping = ggplot2::aes(
+            x     = .data[["x"]],
+            y     = .data[["y"]],
+            label = .data[["label"]]),
+          hjust = 0, vjust = 0, size = ggplot2_base_size*cex.anno)
+      }else{
+        out <- out + ggplot2::geom_text(
+          data    = data.frame(
+            x     = x.anno,
+            y     = y_max*y.anno[5:8],
+            label = c(
+              paste0("Expected discovery rate:"),
+              paste0(.r2d(x_summary$coefficients["EDR","Estimate"])),
+              paste0("Expected replicability rate:"),
+              paste0(.r2d(x_summary$coefficients["ERR","Estimate"]))
+            )
+          ),
+          mapping = ggplot2::aes(
+            x     = .data[["x"]],
+            y     = .data[["y"]],
+            label = .data[["label"]]),
+          hjust = 0, vjust = 0, size = ggplot2_base_size*cex.anno)
+      }
+    }
+    
+    return(out)
   }
   
 }

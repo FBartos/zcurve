@@ -94,7 +94,7 @@ ctr1 <- list(
   "max_iter" = 9999,
   "alpha"    = .10
   )
-\donttest{m1.EM <- zcurve(OSC.z, method = "EM", bootstrap = FALSE, control = ctr1)}
+\dontrun{m1.EM <- zcurve(OSC.z, method = "EM", bootstrap = FALSE, control = ctr1)}
 # see '?control_EM' and '?control_density' for more information about different
 # z-curves specifications
 }
