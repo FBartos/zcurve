@@ -36,3 +36,4 @@ Suggests:
 Language: en-US
 RdMacros: Rdpack
 URL: https://fbartos.github.io/zcurve/
+BugReports: https://github.com/FBartos/zcurve/issues
