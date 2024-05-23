@@ -128,6 +128,7 @@ zcurve       <- function(z, z.lb, z.ub, p, p.lb, p.ub, data, method = "EM", boot
   
   ### prepare data
   if(missing(data)){
+    
     # get point estimates on the same scale
     if(!missing(z)){
       z <- abs(z)
@@ -150,11 +151,18 @@ zcurve       <- function(z, z.lb, z.ub, p, p.lb, p.ub, data, method = "EM", boot
       ub          <- c(ub, .p_to_z(p.lb))
     }
     
+    # get the total number of observations before removal for fitting purposes
+    N_obs <- length(z) + length(lb)
+    N_sig <- length(z[z >= control$a]) + length(lb[lb >= control$a])
+    
     # restrict censoring to the fitting range & treat extremely censored values as extremely significant values
     if(!is.null(lb)){
       
-      if(any(lb < control$a))
-        stop("All censored observations must be higher than the fitting range.")
+      if(any(lb < control$a)){
+        warning(paste0(sum(lb < control$a), " censored p-values removed due to the upper bound being larger that the fitting range."), immediate. = TRUE, call. = FALSE)
+        ub <- ub[lb >= control$a]
+        lb <- lb[lb >= control$a]
+      }
       
       z  <- c(z, lb[lb >= control$b])
       
@@ -184,10 +192,18 @@ zcurve       <- function(z, z.lb, z.ub, p, p.lb, p.ub, data, method = "EM", boot
       object$data <- numeric()
     }
     
+    # get the total number of observations before removal for fitting purposes
+    N_obs <- length(data$precise$p)
+    N_sig <- length(data$precise$p[.p_to_z(data$precise$p) >= control$a])
+    
     if(nrow(data$censored) != 0){
       
       lb <- .p_to_z(data$censored$p.ub)
       ub <- .p_to_z(data$censored$p.lb)
+      
+      # get the total number of observations before removal for fitting purposes (using the collected bounds before accounting for rounding)
+      N_obs <- N_obs + length(.p_to_z(data$censored$p.rep))
+      N_sig <- N_sig + length(.p_to_z(data$censored$p.rep)[.p_to_z(data$censored$p.rep) >= control$a])
       
       # remove non-significant censored p-values
       if(any(lb < control$a)){
@@ -195,7 +211,7 @@ zcurve       <- function(z, z.lb, z.ub, p, p.lb, p.ub, data, method = "EM", boot
         ub <- ub[lb >= control$a]
         lb <- lb[lb >= control$a]
       }
-
+      
       # move too significant censored p-values among precise p-values          
       if(length(lb) > 0 && any(lb >= control$b)){
         object$data <- c(object$data, lb[lb >= control$b])
@@ -222,7 +238,9 @@ zcurve       <- function(z, z.lb, z.ub, p, p.lb, p.ub, data, method = "EM", boot
     }
   }
 
-  object$control        <- control
+  object$control <- control
+  object$N_obs   <- N_obs
+  object$N_sig   <- N_sig
   
   # only run the algorithm with some significant results
   if(sum(object$data > control$a & object$data < control$b) + nrow(object$data_censoring) < 10)
@@ -353,9 +371,8 @@ summary.zcurve       <- function(object, type = "results", all = FALSE, ERR.adj 
     iter_text <- object$fit$iter
   }
   
-  temp_N_sig     <- sum(object$data > stats::qnorm(object$control$sig_level/2, lower.tail = FALSE)) + 
-    nrow(object$data_censoring[object$data_censoring$lb > object$control$a,]) 
-  temp_N_obs     <- length(object$data) + nrow(object$data_censoring)
+  temp_N_sig     <- object$N_sig
+  temp_N_obs     <- object$N_obs
   temp_N_used    <- sum(object$data > object$control$a & object$data < object$control$b) + 
     nrow(object$data_censoring[object$data_censoring$lb > object$control$a & object$data_censoring$lb < object$control$b ,])
     

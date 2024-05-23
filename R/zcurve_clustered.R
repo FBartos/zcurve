@@ -66,11 +66,19 @@ zcurve_clustered <- function(data, method = "b", bootstrap = 1000, parallel = FA
     z_id <- numeric()
   }
   
+  # get the total number of observations before removal for fitting purposes
+  N_obs <- length(data$precise$p)
+  N_sig <- length(data$precise$p[.p_to_z(data$precise$p) >= control$a])
+  
   if(nrow(data$censored) != 0){
     
     lb   <- .p_to_z(data$censored$p.ub)
     ub   <- .p_to_z(data$censored$p.lb)
     b_id <- data$censored$id
+    
+    # get the total number of observations before removal for fitting purposes (using the collected bounds before accounting for rounding)
+    N_obs <- N_obs + length(.p_to_z(data$censored$p.rep))
+    N_sig <- N_sig + length(.p_to_z(data$censored$p.rep)[.p_to_z(data$censored$p.rep) >= control$a])
     
     # remove non-significant censored p-values
     if(any(lb < control$a)){
@@ -109,7 +117,9 @@ zcurve_clustered <- function(data, method = "b", bootstrap = 1000, parallel = FA
   object$data_id        <- z_id
   object$data_censoring <- data.frame(lb = lb, ub = ub, id = b_id)
   
-  object$control        <- control
+  object$control <- control
+  object$N_obs   <- N_obs
+  object$N_sig   <- N_sig
   
   # only run the algorithm with some significant results
   if(sum(z > control$a & z < control$b) + length(lb) < 10)

@@ -1,3 +1,6 @@
+## version 2.4.1
+- Fixes ODR computation with censored data
+
 ## version 2.4.0
 - Implementation of ggploting function.
 

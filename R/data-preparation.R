@@ -21,7 +21,7 @@
 #' p-values treated as exact values.
 #'
 #' @details By default, the function extract the type of test statistic:
-#' \itemize{
+#' \describe{
 #'  \item{\code{"F(df1, df2)=x"}}{F-statistic with df1 and df2 degrees of freedom,}
 #'  \item{\code{"chi(df)=x"}}{Chi-square statistic with df degrees of freedom,}
 #'  \item{\code{"t(df)=x"}}{for t-statistic with df degrees of freedom,}
@@ -119,9 +119,10 @@ zcurve_data <- function(data, id = NULL, rounded = TRUE, stat_precise = 2, p_pre
   }
   
   # prepare empty containers
-  p_vals    <- rep(NA, length(data))
-  p_vals.lb <- rep(NA, length(data))
-  p_vals.ub <- rep(NA, length(data))
+  p_vals     <- rep(NA, length(data))
+  p_vals.rep <- rep(NA, length(data))
+  p_vals.lb  <- rep(NA, length(data))
+  p_vals.ub  <- rep(NA, length(data))
   
   # compute and allocate the p-values accordingly
   for(i in seq_along(data)){
@@ -151,10 +152,11 @@ zcurve_data <- function(data, id = NULL, rounded = TRUE, stat_precise = 2, p_pre
         ),
         warning = function(w) stop(paste0("The following input could not be decoded: '", data[i], "'."))
       )
-      p_vals.lb[i] <- 0
+      p_vals.lb[i]  <- 0
+      p_vals.rep[i] <- p_vals.ub[i]
     }else if(rounded[i] != -1 && !censored[i]){
       # rounded non-censored values
-      
+      temp_stat_val    <- abs(stat_val[i]) 
       temp_stat_val.lb <- abs(stat_val[i]) - 0.5 * 10^-digits[i]
       temp_stat_val.ub <- abs(stat_val[i]) + 0.5 * 10^-digits[i]
       
@@ -182,9 +184,20 @@ zcurve_data <- function(data, id = NULL, rounded = TRUE, stat_precise = 2, p_pre
         ),
         warning = function(w) stop(paste0("The following input could not be decoded: '", data[i], "'."))
       )
+      p_vals.rep[i] <- tryCatch(
+        switch(
+          stat_type[i],
+          "f" = stats::pf(temp_stat_val, df1 = stat_df1[i], df2 = stat_df2[i], lower.tail = FALSE),
+          "c" = stats::pchisq(temp_stat_val, df = stat_df1[i], lower.tail = FALSE),
+          "t" = stats::pt(abs(temp_stat_val), df = stat_df1[i], lower.tail = FALSE) * 2,
+          "z" = stats::pnorm(abs(temp_stat_val), lower.tail = FALSE) * 2,
+          "p" = temp_stat_val
+        ),
+        warning = function(w) stop(paste0("The following input could not be decoded: '", data[i], "'."))
+      )
     }else if(rounded[i] != -1 && censored[i]){
       # rounded censored values
-      
+      temp_stat_val    <- abs(stat_val[i]) 
       temp_stat_val.ub <- abs(stat_val[i]) + 0.5 * 10^-digits[i]
     
       p_vals.ub[i] <- tryCatch(
@@ -198,7 +211,18 @@ zcurve_data <- function(data, id = NULL, rounded = TRUE, stat_precise = 2, p_pre
         ),
         warning = function(w) stop(paste0("The following input could not be decoded: '", data[i], "'."))
       )
-      p_vals.lb[i] <- 0
+      p_vals.lb[i]  <- 0
+      p_vals.rep[i] <- tryCatch(
+        switch(
+          stat_type[i],
+          "f" = stats::pf(temp_stat_val.lb , df1 = stat_df1[i], df2 = stat_df2[i], lower.tail = FALSE),
+          "c" = stats::pchisq(temp_stat_val.lb, df = stat_df1[i], lower.tail = FALSE),
+          "t" = stats::pt(temp_stat_val.lb, df = stat_df1[i], lower.tail = FALSE) * 2,
+          "z" = stats::pnorm(temp_stat_val.lb, lower.tail = FALSE) * 2,
+          "p" = temp_stat_val
+        ),
+        warning = function(w) stop(paste0("The following input could not be decoded: '", data[i], "'."))
+      )
     }
   }
   
@@ -212,6 +236,7 @@ zcurve_data <- function(data, id = NULL, rounded = TRUE, stat_precise = 2, p_pre
       "input" = data[!is.na(p_vals.lb)],
       "p.lb"  = p_vals.lb[!is.na(p_vals.lb)],
       "p.ub"  = p_vals.ub[!is.na(p_vals.ub)],
+      "p.rep" = p_vals.rep[!is.na(p_vals.rep)],
       "id"    = id[!is.na(p_vals.lb)]
     )
   )
