@@ -16,60 +16,68 @@ name: R-CMD-check
 
 jobs:
   R-CMD-check:
-    runs-on: ${{ matrix.config.os }}
-
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os }} (R ${{ matrix.r }})
 
     strategy:
       fail-fast: false
       matrix:
-        config:
-          - {os: windows-latest, r: 'release'}
-          - {os: macOS-latest,   r: 'release'}
-          - {os: ubuntu-latest,  r: 'release'}
+        r: ['4.3.3']
+        os: [ubuntu-latest, macOS-latest, windows-latest]
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
-      RSPM: ${{ matrix.config.rspm }}
+      R_REMOTES_UPGRADE: never
+      VDIFFR_RUN_TESTS: true
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      _R_CHECK_LENGTH_1_CONDITION_: TRUE #deprecated from R 4.2.0
+      _R_CHECK_MATRIX_DATA_: TRUE # only works from R 4.2.0 onwards
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: r-lib/actions/setup-r@v2
         with:
-          r-version: ${{ matrix.config.r }}
+          r-version: ${{ matrix.r }}
 
-      - uses: r-lib/actions/setup-pandoc@v2
-
-      - name: Query dependencies
+      - name: Install system dependencies on macOS
+        if: runner.os == 'macOS'
         run: |
-          install.packages('remotes')
-          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
-          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
-        shell: Rscript {0}
+          # see https://github.com/orgs/Homebrew/discussions/4612
+          unset HOMEBREW_NO_INSTALL_FROM_API
+          brew update
+          brew install --cask xquartz
+          brew install libarchive
+        shell: bash
+        
+      - name: Install system dependencies on macOS specific to R devel
+        if: runner.os == 'macOS' && matrix.r == 'devel'
+        run: |
+          # ragg                                          requires harfbuzz fribidi
+          # The dependencies of the two R packages below are required for compiling from source on Ubuntu, but macOS seems fine without them
+          # credentials   (dependency of usethis)         requires libgit2
+          # curl          (dependency of usethis)         requires openssl
+          
+          brew install harfbuzz fribidi libgit2 openssl curl
+        shell: bash
 
-      - name: Restore R package cache
-        uses: actions/cache@v2
-        with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
-
-      - name: Install system dependencies
+      - name: Install system dependencies on linux
         if: runner.os == 'Linux'
         run: |
-          while read -r cmd
-          do
-            eval sudo $cmd
-          sudo apt-get install libcurl4-openssl-dev
+          # ragg                                          requires libharfbuzz-dev libfribidi-dev 
+          # credentials   (dependency of usethis)         requires libgit2-dev
+          # curl          (dependency of usethis)         requires libcurl4-openssl-dev
+          # libicu   (dependency of igraph or stringi...) requires libicu libicu-dev
+
+          sudo apt install libharfbuzz-dev libfribidi-dev libgit2-dev libcurl4-openssl-dev libicu*
+        shell: bash
 
       - name: Install dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
-
+        
       - name: Check
         if: runner.os != 'Windows'
         env:
@@ -95,7 +103,6 @@ jobs:
             error_on    = "warning",
             check_dir   = "check")
         shell: Rscript {0}
-
 
       - name: Upload check results
         if: failure()

@@ -59,8 +59,8 @@ test_that("z-curve EM can be fitted and reproduces OSC results", {
     ))
   
   # plot
-  expect_doppelganger("z-curve EM", function()plot(fit.EM, main = "OSC (with EM)", annotation = TRUE, CI = TRUE))
-  expect_doppelganger("z-curve EM (ggplot)", suppressWarnings(plot(fit.EM, main = "OSC (with EM)", annotation = TRUE, CI = TRUE, plot_type = "ggplot")))
+  vdiffr::expect_doppelganger("z-curve EM", function()plot(fit.EM, main = "OSC (with EM)", annotation = TRUE, CI = TRUE))
+  vdiffr::expect_doppelganger("z-curve EM (ggplot)", suppressWarnings(plot(fit.EM, main = "OSC (with EM)", annotation = TRUE, CI = TRUE, plot_type = "ggplot")))
 
 })
 test_that("z-curve KD2 can be fitted and reproduces OSC results", {
@@ -100,8 +100,8 @@ test_that("z-curve KD2 can be fitted and reproduces OSC results", {
     ))
   
   # plot
-  expect_doppelganger("z-curve KD2", function()plot(fit.KD2))
-  expect_doppelganger("z-curve KD2 (ggplot)", plot(fit.KD2, plot_type = "ggplot"))
+  vdiffr::expect_doppelganger("z-curve KD2", function()plot(fit.KD2))
+  vdiffr::expect_doppelganger("z-curve KD2 (ggplot)", plot(fit.KD2, plot_type = "ggplot"))
   
 })
 test_that("z-curve EM censoring works", {
@@ -132,8 +132,8 @@ test_that("z-curve EM censoring works", {
     ))
   
   # plot
-  expect_doppelganger("z-curve mixed EM", function()plot(fit.mixed, CI = TRUE))
-  expect_doppelganger("z-curve mixed EM (ggplot)", plot(fit.mixed, CI = TRUE, plot_type = "ggplot"))
+  vdiffr::expect_doppelganger("z-curve mixed EM", function()plot(fit.mixed, CI = TRUE))
+  vdiffr::expect_doppelganger("z-curve mixed EM (ggplot)", plot(fit.mixed, CI = TRUE, plot_type = "ggplot"))
   
   
   # censoring only
@@ -157,8 +157,8 @@ test_that("z-curve EM censoring works", {
     ))
   
   # plot
-  expect_doppelganger("z-curve cens EM", function()plot(fit.cens, CI = TRUE))
-  expect_doppelganger("z-curve cens EM (ggplot)", plot(fit.cens, CI = TRUE, plot_type = "ggplot"))
+  vdiffr::expect_doppelganger("z-curve cens EM", function()plot(fit.cens, CI = TRUE))
+  vdiffr::expect_doppelganger("z-curve cens EM (ggplot)", plot(fit.cens, CI = TRUE, plot_type = "ggplot"))
 })
 test_that("z-curve clustered works", {
   
@@ -204,7 +204,7 @@ test_that("z-curve clustered works", {
       "Q = -238.11, 95% CI[-269.95, -219.12]"  
     ))
   
-  expect_doppelganger("z-curve clustered rounded", function(){
+  vdiffr::expect_doppelganger("z-curve clustered rounded", function(){
     oldpar <- graphics::par(no.readonly = TRUE)
     on.exit(graphics::par(mfrow = oldpar[["mfrow"]]))
     par(mfrow = c(1, 2))
@@ -251,7 +251,7 @@ test_that("z-curve clustered works", {
       "Q = -201.69, 95% CI[-219.18, -185.82]" 
     ))
   
-  expect_doppelganger("z-curve clustered precise", function(){
+  vdiffr::expect_doppelganger("z-curve clustered precise", function(){
     oldpar <- graphics::par(no.readonly = TRUE)
     on.exit(graphics::par(mfrow = oldpar[["mfrow"]]))
     par(mfrow = c(1, 2))
@@ -298,7 +298,7 @@ test_that("z-curve clustered works", {
       "Q = -321.39, 95% CI[-361.78, -298.20]"  
     ))
   
-  expect_doppelganger("z-curve clustered mixed", function(){
+  vdiffr::expect_doppelganger("z-curve clustered mixed", function(){
     oldpar <- graphics::par(no.readonly = TRUE)
     on.exit(graphics::par(mfrow = oldpar[["mfrow"]]))
     par(mfrow = c(1, 2))
@@ -306,6 +306,6 @@ test_that("z-curve clustered works", {
     plot(fitw)
   })
   
-  expect_doppelganger("z-curve clustered mixed (ggplot-1)", plot(fitb, plot_type = "ggplot"))
-  expect_doppelganger("z-curve clustered mixed (ggplot-2)", plot(fitw, plot_type = "ggplot"))
+  vdiffr::expect_doppelganger("z-curve clustered mixed (ggplot-1)", plot(fitb, plot_type = "ggplot"))
+  vdiffr::expect_doppelganger("z-curve clustered mixed (ggplot-2)", plot(fitw, plot_type = "ggplot"))
 })
