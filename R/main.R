@@ -92,19 +92,23 @@ zcurve       <- function(z, z.lb, z.ub, p, p.lb, p.ub, data, method = "EM", boot
     if(missing(z) & missing(p) & missing(z.lb) & missing(p.lb))
       stop("No data input")
     if(!missing(z)){
+      if(length(z) == 0)
+        stop("An empty input was passed as z-scores.")
       if(!is.numeric(z))
         stop("Wrong z-scores input: Data are not nummeric.")
       if(!is.vector(z))
-        stop("Wrong z-scores input: Data are not a vector")
+        stop("Wrong z-scores input: Data are not a vector.")
       if(all(z <= 1 & z >= 0))
-        stop("It looks like you are entering p-values rather than z-scores. To use p-values, explicitly name your argument 'zcurve(p = [vector of p-values])'")
+        stop("It looks like you are entering p-values rather than z-scores. To use p-values, explicitly name your argument 'zcurve(p = [vector of p-values])'.")
       input_type <- c(input_type, "z")
     }
     if(!missing(p)){
+      if(length(p) == 0)
+        stop("An empty input was passed as p-values.")
       if(!is.numeric(p))
         stop("Wrong p-values input: Data are not nummeric.")
       if(!is.vector(p))
-        stop("Wrong p-values input: Data are not a vector") 
+        stop("Wrong p-values input: Data are not a vector.") 
       input_type <- c(input_type, "p")
     }
   }else if(inherits(data, "zcurve_data")){

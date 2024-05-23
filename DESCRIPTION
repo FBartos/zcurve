@@ -1,6 +1,6 @@
 Package: zcurve
 Title: An Implementation of Z-Curves
-Version: 2.4.1
+Version: 2.4.2
 Authors@R: c(
     person("František", "Bartoš", email = "f.bartos96@gmail.com", role = c("aut", "cre")),
     person("Ulrich", "Schimmack", email = "ulrich.schimmack@utoronto.ca", role = c("aut")))
