@@ -12,6 +12,7 @@ An implementation of z-curves - a method for estimating expected discovery and r
 Useful links:
 \itemize{
   \item \url{https://fbartos.github.io/zcurve/}
+  \item Report bugs at \url{https://github.com/FBartos/zcurve/issues}
 }
 
 }
