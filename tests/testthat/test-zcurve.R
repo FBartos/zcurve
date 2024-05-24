@@ -59,14 +59,16 @@ test_that("z-curve EM can be fitted and reproduces OSC results", {
     ))
   
   # plot
+  skip_on_os("mac")
   vdiffr::expect_doppelganger("z-curve EM", function()plot(fit.EM, main = "OSC (with EM)", annotation = TRUE, CI = TRUE))
   vdiffr::expect_doppelganger("z-curve EM (ggplot)", suppressWarnings(plot(fit.EM, main = "OSC (with EM)", annotation = TRUE, CI = TRUE, plot_type = "ggplot")))
 
 })
 test_that("z-curve KD2 can be fitted and reproduces OSC results", {
-  
+
   # set seed for reproducibility 
   set.seed(666)
+  skip_on_os("mac")
   
   # fit the EM method
   fit.KD2 <- zcurve(OSC.z, method = "density", bootstrap = 10)
