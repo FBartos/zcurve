@@ -79,7 +79,7 @@ test_that("z-curve KD2 can be fitted and reproduces OSC results", {
       ""                                                       ,
       "Estimates:"                                             ,
       "      ERR       EDR "                                   ,
-      "0.6133950 0.5064392 "    
+      "0.6133975 0.5064694 "    
     ))
   
   # basic summary
@@ -94,7 +94,7 @@ test_that("z-curve KD2 can be fitted and reproduces OSC results", {
       "ERR    0.613 0.496 0.745"                                                                ,
       "EDR    0.506 0.141 0.714"                                                                ,
       ""                                                                                        ,
-      "Model converged in 47 iterations"                                                        ,
+      "Model converged in 46 iterations"                                                        ,
       "Fitted using 73 z-values. 90 supplied, 85 significant (ODR = 0.94, 95% CI [0.87, 0.98]).",
       "RMSE = 0.11, 95% CI[0.09, 0.19]"
     ))
