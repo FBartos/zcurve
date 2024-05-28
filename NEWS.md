@@ -1,3 +1,6 @@
+## version 2.4.2
+- Fixes https://github.com/FBartos/zcurve/issues/22
+
 ## version 2.4.1
 - Fixes ODR computation with censored data
 
