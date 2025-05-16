@@ -1,3 +1,7 @@
+## version 2.4.3
+- Adds conf.level argument to the summary function to change the confidence level of the confidence intervals.
+- Updates documentation and references.
+
 ## version 2.4.2
 - Fixes https://github.com/FBartos/zcurve/issues/22
 
