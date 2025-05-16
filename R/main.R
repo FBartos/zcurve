@@ -531,8 +531,9 @@ print.summary.zcurve <- function(x, ...){
   temp_coef    <- x$coefficients
   
   # confidence interval label
-  conf.level <- attr(x, "conf.level") 
-  CI_label   <- sprintf("%.0f%%", conf.level * 100) 
+  # adding default value because of stored summary objects in CoTiMa's test...
+  conf.level <- if(is.null(attr(x, "conf.level"))) 0.95 else attr(x, "conf.level") 
+  CI_label   <- sprintf("%.0f%%", conf.level * 100)
   
   if(length(temp_to_int) != 0){
     temp_coef[temp_to_int,]  <- apply(as.data.frame(x$coefficients[temp_to_int,]), 2, function(p).rXd(p, X = x$round.coef))
