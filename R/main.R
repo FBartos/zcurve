@@ -30,7 +30,9 @@
 #' \code{method = "density"} gives the KD2 version of z-curve as outlined in
 #' \insertCite{zcurve2;textual}{zcurve}. For the original z-curve 
 #' \insertCite{zcurve1}{zcurve}, referred to as KD1, specify 
-#'  \code{'control = "density", control = list(model = "KD1")'}.
+#'  \code{'control = "density", control = list(model = "KD1")'}. Specifying 
+#'  the lower and upper bounds of z-scores or p-values will fit the censored 
+#'  version of z-curve described in \insertCite{zcurve3}{zcurve}.
 #'  
 #' @references
 #' \insertAllCited{}
@@ -339,6 +341,9 @@ print.zcurve         <- function(x, ...){
 #' to \code{.05} as proposed by Bartos & Schimmack (in preparation).
 #' @param round.coef To how many decimals should the coefficient 
 #' be rounded. Defaults to \code{3}.
+#' @param conf.level Confidence level for the confidence intervals. Note 
+#' that the \code{ERR.adj} and \code{EDR.adj} arguments were calibrated 
+#' for a 95% CI and might not be appropriate for other confidence levels.
 #' @param ... Additional arguments
 #'
 #' @return Summary of a z-curve object
@@ -347,11 +352,11 @@ print.zcurve         <- function(x, ...){
 #' @export summary.zcurve
 #' @rawNamespace S3method(summary, zcurve)
 #' @seealso [zcurve()]
-summary.zcurve       <- function(object, type = "results", all = FALSE, ERR.adj = .03, EDR.adj = .05, round.coef = 3, ...){
+summary.zcurve       <- function(object, type = "results", all = FALSE, ERR.adj = .03, EDR.adj = .05, round.coef = 3, conf.level = 0.95, ...){
 
   if(substr(object$method, 1, 2) == "EM"){
     if(!is.null(object$boot)){
-      fit_index <- c(object$fit$Q, unname(stats::quantile(object$boot$Q, c(.025, .975))))
+      fit_index <- c(object$fit$Q, unname(stats::quantile(object$boot$Q, probs = 0.5 + c(-conf.level/2, conf.level/2 ))))
     }else{
       fit_index <- c(object$fit$Q)
     }
@@ -360,7 +365,7 @@ summary.zcurve       <- function(object, type = "results", all = FALSE, ERR.adj 
     fit_stat    <- "Q"
   }else if(object$method == "density"){
     if(!is.null(object$boot)){
-      fit_index <- c(object$fit$objective, unname(stats::quantile(object$boot$objective, c(.025, .975))))
+      fit_index <- c(object$fit$objective, unname(stats::quantile(object$boot$objective, probs = 0.5 + c(-conf.level/2, conf.level/2 ))))
     }else{
       fit_index <- c(object$fit$objective)
     }
@@ -395,10 +400,10 @@ summary.zcurve       <- function(object, type = "results", all = FALSE, ERR.adj 
   if(type == "results" | substr(type,1,3) == "res"){
     
     if(!is.null(object$boot)){
-      l.CI <- c(stats::quantile(object$coefficients_boot$ERR, .025),
-                stats::quantile(object$coefficients_boot$EDR, .025))
-      u.CI <- c(stats::quantile(object$coefficients_boot$ERR, .975),
-                stats::quantile(object$coefficients_boot$EDR, .975))
+      l.CI <- c(stats::quantile(object$coefficients_boot$ERR, probs = 0.5 - conf.level/2),
+                stats::quantile(object$coefficients_boot$EDR, probs = 0.5 - conf.level/2))
+      u.CI <- c(stats::quantile(object$coefficients_boot$ERR, probs = 0.5 + conf.level/2),
+                stats::quantile(object$coefficients_boot$EDR, probs = 0.5 + conf.level/2))
     }else{
       l.CI <- NULL
       u.CI <- NULL
@@ -464,8 +469,8 @@ summary.zcurve       <- function(object, type = "results", all = FALSE, ERR.adj 
       
       if(object$method == "density"){
         if(object$control$version == 1){
-          M_l.CI <- apply(object$boot$mu,2,stats::quantile, prob = .025)
-          M_u.CI <- apply(object$boot$mu,2,stats::quantile, prob = .975)
+          M_l.CI <- apply(object$boot$mu,2,stats::quantile, probs = 0.5 - conf.level/2)
+          M_u.CI <- apply(object$boot$mu,2,stats::quantile, probs = 0.5 + conf.level/2)
         }else{
           M_l.CI <- NULL
           M_u.CI <- NULL
@@ -475,8 +480,8 @@ summary.zcurve       <- function(object, type = "results", all = FALSE, ERR.adj 
         M_u.CI <- NULL
       }
 
-      W_l.CI <- apply(object$boot$weights,2,stats::quantile, prob = .025)
-      W_u.CI <- apply(object$boot$weights,2,stats::quantile, prob = .975)
+      W_l.CI <- apply(object$boot$weights,2,stats::quantile, probs = 0.5 - conf.level/2)
+      W_u.CI <- apply(object$boot$weights,2,stats::quantile, probs = 0.5 + conf.level/2)
       
     }else{
       M_l.CI <- NULL
@@ -500,6 +505,7 @@ summary.zcurve       <- function(object, type = "results", all = FALSE, ERR.adj 
               model        = model,
               converged    = object$converged,
               round.coef   = round.coef)
+  attr(res, "conf.level") <- conf.level
   class(res) <- "summary.zcurve"
   return(res)
 }
@@ -521,9 +527,13 @@ print.summary.zcurve <- function(x, ...){
   
   #stats::printCoefmat(x$coefficients, digits = 2,
   #                    cs.ind  = c(1:ncol(x$coefficients)), tst.ind = integer(), zap.ind = integer())
-  
   temp_to_int  <- !rownames(x$coefficients) %in% c("Expected N", "Missing N")
   temp_coef    <- x$coefficients
+  
+  # confidence interval label
+  # adding default value because of stored summary objects in CoTiMa's test...
+  conf.level <- if(is.null(attr(x, "conf.level"))) 0.95 else attr(x, "conf.level") 
+  CI_label   <- sprintf("%.0f%%", conf.level * 100)
   
   if(length(temp_to_int) != 0){
     temp_coef[temp_to_int,]  <- apply(as.data.frame(x$coefficients[temp_to_int,]), 2, function(p).rXd(p, X = x$round.coef))
@@ -533,7 +543,7 @@ print.summary.zcurve <- function(x, ...){
   print(temp_coef,quote = FALSE, right = T)
   
   if(length(x$model$fit_index) > 1){
-    fit_index_CI <- paste(c(", 95% CI[", .r2d(x$model$fit_index[2]), ", ", .r2d(x$model$fit_index[3]),"]"), collapse = "")
+    fit_index_CI <- paste(c(", ", CI_label, " CI[", .r2d(x$model$fit_index[2]), ", ", .r2d(x$model$fit_index[3]),"]"), collapse = "")
   }else{
     fit_index_CI <- NULL
   }
@@ -545,8 +555,8 @@ print.summary.zcurve <- function(x, ...){
     cat(paste(c("\033[0;31m", "Model did not converge in ", x$model$iter, " iterations", "\033[0m", "\n"), collapse = ""))
   }
   
-  obs_proportion <- stats::prop.test(x$model$N_sig, x$model$N_all)
-  cat(paste0("Fitted using ", x$model$N_used, " ", paste(x$model$input_type, collapse = " and "), "-values. ", x$model$N_all, " supplied, ", x$model$N_sig, " significant (ODR = ",  .r2d(obs_proportion$estimate), ", 95% CI [", .r2d(obs_proportion$conf.int[1]), ", ", .r2d(obs_proportion$conf.int[2]), "]).\n"))
+  obs_proportion <- stats::prop.test(x$model$N_sig, x$model$N_all, conf.level = conf.level)
+  cat(paste0("Fitted using ", x$model$N_used, " ", paste(x$model$input_type, collapse = " and "), "-values. ", x$model$N_all, " supplied, ", x$model$N_sig, " significant (ODR = ",  .r2d(obs_proportion$estimate), ", ", CI_label, " CI [", .r2d(obs_proportion$conf.int[1]), ", ", .r2d(obs_proportion$conf.int[2]), "]).\n"))
 
   cat(paste(c(x$model$fit_stat," = " , .r2d(x$model$fit_index[1]), fit_index_CI, "\n"), collapse = ""))
   

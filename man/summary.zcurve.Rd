@@ -11,6 +11,7 @@
   ERR.adj = 0.03,
   EDR.adj = 0.05,
   round.coef = 3,
+  conf.level = 0.95,
   ...
 )
 }
@@ -33,6 +34,10 @@ to \code{.05} as proposed by Bartos & Schimmack (in preparation).}
 
 \item{round.coef}{To how many decimals should the coefficient
 be rounded. Defaults to \code{3}.}
+
+\item{conf.level}{Confidence level for the confidence intervals. Note
+that the \code{ERR.adj} and \code{EDR.adj} arguments were calibrated
+for a 95\% CI and might not be appropriate for other confidence levels.}
 
 \item{...}{Additional arguments}
 }

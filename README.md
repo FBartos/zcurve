@@ -13,13 +13,14 @@ status](https://www.r-pkg.org/badges/version/zcurve)](https://CRAN.R-project.org
 
 This package implements z-curves - methods for estimating expected
 discovery and replicability rates on bases of test-statistics of
-published studies. The package provides functions for fitting the new
-density and EM version (Bartoš & Schimmack, in preparation) as well as
-the original density z-curve (Brunner & Schimmack, 2020). Furthermore,
-the package provides summarizing and plotting functions for the fitted
-z-curve objects. See the aforementioned articles for more information
-about the z-curves, expected discovery and replicability rates,
-validation studies, and limitations.
+published studies. The package provides functions for fitting the
+censored EM version (Schimmack & Bartoš, 2023), the EM version (Bartoš &
+Schimmack, 2022) as well as the original density z-curve (Brunner &
+Schimmack, 2020). Furthermore, the package provides summarizing and
+plotting functions for the fitted z-curve objects. See the
+aforementioned articles for more information about z-curve, expected
+discovery rate (EDR), expected replicability rate (ERR), maximum false
+discovery rate (FDR), as well as validation studies, and limitations.
 
 ## Installation
 
@@ -38,14 +39,15 @@ devtools::install_github("FBartos/zcurve")
 
 ## Example
 
-Z-curve can be used to estimate expected replicability rate (ERR) and
-expected discovery rate (EDR) using z-scores from a set of significant
-findings. This is a reproduction of an example in Bartoš and Schimmack
-(in preparation) where the z-curve is used to estimate ERR and EDR on a
-subset of studies used in reproducibility project (OSC, 2015). Only
-studies with non-ambiguous original outcomes are used - excluding
-studies with “marginally significant” original findings, leading to 90
-studies. Out of these 90 studies, 35 were successfully replicated.
+Z-curve can be used to estimate expected replicability rate (ERR),
+expected discovery rate (EDR), and maximum false discovery rate (Soric
+FDR) using z-scores from a set of significant findings. This is a
+reproduction of an example in Bartoš and Schimmack (2022) where the
+z-curve is used to estimate ERR and EDR on a subset of studies used in
+reproducibility project (OSC, 2015). Only studies with non-ambiguous
+original outcomes are used - excluding studies with “marginally
+significant” original findings, leading to 90 studies. Out of these 90
+studies, 35 were successfully replicated.
 
 We included the recoded z-scores from the 90 OSC studies as a dataset in
 the package (‘OSC.z’). The expectation-maximization (EM) version of the
@@ -59,8 +61,6 @@ specifying “zcurve(p = p.values)”.
 ``` r
 set.seed(666)
 library(zcurve)
-#> Please, note the following changes in version 1.0.9 (see NEWS for more details):
-#> - The ERR estimate now takes the directionality of the expected replications into account, which might lead to slight changes in the estimates.
 
 fit <- zcurve(OSC.z)
 
@@ -81,7 +81,8 @@ summary(fit)
 
 More details from the fitted object can be extracted from the fitted
 object. For more statistics, as expected number of conducted studies,
-the file drawer ratio or Sorić’s FDR specify ‘all = TRUE’.
+the file drawer ratio or Sorić’s FDR specify ‘all = TRUE’ (see Schimmack
+& Bartoš, 2023) .
 
 ``` r
 summary(fit, all = TRUE)
@@ -172,7 +173,7 @@ summary(fit.KD2)
 #> ERR    0.613
 #> EDR    0.506
 #> 
-#> Model converged in 47 iterations
+#> Model converged in 46 iterations
 #> Fitted using 73 z-values. 90 supplied, 85 significant (ODR = 0.94, 95% CI [0.87, 0.98]).
 #> RMSE = 0.11
 
@@ -183,11 +184,11 @@ summary(fit.KD1)
 #> model: KD1 via density (version 1)
 #> 
 #>     Estimate
-#> ERR    0.634
+#> ERR    0.637
 #> 
-#> Model converged in 141 iterations
+#> Model converged in 44 iterations
 #> Fitted using 73 z-values. 90 supplied, 85 significant (ODR = 0.94, 95% CI [0.87, 0.98]).
-#> MAE (*1e3) = 0.25
+#> MAE (*1e3) = 0.26
 ```
 
 The ‘control’ argument can be used to change the number of iterations or
@@ -206,12 +207,11 @@ use it in your work, please, cite it as:
 
 ``` r
 citation(package = "zcurve")
-#> 
 #> To cite the zcurve package in publications use:
 #> 
-#> Bartoš F, Schimmack U (2020). "zcurve: An R Package for Fitting
-#> Z-curves." R package version 1.0.9, <URL:
-#> https://CRAN.R-project.org/package=zcurve>.
+#>   Bartoš F, Schimmack U (2020). "zcurve: An R Package for Fitting
+#>   Z-curves." R package version 2.4.2,
+#>   <https://CRAN.R-project.org/package=zcurve>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
@@ -219,20 +219,26 @@ citation(package = "zcurve")
 #>     title = {zcurve: An R Package for Fitting Z-curves},
 #>     author = {František Bartoš and Ulrich Schimmack},
 #>     year = {2020},
-#>     note = {R package version 1.0.9},
+#>     note = {R package version 2.4.2},
 #>     url = {https://CRAN.R-project.org/package=zcurve},
 #>   }
 ```
 
 ## Sources
 
-Bartoš, F., & Schimmack, U. (2020, January 10). Z-Curve.2.0: Estimating
-Replication Rates and Discovery Rates.
-<https://doi.org/10.31234/osf.io/urgtn>
+Schimmack, U., & Bartoš, F. (2023). Estimating the false discovery risk
+of (randomized) clinical trials in medical journals based on published
+p-values. *PLoS ONE, 18*(8), e0290084.
+<https://doi.org/10.1371/journal.pone.0290084>
+
+Bartoš, F., & Schimmack, U. (2022). Z-curve 2.0: Estimating replication
+rates and discovery rates. *Meta-Psychology*, 6.
+<https://doi.org/10.15626/MP.2021.2720>
 
 Brunner, J., & Schimmack, U. (2020). Estimating population mean power
 under conditions of heterogeneity and selection for significance.
-Meta-Psychology, 4.
+*Meta-Psychology*, 4. <https://doi.org/10.15626/MP.2018.874>
 
 Open Science Collaboration. (2015). Estimating the reproducibility of
-psychological science. Science, 349(6251), aac4716.
+psychological science. *Science, 349*(6251), aac4716.
+<https://doi.org/10.1126/science.aac4716>

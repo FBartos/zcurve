@@ -64,7 +64,9 @@ The function returns the EM method by default and changing
 \code{method = "density"} gives the KD2 version of z-curve as outlined in
 \insertCite{zcurve2;textual}{zcurve}. For the original z-curve
 \insertCite{zcurve1}{zcurve}, referred to as KD1, specify
-\code{'control = "density", control = list(model = "KD1")'}.
+\code{'control = "density", control = list(model = "KD1")'}. Specifying
+the lower and upper bounds of z-scores or p-values will fit the censored
+version of z-curve described in \insertCite{zcurve3}{zcurve}.
 }
 \examples{
 # load data from OSC 2015 reproducibility project

@@ -399,7 +399,7 @@ NULL
     return(control)
   }
   if(!is.null(control[["model"]])){
-    if(control$model == "KD2"){
+    if(control[["model"]] == "KD2"){
       control$version         <- 2
       control$sig_level       <- .05
       control$sig_level_Z     <- stats::qnorm(control$sig_level/2,lower.tail = F)

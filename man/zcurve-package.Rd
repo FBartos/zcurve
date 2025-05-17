@@ -3,10 +3,9 @@
 \docType{package}
 \name{zcurve-package}
 \alias{zcurve-package}
-\alias{_PACKAGE}
 \title{zcurve: An Implementation of Z-Curves}
 \description{
-An implementation of z-curves - a method for estimating expected discovery and replicability rates on the bases of test-statistics of published studies. The package provides functions for fitting the new density and EM version (Bartoš & Schimmack, 2020, \doi{10.31234/osf.io/urgtn}), censored observations, as well as the original density z-curve (Brunner & Schimmack, 2020, \doi{10.15626/MP.2018.874}). Furthermore, the package provides summarizing and plotting functions for the fitted z-curve objects. See the aforementioned articles for more information about the z-curves, expected discovery and replicability rates, validation studies, and limitations.
+An implementation of z-curves - a method for estimating expected discovery and replicability rates on the bases of test-statistics of published studies. The package provides functions for fitting the density, EM, and censored EM version (Bartoš & Schimmack, 2022, \doi{10.15626/MP.2021.2720}; Schimmack & Bartoš, 2023, \doi{ 10.1371/journal.pone.0290084}), as well as the original density z-curve (Brunner & Schimmack, 2020, \doi{10.15626/MP.2018.874}). Furthermore, the package provides summarizing and plotting functions for the fitted z-curve objects. See the aforementioned articles for more information about the z-curves, expected discovery and replicability rates, validation studies, and limitations.
 }
 \seealso{
 Useful links:
