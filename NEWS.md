@@ -1,3 +1,6 @@
+## version 2.4.4
+- Fixes incorrect computation of EDR/ERR when the start of the fitting range does not match the significance level.
+
 ## version 2.4.3
 - Adds conf.level argument to the summary function to change the confidence level of the confidence intervals.
 - Updates documentation and references.

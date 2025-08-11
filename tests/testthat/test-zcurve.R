@@ -17,7 +17,7 @@ test_that("z-curve EM can be fitted and reproduces OSC results", {
       ""                    , 
       "Estimates:"          , 
       "      ERR       EDR ",
-      "0.6145784 0.3884366 "    
+      "0.6180663 0.3905984 "    
     ))
   
   # basic summary
@@ -29,8 +29,8 @@ test_that("z-curve EM can be fitted and reproduces OSC results", {
       "model: EM via EM"                                                                        ,
       ""                                                                                        ,
       "    Estimate  l.CI  u.CI"                                                                ,
-      "ERR    0.615 0.443 0.740"                                                                ,
-      "EDR    0.388 0.070 0.699"                                                                ,
+      "ERR    0.618 0.447 0.743"                                                                ,
+      "EDR    0.391 0.070 0.701"                                                                ,
       ""                                                                                        ,
       "Model converged in 27 + 783 iterations"                                                  ,
       "Fitted using 73 z-values. 90 supplied, 85 significant (ODR = 0.94, 95% CI [0.87, 0.98]).",
@@ -46,12 +46,12 @@ test_that("z-curve EM can be fitted and reproduces OSC results", {
       "model: EM via EM"                                                                        ,
       ""                                                                                        ,
       "              Estimate  l.CI   u.CI"                                                     ,
-      "ERR              0.615 0.443  0.740"                                                     ,
-      "EDR              0.388 0.070  0.699"                                                     ,
-      "Soric FDR        0.083 0.023  0.705"                                                     ,
-      "File Drawer R    1.574 0.430 13.387"                                                     ,
-      "Expected N         219   122   1223"                                                     ,
-      "Missing N          129    32   1133"                                                     ,
+      "ERR              0.618 0.447  0.743"                                                     ,
+      "EDR              0.391 0.070  0.701"                                                     ,
+      "Soric FDR        0.082 0.022  0.697"                                                     ,
+      "File Drawer R    1.560 0.426 13.237"                                                     ,
+      "Expected N         218   121   1210"                                                     ,
+      "Missing N          128    31   1120"                                                     ,
       ""                                                                                        ,
       "Model converged in 27 + 783 iterations"                                                  ,
       "Fitted using 73 z-values. 90 supplied, 85 significant (ODR = 0.94, 95% CI [0.87, 0.98]).",

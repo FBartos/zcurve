@@ -84,7 +84,7 @@
 # original z-curve1.0
 .zcurve_density_ver1         <- function(z, control) {
   
-  prop_high <- sum(z > control$b) / sum(z > stats::qnorm(control$sig_level/2, lower.tail = FALSE))
+  prop_high <- sum(z > control$b) / sum(z > control$a)
   ncomp     <- control$K
   bw        <- control$bw
   cv        <- control$a
@@ -202,7 +202,7 @@ NULL
 # z-curve 2.0 (KD2)
 .zcurve_density_ver2      <- function(z, control) {
 
-  prop_high   <- sum(z > control$b) / sum(z > stats::qnorm(control$sig_level/2, lower.tail = FALSE))
+  prop_high   <- sum(z > control$b) / sum(z > control$a)
   z.val.input <- z
   
   Z.INT = z.val.input[z.val.input >= control$a & z.val.input <= control$b + 1]

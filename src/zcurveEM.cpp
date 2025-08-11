@@ -264,9 +264,7 @@ NumericVector select_x_w(NumericVector x, NumericVector x_w, double a, double b)
   NumericVector x_w_new  = x_w[x_true1 & x_true2];
   return x_w_new;
 }
-double get_prop_high(NumericVector x, double select_sig, double b){
-  
-  double a = R::pnorm(select_sig/2, 0, 1, false, false);
+double get_prop_high(NumericVector x, double a, double b){
   
   LogicalVector x_sig_true = x > a;
   NumericVector x_sig      = x[x_sig_true];
@@ -277,9 +275,7 @@ double get_prop_high(NumericVector x, double select_sig, double b){
   double prop_high = (1.0 * x_high.length()) / (1.0 * x_sig.length());
   return prop_high;
 }
-double get_prop_high_cens(NumericVector x, double select_sig, double b, int n_censored){
-  
-  double a = R::pnorm(select_sig/2, 0, 1, false, false);
+double get_prop_high_cens(NumericVector x, double a, double b, int n_censored){
   
   LogicalVector x_sig_true = x > a;
   NumericVector x_sig      = x[x_sig_true];
@@ -290,9 +286,7 @@ double get_prop_high_cens(NumericVector x, double select_sig, double b, int n_ce
   double prop_high = (1.0 * x_high.length()) / (1.0 * (x_sig.length() + n_censored));
   return prop_high;
 }
-double get_prop_high_cens_w(NumericVector x, NumericVector x_w, double select_sig, double b, int n_censored){
-  
-  double a = R::pnorm(select_sig/2, 0, 1, false, false);
+double get_prop_high_cens_w(NumericVector x, NumericVector x_w, double a, double b, int n_censored){
   
   LogicalVector x_sig_true = x > a;
   NumericVector x_w_sig    = x_w[x_sig_true];
@@ -309,7 +303,7 @@ double get_prop_high_cens_w(NumericVector x, NumericVector x_w, double select_si
 List zcurve_EM_fit_RCpp(NumericVector x, int type, NumericVector mu, NumericVector sigma, NumericVector theta, double a, double b, double sig_level,
                  int max_iter, double criterion) {
 
-  double prop_high = get_prop_high(x, sig_level, b);
+  double prop_high = get_prop_high(x, a, b);
   x = select_x(x,a,b);
   
   
@@ -354,7 +348,7 @@ List zcurve_EM_fit_RCpp(NumericVector x, int type, NumericVector mu, NumericVect
 List zcurve_EM_fit_fast_RCpp(NumericVector x, NumericVector mu, NumericVector sigma, NumericVector theta, double a, double b, double sig_level,
                  int max_iter, double criterion) {
 
-  double prop_high = get_prop_high(x, sig_level, b);
+  double prop_high = get_prop_high(x, a, b);
   x = select_x(x,a,b);
   
   NumericMatrix log_lik (x.size(), mu.size());
@@ -398,7 +392,7 @@ List zcurve_EMc_fit_fast_RCpp(NumericVector x, NumericVector lb, NumericVector u
                               NumericVector mu, NumericVector sigma, NumericVector theta, double a, double b, double sig_level,
                              int max_iter, double criterion) {
   
-  double prop_high = get_prop_high_cens(x, sig_level, b, lb.size());
+  double prop_high = get_prop_high_cens(x, a, b, lb.size());
   x = select_x(x,a,b);
   
   NumericMatrix log_lik (x.size(), mu.size());
@@ -442,7 +436,7 @@ List zcurve_EMc_fit_fast_w_RCpp(NumericVector x, NumericVector x_w, NumericVecto
                               NumericVector mu, NumericVector sigma, NumericVector theta, double a, double b, double sig_level,
                               int max_iter, double criterion) {
   
-  double prop_high =  get_prop_high_cens_w(x, x_w, sig_level, b, sum(b_w));
+  double prop_high =  get_prop_high_cens_w(x, x_w, a, b, sum(b_w));
   x_w = select_x_w(x,x_w,a,b);
   x   = select_x(x,a,b);
   
