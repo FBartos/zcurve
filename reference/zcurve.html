@@ -22,7 +22,7 @@ be specified using the method and control arguments. See
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">zcurve</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.6</span>
       </span>
     </div>
 
@@ -191,11 +191,14 @@ version of z-curve described in (Schimmack and Bartoš 2023)
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># fit an EM z-curve (with disabled bootstrap due to examples times limits)</span></span></span>
 <span class="r-in"><span><span class="va">m.EM</span> <span class="op">&lt;-</span> <span class="fu">zcurve</span><span class="op">(</span><span class="va">OSC.z</span>, method <span class="op">=</span> <span class="st">"EM"</span>, bootstrap <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The z-curve method is meant for large samples of test statistics. It might produce undercoverage and biased estimates of EDR in small sample sizes.</span>
 <span class="r-in"><span><span class="co"># a version with 1000 boostraped samples would looked like:</span></span></span>
 <span class="r-in"><span><span class="va">m.EM</span> <span class="op">&lt;-</span> <span class="fu">zcurve</span><span class="op">(</span><span class="va">OSC.z</span>, method <span class="op">=</span> <span class="st">"EM"</span>, bootstrap <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The z-curve method is meant for large samples of test statistics. It might produce undercoverage and biased estimates of EDR in small sample sizes.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># or KD2 z-curve (use larger bootstrap for real inference)</span></span></span>
 <span class="r-in"><span><span class="va">m.D</span> <span class="op">&lt;-</span> <span class="fu">zcurve</span><span class="op">(</span><span class="va">OSC.z</span>, method <span class="op">=</span> <span class="st">"density"</span>, bootstrap <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The z-curve method is meant for large samples of test statistics. It might produce undercoverage and biased estimates of EDR in small sample sizes.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># inspect the results</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.EM</span><span class="op">)</span></span></span>
@@ -256,7 +259,7 @@ version of z-curve described in (Schimmack and Bartoš 2023)
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>
