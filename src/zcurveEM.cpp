@@ -95,12 +95,12 @@ NumericVector tdist_pdf(NumericVector x, double mu, double df, double a, double 
   return exp(L);
 }
 NumericVector trunc_normal_lpdf(NumericVector x, double mu, double sigma, double a, double b) {
-  double lccdf = R::pnorm(a, mu, sigma, false,true);
-  double lcdf  = R::pnorm(b, mu, sigma, true, true);
+  double ccdf = R::pnorm(a, mu, sigma, true, false);
+  double cdf  = R::pnorm(b, mu, sigma, true, false);
 
   NumericVector L = dnorm(x, mu, sigma, true);
 
-  L = L - lccdf - lcdf;
+  L = L - log(cdf - ccdf);
   return L;
 }
 
@@ -189,6 +189,7 @@ NumericMatrix weight_u_log_lik(NumericMatrix ull, NumericVector theta){
   }
   return ll;
 }
+
 NumericMatrix compute_log_lik(NumericVector x, NumericVector mu, NumericVector sigma, double a, double b, NumericVector theta){
   NumericMatrix ll(x.size(), mu.size());
 
@@ -316,11 +317,12 @@ List zcurve_EM_fit_RCpp(NumericVector x, int type, NumericVector mu, NumericVect
   int i= 0;
   Q[i] = 0;
 
+  log_lik   = compute_log_lik(x, mu, sigma, a, b, theta);
+  lik       = exp_matrix(log_lik);
+  l_row_sum = compute_l_row_sum(lik);
+  
   do{
     // E-step
-    log_lik   = compute_log_lik(x, mu, sigma, a, b, theta);
-    lik       = exp_matrix(log_lik);
-    l_row_sum = compute_l_row_sum(lik);
     p         = compute_p(lik,l_row_sum);
 
     // M-step
@@ -328,7 +330,11 @@ List zcurve_EM_fit_RCpp(NumericVector x, int type, NumericVector mu, NumericVect
     if(type == 2){
       mu = update_mu(p, x, mu, sigma, a, b);
     }
-
+    
+    log_lik   = compute_log_lik(x, mu, sigma, a, b, theta);
+    lik       = exp_matrix(log_lik);
+    l_row_sum = compute_l_row_sum(lik);
+    
     Q[i+1] = sum(log(l_row_sum));
     ++i;
 
