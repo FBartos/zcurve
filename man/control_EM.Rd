@@ -3,7 +3,18 @@
 \name{control_EM}
 \alias{control_EM}
 \title{Control settings for the zcurve EM algorithm}
-\arguments{
+\description{
+All these settings are passed to the Expectation Maximization
+fitting algorithm. All unspecified settings are set to the default value.
+Setting \code{model = "EM"} sets all settings to the default
+value irrespective of any other setting and fits z-curve as described in
+\insertCite{zcurve2;textual}{zcurve}
+}
+\section{Control options}{
+
+Supply these settings as a named list to the \code{control} argument of
+\code{\link[=zcurve]{zcurve()}}.
+\describe{
 \item{model}{A type of model to be fitted, defaults to \code{"EM"}
 for a z-curve with 7 z-scores centered components.}
 
@@ -52,13 +63,8 @@ bootstrapping, defaults to \code{1.0} (i.e., N-out-of-N bootstrap)}
 \item{fit_reps}{A number of starting fits to get the initial
 position for the EM algorithm, defaults to \code{100}}
 }
-\description{
-All these settings are passed to the Expectation Maximization
-fitting algorithm. All unspecified settings are set to the default value.
-Setting \code{model = "EM"} sets all settings to the default
-value irrespective of any other setting and fits z-curve as described in
-\insertCite{zcurve2;textual}{zcurve}
 }
+
 \examples{
 # to increase the number of starting fits
 # and change the means of the mixture components

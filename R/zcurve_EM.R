@@ -196,39 +196,59 @@
 #' value irrespective of any other setting and fits z-curve as described in
 #' \insertCite{zcurve2;textual}{zcurve}
 #' 
-#' @param model A type of model to be fitted, defaults to \code{"EM"}
-#' for a z-curve with 7 z-scores centered components.
-#' @param sig_level An alpha level of the test statistics, defaults to
-#' \code{.05}
-#' @param a A beginning of fitting interval, defaults to
-#' \code{qnorm(sig_level/2,lower.tail = F)}
-#' @param b An end of fitting interval, defaults to \code{5}
-#' @param mu Means of the components, defaults to
-#' \code{0:6}
-#' @param sigma A standard deviation of the components, defaults to
-#' \code{rep(1, length(mu))}
-#' @param theta_alpha A vector of alpha parameters of a Dirichlet distribution
+#' @section Control options:
+#' Supply these settings as a named list to the \code{control} argument of
+#' [zcurve()].
+#' \describe{
+#' \item{model}{A type of model to be fitted, defaults to \code{"EM"}
+#' for a z-curve with 7 z-scores centered components.}
+#'
+#' \item{sig_level}{An alpha level of the test statistics, defaults to
+#' \code{.05}}
+#'
+#' \item{a}{A beginning of fitting interval, defaults to
+#' \code{qnorm(sig_level/2,lower.tail = F)}}
+#'
+#' \item{b}{An end of fitting interval, defaults to \code{5}}
+#'
+#' \item{mu}{Means of the components, defaults to
+#' \code{0:6}}
+#'
+#' \item{sigma}{A standard deviation of the components, defaults to
+#' \code{rep(1, length(mu))}}
+#'
+#' \item{theta_alpha}{A vector of alpha parameters of a Dirichlet distribution
 #' for generating random starting values for the weights, defaults to
-#' \code{rep(.5, length(mu))}
-#' @param theta_max Upper limits for weights, defaults to
-#' \code{rep(1,length(mu))}
-#' @param criterion A criterion to terminate the EM algorithm,
-#' defaults to \code{1e-6}
-#' @param criterion_start A criterion to terminate the starting phase 
-#' of the EM algorithm, defaults to \code{1e-3}
-#' @param criterion_boot A criterion to terminate the bootstrapping phase 
-#' of the EM algorithm, defaults to \code{1e-5}
-#' @param max_iter A maximum number of iterations of the EM algorithm
-#' (not including the starting iterations) defaults to \code{10000}
-#' @param max_iter_start A maximum number of iterations for the 
-#' starting phase of EM algorithm, defaults to \code{100}
-#' @param max_iter_boot A maximum number of iterations for the 
-#' booting phase of EM algorithm, defaults to \code{100}
-#' @param bootstrap_prop A proportion of the sample size to be used for the
-#' bootstrapping, defaults to \code{1.0} (i.e., N-out-of-N bootstrap)
-#' @param fit_reps A number of starting fits to get the initial
-#' position for the EM algorithm, defaults to \code{100}
-#' 
+#' \code{rep(.5, length(mu))}}
+#'
+#' \item{theta_max}{Upper limits for weights, defaults to
+#' \code{rep(1,length(mu))}}
+#'
+#' \item{criterion}{A criterion to terminate the EM algorithm,
+#' defaults to \code{1e-6}}
+#'
+#' \item{criterion_start}{A criterion to terminate the starting phase
+#' of the EM algorithm, defaults to \code{1e-3}}
+#'
+#' \item{criterion_boot}{A criterion to terminate the bootstrapping phase
+#' of the EM algorithm, defaults to \code{1e-5}}
+#'
+#' \item{max_iter}{A maximum number of iterations of the EM algorithm
+#' (not including the starting iterations) defaults to \code{10000}}
+#'
+#' \item{max_iter_start}{A maximum number of iterations for the
+#' starting phase of EM algorithm, defaults to \code{100}}
+#'
+#' \item{max_iter_boot}{A maximum number of iterations for the
+#' booting phase of EM algorithm, defaults to \code{100}}
+#'
+#' \item{bootstrap_prop}{A proportion of the sample size to be used for the
+#' bootstrapping, defaults to \code{1.0} (i.e., N-out-of-N bootstrap)}
+#'
+#' \item{fit_reps}{A number of starting fits to get the initial
+#' position for the EM algorithm, defaults to \code{100}}
+#' }
+#'
 #' @references
 #' \insertAllCited{}
 #' 

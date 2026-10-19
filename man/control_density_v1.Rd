@@ -3,7 +3,18 @@
 \name{control_density_v1}
 \alias{control_density_v1}
 \title{Control settings for the original z-curve density algorithm}
-\arguments{
+\description{
+All settings are passed to the density fitting
+algorithm. All unspecified settings are set to the default value.
+Setting \code{model = "KD1"} sets all settings to the default
+value irrespective of any other setting and fits z-curve as described
+in \insertCite{zcurve1;textual}{zcurve}.
+}
+\section{Control options}{
+
+Supply these settings as a named list to the \code{control} argument of
+\code{\link[=zcurve]{zcurve()}}.
+\describe{
 \item{version}{Set to \code{1} to fit the original version of z-curve.
 Defaults to \code{2} = the updated version of z-curve. For its settings
 page go to \link{control_density}.}
@@ -32,13 +43,8 @@ defaults to \code{1e-10}}
 
 \item{bw}{A bandwidth of the kernel density estimation, defaults to \code{"nrd0"}}
 }
-\description{
-All settings are passed to the density fitting
-algorithm. All unspecified settings are set to the default value.
-Setting \code{model = "KD1"} sets all settings to the default
-value irrespective of any other setting and fits z-curve as described
-in \insertCite{zcurve1;textual}{zcurve}.
 }
+
 \examples{
 # to increase the number of iterations
 ctrl <- list(

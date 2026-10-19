@@ -1,5 +1,6 @@
 ## version 2.4.7
 - Replaces the evmix dependency with an internal implementation of reflected Gaussian kernel density estimation, preserving the density_dbc option.
+- Documents control settings as option lists to satisfy R-devel Rd checks.
 
 ## version 2.4.6
 - Adds warnings for small sample sizes and homogeneity as suggested by E. Zwet.

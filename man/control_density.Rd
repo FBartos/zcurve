@@ -3,7 +3,20 @@
 \name{control_density}
 \alias{control_density}
 \title{Control settings for the z-curve 2.0 density algorithm}
-\arguments{
+\description{
+All settings are passed to the density fitting
+algorithm. All unspecified settings are set to the default value.
+Setting \code{model = "KD2"} sets all settings to the default
+value irrespective of any other setting and fits z-curve as
+describe in \insertCite{zcurve2;textual}{zcurve}. In order to fit the
+z-curve 1.0 density algorithm, set \code{model = "KD1"} and go to
+\link{control_density_v1}
+}
+\section{Control options}{
+
+Supply these settings as a named list to the \code{control} argument of
+\code{\link[=zcurve]{zcurve()}}.
+\describe{
 \item{version}{Which version of z-curve should be fitted. Defaults to
 \code{2} = z-curve 2.0. Set to \code{1} in order to fit the original
 version of z-curve. For its settings page go to \link{control_density_v1}.}
@@ -63,15 +76,8 @@ reflection at the lower fitting boundary, defaults to \code{.01}}
 
 \item{precision_FDR}{A maximum FDR precision, defaults to \code{.05}}
 }
-\description{
-All settings are passed to the density fitting
-algorithm. All unspecified settings are set to the default value.
-Setting \code{model = "KD2"} sets all settings to the default
-value irrespective of any other setting and fits z-curve as
-describe in \insertCite{zcurve2;textual}{zcurve}. In order to fit the
-z-curve 1.0 density algorithm, set \code{model = "KD1"} and go to
-\link{control_density_v1}
 }
+
 \examples{
 # to decrease the criterion and increase the number of iterations
 ctrl <- list(
