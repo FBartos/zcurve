@@ -331,14 +331,15 @@ NULL
 #' @param aug Augment truncated kernel density, defaults to \code{TRUE}
 #' @param aug.bw A bandwidth of the augmentation, defaults to \code{.20}
 #' @param n.bars A resolution of density function, defaults to \code{512}
-#' @param density_dbc Use \link[evmix]{bckden} to estimate a truncated kernel density,
+#' @param density_dbc Use Gaussian kernel density estimation with reflection at
+#' the lower fitting boundary,
 #' defaults to \code{FALSE}, in which case \link[stats]{density} is used
 #' @param compute_FDR Whether to compute FDR, leads to noticeable increase in
 #' computation, defaults to \code{FALSE}
 #' @param criterion_FDR A criterion for estimating the maximum FDR, defaults
 #' to \code{.02}
 #' @param criterion_FDR_dbc A criterion for estimating the maximum FDR using
-#' the \link[evmix]{bckden} function, defaults to \code{.01}
+#' reflection at the lower fitting boundary, defaults to \code{.01}
 #' @param precision_FDR A maximum FDR precision, defaults to \code{.05}
 #' 
 #' @references
@@ -372,7 +373,7 @@ NULL
     control$aug             <- TRUE		          # Augment truncated Kernal Density
     control$aug.bw          <- .20  		        # Augment Bandwidth
     control$n.bars          <- 512   		        # resolution of density function (doesn't seem to matter much)
-    control$density_dbc     <- FALSE			      # USE dbckden function to truncate Kernal Density
+    control$density_dbc     <- FALSE			      # Use reflection at the lower fitting boundary
     control$criterion_FDR     <- .02		        # criterion for maximum FDR
     control$criterion_FDR_dbc <- .01	          # criterion for maximum FDR using density_dbc function
     control$precision_FDR   <- .05              # Maximum FDR precision (low precision slows things down)
@@ -416,7 +417,7 @@ NULL
       control$aug             <- TRUE		          # Augment truncated Kernal Density
       control$aug.bw          <- .20  		        # Augment Bandwidth
       control$n.bars          <- 512   		        # resolution of density function (doesn't seem to matter much)
-      control$density_dbc     <- FALSE			      # USE dbckden function to truncate Kernal Density
+      control$density_dbc     <- FALSE			      # Use reflection at the lower fitting boundary
       control$criterion_FDR     <- .02		        # criterion for maximum FDR
       control$criterion_FDR_dbc <- .01	          # criterion for maximum FDR using density_dbc function
       control$precision_FDR   <- .05              # Maximum FDR precision (low precision slows things down)
@@ -528,7 +529,7 @@ NULL
     control$n.bars          <- 512   		        # resolution of density function (doesn't seem to matter much)
   }
   if(is.null(control[["density_dbc"]])){
-    control$density_dbc     <- FALSE			      # USE dbckden function to truncate Kernal Density
+    control$density_dbc     <- FALSE			      # Use reflection at the lower fitting boundary
   }
   if(is.null(control[["criterion_FDR"]])){
     control$criterion_FDR     <- .02		        # criterion for maximum FDR
@@ -803,6 +804,44 @@ NULL
 ##############################################
 ### Get Densities
 ##############################################
+# Gaussian reflection branch adapted from evmix 2.12 (GPL-3),
+# dbckden() and bckdenxreflect(), by Yang Hu and Carl Scarrott.
+# Source: https://CRAN.R-project.org/src/contrib/evmix_2.12.tar.gz
+.zcurve_density_reflect <- function(x, kerncentres, bw){
+
+  if(length(x) == 0L || (!is.numeric(x) && !all(is.na(x))))
+    stop("x must be a non-empty numeric vector")
+  if(length(kerncentres) == 0L || (!is.numeric(kerncentres) && !all(is.na(kerncentres))))
+    stop("kerncentres must be a non-empty numeric vector")
+  if(length(bw) != 1L || !is.numeric(bw) || !is.finite(bw) || bw <= 0)
+    stop("bw must be a finite positive numeric scalar")
+
+  if(any(is.infinite(x)))
+    warning("infinite quantiles set to NA")
+  x[is.infinite(x)] <- NA
+
+  if(any(!is.finite(kerncentres)))
+    warning("non-finite kernel centres are dropped")
+  kerncentres <- kerncentres[is.finite(kerncentres)]
+  if(any(kerncentres < 0))
+    stop("negative kernel centres not permitted")
+  if(length(kerncentres) == 0L)
+    stop("kerncentres must contain at least one finite value")
+
+  # Preserve evmix's evaluation limits, including the five-bandwidth cutoff.
+  minaccept <- max(0, min(kerncentres) - 5 * bw)
+  maxaccept <- max(kerncentres) + 5 * bw
+  d <- x
+  d[!is.na(d)] <- 0
+  keep <- !is.na(x) & x >= minaccept & x <= maxaccept
+  d[keep] <- vapply(x[keep], function(at){
+    mean(stats::dnorm((at - kerncentres) / bw) +
+         stats::dnorm((at + kerncentres) / bw)) / bw
+  }, numeric(1))
+
+  return(d)
+}
+
 .zcurve_density_get_densities = function(Z.INT, z.val.input, control){
 
   ### find the maximum z-score. This is only needed if the maximum z-score is below b
@@ -813,7 +852,7 @@ NULL
   if (control$density_dbc) {
     Z.Density.X = seq(control$a,control$b,.01)-control$a
     xx = Z.INT-control$a
-    Z.Density.Y = evmix::dbckden(Z.Density.X,xx,bw=control$bw,bcmethod="reflect")
+    Z.Density.Y = .zcurve_density_reflect(Z.Density.X,xx,bw=control$bw)
     Z.Density.X = Z.Density.X + control$a
   } else {
     if (control$aug) {

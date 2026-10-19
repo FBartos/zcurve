@@ -48,7 +48,8 @@ defaults to \code{1e-03}}
 
 \item{n.bars}{A resolution of density function, defaults to \code{512}}
 
-\item{density_dbc}{Use \link[evmix]{bckden} to estimate a truncated kernel density,
+\item{density_dbc}{Use Gaussian kernel density estimation with reflection at
+the lower fitting boundary,
 defaults to \code{FALSE}, in which case \link[stats]{density} is used}
 
 \item{compute_FDR}{Whether to compute FDR, leads to noticeable increase in
@@ -58,7 +59,7 @@ computation, defaults to \code{FALSE}}
 to \code{.02}}
 
 \item{criterion_FDR_dbc}{A criterion for estimating the maximum FDR using
-the \link[evmix]{bckden} function, defaults to \code{.01}}
+reflection at the lower fitting boundary, defaults to \code{.01}}
 
 \item{precision_FDR}{A maximum FDR precision, defaults to \code{.05}}
 }
