@@ -166,25 +166,39 @@
 #' value irrespective of any other setting and fits z-curve as described 
 #' in \insertCite{zcurve1;textual}{zcurve}.
 #' 
-#' @param version Set to \code{1} to fit the original version of z-curve. 
-#' Defaults to \code{2} = the updated version of z-curve. For its settings 
-#' page go to [control_density].
-#' @param model A type of model to be fitted, defaults to \code{"KD1"}
-#' (the only possibility)
-#' @param sig_level An alpha level of the test statistics, defaults to
-#' \code{.05}
-#' @param a A beginning of fitting interval, defaults to
-#' \code{qnorm(sig_level/2,lower.tail = F)}
-#' @param b An end of fitting interval, defaults to \code{6}
-#' @param K Number of mixture components, defaults to \code{3}
-#' @param max_iter A maximum number of iterations for the \link[stats]{nlminb} 
-#' optimization for fitting mixture model, defaults to \code{150}
-#' @param max_eval A maximum number of evaluation for the \link[stats]{nlminb} 
-#' optimization for fitting mixture model, defaults to \code{300}
-#' @param criterion A criterion to terminate \link[stats]{nlminb} optimization,
-#' defaults to \code{1e-10}
-#' @param bw A bandwidth of the kernel density estimation, defaults to \code{"nrd0"}
-#' 
+#' @section Control options:
+#' Supply these settings as a named list to the \code{control} argument of
+#' [zcurve()].
+#' \describe{
+#' \item{version}{Set to \code{1} to fit the original version of z-curve.
+#' Defaults to \code{2} = the updated version of z-curve. For its settings
+#' page go to [control_density].}
+#'
+#' \item{model}{A type of model to be fitted, defaults to \code{"KD1"}
+#' (the only possibility)}
+#'
+#' \item{sig_level}{An alpha level of the test statistics, defaults to
+#' \code{.05}}
+#'
+#' \item{a}{A beginning of fitting interval, defaults to
+#' \code{qnorm(sig_level/2,lower.tail = F)}}
+#'
+#' \item{b}{An end of fitting interval, defaults to \code{6}}
+#'
+#' \item{K}{Number of mixture components, defaults to \code{3}}
+#'
+#' \item{max_iter}{A maximum number of iterations for the \link[stats]{nlminb}
+#' optimization for fitting mixture model, defaults to \code{150}}
+#'
+#' \item{max_eval}{A maximum number of evaluation for the \link[stats]{nlminb}
+#' optimization for fitting mixture model, defaults to \code{300}}
+#'
+#' \item{criterion}{A criterion to terminate \link[stats]{nlminb} optimization,
+#' defaults to \code{1e-10}}
+#'
+#' \item{bw}{A bandwidth of the kernel density estimation, defaults to \code{"nrd0"}}
+#' }
+#'
 #' @references
 #' \insertAllCited{}
 #' 
@@ -303,44 +317,70 @@ NULL
 #' z-curve 1.0 density algorithm, set \code{model = "KD1"} and go to 
 #' [control_density_v1]
 #' 
-#' @param version Which version of z-curve should be fitted. Defaults to
-#'  \code{2} = z-curve 2.0. Set to \code{1} in order to fit the original 
-#'  version of z-curve. For its settings page go to [control_density_v1].
-#' @param model A type of model to be fitted, defaults to \code{"KD2"}
+#' @section Control options:
+#' Supply these settings as a named list to the \code{control} argument of
+#' [zcurve()].
+#' \describe{
+#' \item{version}{Which version of z-curve should be fitted. Defaults to
+#'  \code{2} = z-curve 2.0. Set to \code{1} in order to fit the original
+#'  version of z-curve. For its settings page go to [control_density_v1].}
+#'
+#' \item{model}{A type of model to be fitted, defaults to \code{"KD2"}
 #' (another possibility is \code{"KD1"} for the original z-curve 1.0, see
-#' [control_density_v1] for its settings)
-#' @param sig_level An alpha level of the test statistics, defaults to
-#' \code{.05}
-#' @param a A beginning of fitting interval, defaults to
-#' \code{qnorm(sig_level/2,lower.tail = F)}
-#' @param b An end of fitting interval, defaults to \code{6}
-#' @param mu Means of the components, defaults to \code{seq(0,6,1)}
-#' @param sigma A standard deviation of the components, "Don't touch this"
-#' \- Ulrich Schimmack, defaults to \code{1}
-#' @param theta_min Lower limits for weights, defaults to
-#' \code{rep(0,length(mu))}
-#' @param theta_max Upper limits for weights, defaults to
-#' \code{rep(1,length(mu))}
-#' @param max_iter A maximum number of iterations for the \link[stats]{nlminb} 
-#' optimization for fitting mixture model, defaults to \code{150}
-#' @param max_eval A maximum number of evaluation for the \link[stats]{nlminb} 
-#' optimization for fitting mixture model, defaults to \code{1000}
-#' @param criterion A criterion to terminate \link[stats]{nlminb} optimization,
-#' defaults to \code{1e-03}
-#' @param bw A bandwidth of the kernel density estimation, defaults to \code{.10}
-#' @param aug Augment truncated kernel density, defaults to \code{TRUE}
-#' @param aug.bw A bandwidth of the augmentation, defaults to \code{.20}
-#' @param n.bars A resolution of density function, defaults to \code{512}
-#' @param density_dbc Use \link[evmix]{bckden} to estimate a truncated kernel density,
-#' defaults to \code{FALSE}, in which case \link[stats]{density} is used
-#' @param compute_FDR Whether to compute FDR, leads to noticeable increase in
-#' computation, defaults to \code{FALSE}
-#' @param criterion_FDR A criterion for estimating the maximum FDR, defaults
-#' to \code{.02}
-#' @param criterion_FDR_dbc A criterion for estimating the maximum FDR using
-#' the \link[evmix]{bckden} function, defaults to \code{.01}
-#' @param precision_FDR A maximum FDR precision, defaults to \code{.05}
-#' 
+#' [control_density_v1] for its settings)}
+#'
+#' \item{sig_level}{An alpha level of the test statistics, defaults to
+#' \code{.05}}
+#'
+#' \item{a}{A beginning of fitting interval, defaults to
+#' \code{qnorm(sig_level/2,lower.tail = F)}}
+#'
+#' \item{b}{An end of fitting interval, defaults to \code{6}}
+#'
+#' \item{mu}{Means of the components, defaults to \code{seq(0,6,1)}}
+#'
+#' \item{sigma}{A standard deviation of the components, "Don't touch this"
+#' \- Ulrich Schimmack, defaults to \code{1}}
+#'
+#' \item{theta_min}{Lower limits for weights, defaults to
+#' \code{rep(0,length(mu))}}
+#'
+#' \item{theta_max}{Upper limits for weights, defaults to
+#' \code{rep(1,length(mu))}}
+#'
+#' \item{max_iter}{A maximum number of iterations for the \link[stats]{nlminb}
+#' optimization for fitting mixture model, defaults to \code{150}}
+#'
+#' \item{max_eval}{A maximum number of evaluation for the \link[stats]{nlminb}
+#' optimization for fitting mixture model, defaults to \code{1000}}
+#'
+#' \item{criterion}{A criterion to terminate \link[stats]{nlminb} optimization,
+#' defaults to \code{1e-03}}
+#'
+#' \item{bw}{A bandwidth of the kernel density estimation, defaults to \code{.10}}
+#'
+#' \item{aug}{Augment truncated kernel density, defaults to \code{TRUE}}
+#'
+#' \item{aug.bw}{A bandwidth of the augmentation, defaults to \code{.20}}
+#'
+#' \item{n.bars}{A resolution of density function, defaults to \code{512}}
+#'
+#' \item{density_dbc}{Use Gaussian kernel density estimation with reflection at
+#' the lower fitting boundary,
+#' defaults to \code{FALSE}, in which case \link[stats]{density} is used}
+#'
+#' \item{compute_FDR}{Whether to compute FDR, leads to noticeable increase in
+#' computation, defaults to \code{FALSE}}
+#'
+#' \item{criterion_FDR}{A criterion for estimating the maximum FDR, defaults
+#' to \code{.02}}
+#'
+#' \item{criterion_FDR_dbc}{A criterion for estimating the maximum FDR using
+#' reflection at the lower fitting boundary, defaults to \code{.01}}
+#'
+#' \item{precision_FDR}{A maximum FDR precision, defaults to \code{.05}}
+#' }
+#'
 #' @references
 #' \insertAllCited{}
 #' 
@@ -372,7 +412,7 @@ NULL
     control$aug             <- TRUE		          # Augment truncated Kernal Density
     control$aug.bw          <- .20  		        # Augment Bandwidth
     control$n.bars          <- 512   		        # resolution of density function (doesn't seem to matter much)
-    control$density_dbc     <- FALSE			      # USE dbckden function to truncate Kernal Density
+    control$density_dbc     <- FALSE			      # Use reflection at the lower fitting boundary
     control$criterion_FDR     <- .02		        # criterion for maximum FDR
     control$criterion_FDR_dbc <- .01	          # criterion for maximum FDR using density_dbc function
     control$precision_FDR   <- .05              # Maximum FDR precision (low precision slows things down)
@@ -416,7 +456,7 @@ NULL
       control$aug             <- TRUE		          # Augment truncated Kernal Density
       control$aug.bw          <- .20  		        # Augment Bandwidth
       control$n.bars          <- 512   		        # resolution of density function (doesn't seem to matter much)
-      control$density_dbc     <- FALSE			      # USE dbckden function to truncate Kernal Density
+      control$density_dbc     <- FALSE			      # Use reflection at the lower fitting boundary
       control$criterion_FDR     <- .02		        # criterion for maximum FDR
       control$criterion_FDR_dbc <- .01	          # criterion for maximum FDR using density_dbc function
       control$precision_FDR   <- .05              # Maximum FDR precision (low precision slows things down)
@@ -528,7 +568,7 @@ NULL
     control$n.bars          <- 512   		        # resolution of density function (doesn't seem to matter much)
   }
   if(is.null(control[["density_dbc"]])){
-    control$density_dbc     <- FALSE			      # USE dbckden function to truncate Kernal Density
+    control$density_dbc     <- FALSE			      # Use reflection at the lower fitting boundary
   }
   if(is.null(control[["criterion_FDR"]])){
     control$criterion_FDR     <- .02		        # criterion for maximum FDR
@@ -803,6 +843,44 @@ NULL
 ##############################################
 ### Get Densities
 ##############################################
+# Gaussian reflection branch adapted from evmix 2.12 (GPL-3),
+# dbckden() and bckdenxreflect(), by Yang Hu and Carl Scarrott.
+# Source: https://CRAN.R-project.org/src/contrib/evmix_2.12.tar.gz
+.zcurve_density_reflect <- function(x, kerncentres, bw){
+
+  if(length(x) == 0L || (!is.numeric(x) && !all(is.na(x))))
+    stop("x must be a non-empty numeric vector")
+  if(length(kerncentres) == 0L || (!is.numeric(kerncentres) && !all(is.na(kerncentres))))
+    stop("kerncentres must be a non-empty numeric vector")
+  if(length(bw) != 1L || !is.numeric(bw) || !is.finite(bw) || bw <= 0)
+    stop("bw must be a finite positive numeric scalar")
+
+  if(any(is.infinite(x)))
+    warning("infinite quantiles set to NA")
+  x[is.infinite(x)] <- NA
+
+  if(any(!is.finite(kerncentres)))
+    warning("non-finite kernel centres are dropped")
+  kerncentres <- kerncentres[is.finite(kerncentres)]
+  if(any(kerncentres < 0))
+    stop("negative kernel centres not permitted")
+  if(length(kerncentres) == 0L)
+    stop("kerncentres must contain at least one finite value")
+
+  # Preserve evmix's evaluation limits, including the five-bandwidth cutoff.
+  minaccept <- max(0, min(kerncentres) - 5 * bw)
+  maxaccept <- max(kerncentres) + 5 * bw
+  d <- x
+  d[!is.na(d)] <- 0
+  keep <- !is.na(x) & x >= minaccept & x <= maxaccept
+  d[keep] <- vapply(x[keep], function(at){
+    mean(stats::dnorm((at - kerncentres) / bw) +
+         stats::dnorm((at + kerncentres) / bw)) / bw
+  }, numeric(1))
+
+  return(d)
+}
+
 .zcurve_density_get_densities = function(Z.INT, z.val.input, control){
 
   ### find the maximum z-score. This is only needed if the maximum z-score is below b
@@ -813,7 +891,7 @@ NULL
   if (control$density_dbc) {
     Z.Density.X = seq(control$a,control$b,.01)-control$a
     xx = Z.INT-control$a
-    Z.Density.Y = evmix::dbckden(Z.Density.X,xx,bw=control$bw,bcmethod="reflect")
+    Z.Density.Y = .zcurve_density_reflect(Z.Density.X,xx,bw=control$bw)
     Z.Density.X = Z.Density.X + control$a
   } else {
     if (control$aug) {
