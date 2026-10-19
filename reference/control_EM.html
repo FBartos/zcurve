@@ -21,7 +21,7 @@ Bartoš and Schimmack (2022)'><!-- mathjax --><script src="https://cdnjs.cloudfl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">zcurve</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.7</span>
       </span>
     </div>
 
@@ -61,88 +61,90 @@ Bartoš and Schimmack (2022)</p>
     </div>
 
 
-    <div id="arguments">
-    <h2>Arguments</h2>
+    <div id="control-options">
+    <h2>Control options</h2>
 
 
-<dl><dt id="arg-model">model<a class="anchor" aria-label="anchor" href="#arg-model"></a></dt>
+<p>Supply these settings as a named list to the <code>control</code> argument of
+<code><a href="zcurve.html">zcurve()</a></code>.</p><dl><dt>model</dt>
 <dd><p>A type of model to be fitted, defaults to <code>"EM"</code>
 for a z-curve with 7 z-scores centered components.</p></dd>
 
 
-<dt id="arg-sig-level">sig_level<a class="anchor" aria-label="anchor" href="#arg-sig-level"></a></dt>
+<dt>sig_level</dt>
 <dd><p>An alpha level of the test statistics, defaults to
 <code>.05</code></p></dd>
 
 
-<dt id="arg-a">a<a class="anchor" aria-label="anchor" href="#arg-a"></a></dt>
+<dt>a</dt>
 <dd><p>A beginning of fitting interval, defaults to
 <code>qnorm(sig_level/2,lower.tail = F)</code></p></dd>
 
 
-<dt id="arg-b">b<a class="anchor" aria-label="anchor" href="#arg-b"></a></dt>
+<dt>b</dt>
 <dd><p>An end of fitting interval, defaults to <code>5</code></p></dd>
 
 
-<dt id="arg-mu">mu<a class="anchor" aria-label="anchor" href="#arg-mu"></a></dt>
+<dt>mu</dt>
 <dd><p>Means of the components, defaults to
 <code>0:6</code></p></dd>
 
 
-<dt id="arg-sigma">sigma<a class="anchor" aria-label="anchor" href="#arg-sigma"></a></dt>
+<dt>sigma</dt>
 <dd><p>A standard deviation of the components, defaults to
 <code>rep(1, length(mu))</code></p></dd>
 
 
-<dt id="arg-theta-alpha">theta_alpha<a class="anchor" aria-label="anchor" href="#arg-theta-alpha"></a></dt>
+<dt>theta_alpha</dt>
 <dd><p>A vector of alpha parameters of a Dirichlet distribution
 for generating random starting values for the weights, defaults to
 <code>rep(.5, length(mu))</code></p></dd>
 
 
-<dt id="arg-theta-max">theta_max<a class="anchor" aria-label="anchor" href="#arg-theta-max"></a></dt>
+<dt>theta_max</dt>
 <dd><p>Upper limits for weights, defaults to
 <code>rep(1,length(mu))</code></p></dd>
 
 
-<dt id="arg-criterion">criterion<a class="anchor" aria-label="anchor" href="#arg-criterion"></a></dt>
+<dt>criterion</dt>
 <dd><p>A criterion to terminate the EM algorithm,
 defaults to <code>1e-6</code></p></dd>
 
 
-<dt id="arg-criterion-start">criterion_start<a class="anchor" aria-label="anchor" href="#arg-criterion-start"></a></dt>
+<dt>criterion_start</dt>
 <dd><p>A criterion to terminate the starting phase
 of the EM algorithm, defaults to <code>1e-3</code></p></dd>
 
 
-<dt id="arg-criterion-boot">criterion_boot<a class="anchor" aria-label="anchor" href="#arg-criterion-boot"></a></dt>
+<dt>criterion_boot</dt>
 <dd><p>A criterion to terminate the bootstrapping phase
 of the EM algorithm, defaults to <code>1e-5</code></p></dd>
 
 
-<dt id="arg-max-iter">max_iter<a class="anchor" aria-label="anchor" href="#arg-max-iter"></a></dt>
+<dt>max_iter</dt>
 <dd><p>A maximum number of iterations of the EM algorithm
 (not including the starting iterations) defaults to <code>10000</code></p></dd>
 
 
-<dt id="arg-max-iter-start">max_iter_start<a class="anchor" aria-label="anchor" href="#arg-max-iter-start"></a></dt>
+<dt>max_iter_start</dt>
 <dd><p>A maximum number of iterations for the
 starting phase of EM algorithm, defaults to <code>100</code></p></dd>
 
 
-<dt id="arg-max-iter-boot">max_iter_boot<a class="anchor" aria-label="anchor" href="#arg-max-iter-boot"></a></dt>
+<dt>max_iter_boot</dt>
 <dd><p>A maximum number of iterations for the
 booting phase of EM algorithm, defaults to <code>100</code></p></dd>
 
 
-<dt id="arg-bootstrap-prop">bootstrap_prop<a class="anchor" aria-label="anchor" href="#arg-bootstrap-prop"></a></dt>
+<dt>bootstrap_prop</dt>
 <dd><p>A proportion of the sample size to be used for the
 bootstrapping, defaults to <code>1.0</code> (i.e., N-out-of-N bootstrap)</p></dd>
 
 
-<dt id="arg-fit-reps">fit_reps<a class="anchor" aria-label="anchor" href="#arg-fit-reps"></a></dt>
+<dt>fit_reps</dt>
 <dd><p>A number of starting fits to get the initial
 position for the EM algorithm, defaults to <code>100</code></p></dd>
+
 
 </dl></div>
     <div id="references">
@@ -183,7 +185,7 @@ position for the EM algorithm, defaults to <code>100</code></p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

@@ -24,7 +24,7 @@ control_density_v1'><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">zcurve</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.7</span>
       </span>
     </div>
 
@@ -67,108 +67,111 @@ z-curve 1.0 density algorithm, set <code>model = "KD1"</code> and go to
     </div>
 
 
-    <div id="arguments">
-    <h2>Arguments</h2>
+    <div id="control-options">
+    <h2>Control options</h2>
 
 
-<dl><dt id="arg-version">version<a class="anchor" aria-label="anchor" href="#arg-version"></a></dt>
+<p>Supply these settings as a named list to the <code>control</code> argument of
+<code><a href="zcurve.html">zcurve()</a></code>.</p><dl><dt>version</dt>
 <dd><p>Which version of z-curve should be fitted. Defaults to
 <code>2</code> = z-curve 2.0. Set to <code>1</code> in order to fit the original
 version of z-curve. For its settings page go to <a href="control_density_v1.html">control_density_v1</a>.</p></dd>
 
 
-<dt id="arg-model">model<a class="anchor" aria-label="anchor" href="#arg-model"></a></dt>
+<dt>model</dt>
 <dd><p>A type of model to be fitted, defaults to <code>"KD2"</code>
 (another possibility is <code>"KD1"</code> for the original z-curve 1.0, see
 <a href="control_density_v1.html">control_density_v1</a> for its settings)</p></dd>
 
 
-<dt id="arg-sig-level">sig_level<a class="anchor" aria-label="anchor" href="#arg-sig-level"></a></dt>
+<dt>sig_level</dt>
 <dd><p>An alpha level of the test statistics, defaults to
 <code>.05</code></p></dd>
 
 
-<dt id="arg-a">a<a class="anchor" aria-label="anchor" href="#arg-a"></a></dt>
+<dt>a</dt>
 <dd><p>A beginning of fitting interval, defaults to
 <code>qnorm(sig_level/2,lower.tail = F)</code></p></dd>
 
 
-<dt id="arg-b">b<a class="anchor" aria-label="anchor" href="#arg-b"></a></dt>
+<dt>b</dt>
 <dd><p>An end of fitting interval, defaults to <code>6</code></p></dd>
 
 
-<dt id="arg-mu">mu<a class="anchor" aria-label="anchor" href="#arg-mu"></a></dt>
+<dt>mu</dt>
 <dd><p>Means of the components, defaults to <code>seq(0,6,1)</code></p></dd>
 
 
-<dt id="arg-sigma">sigma<a class="anchor" aria-label="anchor" href="#arg-sigma"></a></dt>
+<dt>sigma</dt>
 <dd><p>A standard deviation of the components, "Don't touch this"
 \- Ulrich Schimmack, defaults to <code>1</code></p></dd>
 
 
-<dt id="arg-theta-min">theta_min<a class="anchor" aria-label="anchor" href="#arg-theta-min"></a></dt>
+<dt>theta_min</dt>
 <dd><p>Lower limits for weights, defaults to
 <code>rep(0,length(mu))</code></p></dd>
 
 
-<dt id="arg-theta-max">theta_max<a class="anchor" aria-label="anchor" href="#arg-theta-max"></a></dt>
+<dt>theta_max</dt>
 <dd><p>Upper limits for weights, defaults to
 <code>rep(1,length(mu))</code></p></dd>
 
 
-<dt id="arg-max-iter">max_iter<a class="anchor" aria-label="anchor" href="#arg-max-iter"></a></dt>
+<dt>max_iter</dt>
 <dd><p>A maximum number of iterations for the <a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">nlminb</a>
 optimization for fitting mixture model, defaults to <code>150</code></p></dd>
 
 
-<dt id="arg-max-eval">max_eval<a class="anchor" aria-label="anchor" href="#arg-max-eval"></a></dt>
+<dt>max_eval</dt>
 <dd><p>A maximum number of evaluation for the <a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">nlminb</a>
 optimization for fitting mixture model, defaults to <code>1000</code></p></dd>
 
 
-<dt id="arg-criterion">criterion<a class="anchor" aria-label="anchor" href="#arg-criterion"></a></dt>
+<dt>criterion</dt>
 <dd><p>A criterion to terminate <a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">nlminb</a> optimization,
 defaults to <code>1e-03</code></p></dd>
 
 
-<dt id="arg-bw">bw<a class="anchor" aria-label="anchor" href="#arg-bw"></a></dt>
+<dt>bw</dt>
 <dd><p>A bandwidth of the kernel density estimation, defaults to <code>.10</code></p></dd>
 
 
-<dt id="arg-aug">aug<a class="anchor" aria-label="anchor" href="#arg-aug"></a></dt>
+<dt>aug</dt>
 <dd><p>Augment truncated kernel density, defaults to <code>TRUE</code></p></dd>
 
 
-<dt id="arg-aug-bw">aug.bw<a class="anchor" aria-label="anchor" href="#arg-aug-bw"></a></dt>
+<dt>aug.bw</dt>
 <dd><p>A bandwidth of the augmentation, defaults to <code>.20</code></p></dd>
 
 
-<dt id="arg-n-bars">n.bars<a class="anchor" aria-label="anchor" href="#arg-n-bars"></a></dt>
+<dt>n.bars</dt>
 <dd><p>A resolution of density function, defaults to <code>512</code></p></dd>
 
 
-<dt id="arg-density-dbc">density_dbc<a class="anchor" aria-label="anchor" href="#arg-density-dbc"></a></dt>
-<dd><p>Use <a href="https://rdrr.io/pkg/evmix/man/bckden.html" class="external-link">bckden</a> to estimate a truncated kernel density,
+<dt>density_dbc</dt>
+<dd><p>Use Gaussian kernel density estimation with reflection at
+the lower fitting boundary,
 defaults to <code>FALSE</code>, in which case <a href="https://rdrr.io/r/stats/density.html" class="external-link">density</a> is used</p></dd>
 
 
-<dt id="arg-compute-fdr">compute_FDR<a class="anchor" aria-label="anchor" href="#arg-compute-fdr"></a></dt>
+<dt>compute_FDR</dt>
 <dd><p>Whether to compute FDR, leads to noticeable increase in
 computation, defaults to <code>FALSE</code></p></dd>
 
 
-<dt id="arg-criterion-fdr">criterion_FDR<a class="anchor" aria-label="anchor" href="#arg-criterion-fdr"></a></dt>
+<dt>criterion_FDR</dt>
 <dd><p>A criterion for estimating the maximum FDR, defaults
 to <code>.02</code></p></dd>
 
 
-<dt id="arg-criterion-fdr-dbc">criterion_FDR_dbc<a class="anchor" aria-label="anchor" href="#arg-criterion-fdr-dbc"></a></dt>
+<dt>criterion_FDR_dbc</dt>
 <dd><p>A criterion for estimating the maximum FDR using
-the <a href="https://rdrr.io/pkg/evmix/man/bckden.html" class="external-link">bckden</a> function, defaults to <code>.01</code></p></dd>
+reflection at the lower fitting boundary, defaults to <code>.01</code></p></dd>
 
 
-<dt id="arg-precision-fdr">precision_FDR<a class="anchor" aria-label="anchor" href="#arg-precision-fdr"></a></dt>
+<dt>precision_FDR</dt>
 <dd><p>A maximum FDR precision, defaults to <code>.05</code></p></dd>
+
 
 </dl></div>
     <div id="references">
@@ -207,7 +210,7 @@ the <a href="https://rdrr.io/pkg/evmix/man/bckden.html" class="external-link">bc
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>
