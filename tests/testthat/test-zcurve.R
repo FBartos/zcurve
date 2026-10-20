@@ -72,6 +72,10 @@ test_that("z-curve KD2 can be fitted and reproduces OSC results", {
   
   # fit the EM method
   fit.KD2 <- suppressWarnings(zcurve(OSC.z, method = "density", bootstrap = 10))
+
+  # Round fitted results to remove small numerical differences across platforms.
+  fit.KD2$coefficients <- round(fit.KD2$coefficients, 5)
+  fit.KD2$fit$weights <- round(fit.KD2$fit$weights, 5)
   
   # print
   expect_equal(
@@ -80,8 +84,8 @@ test_that("z-curve KD2 can be fitted and reproduces OSC results", {
       "zcurve(z = OSC.z, method = \"density\", bootstrap = 10)",
       ""                                                       ,
       "Estimates:"                                             ,
-      "      ERR       EDR "                                   ,
-      "0.6132671 0.5064694 "    
+      "    ERR     EDR "                                         ,
+      "0.61327 0.50647 "
     ))
   
   # basic summary
