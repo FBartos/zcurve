@@ -74,24 +74,24 @@ test_that("z-curve KD2 can be fitted and reproduces OSC results", {
   fit.KD2 <- suppressWarnings(zcurve(OSC.z, method = "density", bootstrap = 10))
 
   # Check optimizer results numerically; the final digits vary across platforms.
-  reference.KD2 <- fit.KD2
-  reference.KD2$coefficients[1:2] <- c(ERR = 0.6132671, EDR = 0.5064694)
-  reference.KD2$fit$weights <- c(0, 0.0810331470538404, 0.785092085130368,
-                               0, 0.133874767815792, 0, 0)
-  expect_equal(fit.KD2$coefficients[1:2], reference.KD2$coefficients[1:2],
+  expect_equal(fit.KD2$coefficients[1:2], c(ERR = 0.6132671, EDR = 0.5064694),
                tolerance = 1e-6)
-  expect_equal(fit.KD2$fit$weights, reference.KD2$fit$weights, tolerance = 1e-5)
+  expect_equal(fit.KD2$fit$weights,
+               c(0, 0.0810331470538404, 0.785092085130368,
+                 0, 0.133874767815792, 0, 0), tolerance = 1e-5)
   
-  # Use fixed estimates for exact print and plot snapshots.
+  # Compare print formatting exactly and printed estimates numerically.
+  output <- capture_output_lines(print(fit.KD2), print = TRUE, width = 150)
   expect_equal(
-    capture_output_lines(print(reference.KD2), print = TRUE, width = 150),
+    head(output, -1),
     c("Call:"                                                  ,
       "zcurve(z = OSC.z, method = \"density\", bootstrap = 10)",
       ""                                                       ,
       "Estimates:"                                             ,
-      "      ERR       EDR "                                   ,
-      "0.6132671 0.5064694 "    
+      "      ERR       EDR "
     ))
+  expect_equal(scan(text = tail(output, 1), quiet = TRUE),
+               c(0.6132671, 0.5064694), tolerance = 1e-6)
   
   # basic summary
   expect_equal(
@@ -111,8 +111,8 @@ test_that("z-curve KD2 can be fitted and reproduces OSC results", {
     ))
   
   # plot
-  vdiffr::expect_doppelganger("z-curve KD2", function()plot(reference.KD2))
-  vdiffr::expect_doppelganger("z-curve KD2 (ggplot)", plot(reference.KD2, plot_type = "ggplot"))
+  expect_doppelganger_tolerance("z-curve KD2", function()plot(fit.KD2), tolerance = 0.011)
+  expect_doppelganger_tolerance("z-curve KD2 (ggplot)", plot(fit.KD2, plot_type = "ggplot"), tolerance = 0.011)
   
 })
 test_that("z-curve EM censoring works", {
