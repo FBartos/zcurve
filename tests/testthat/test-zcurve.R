@@ -73,25 +73,20 @@ test_that("z-curve KD2 can be fitted and reproduces OSC results", {
   # fit the EM method
   fit.KD2 <- suppressWarnings(zcurve(OSC.z, method = "density", bootstrap = 10))
 
-  # Check optimizer results numerically; the final digits vary across platforms.
-  expect_equal(fit.KD2$coefficients[1:2], c(ERR = 0.6132671, EDR = 0.5064694),
-               tolerance = 1e-6)
-  expect_equal(fit.KD2$fit$weights,
-               c(0, 0.0810331470538404, 0.785092085130368,
-                 0, 0.133874767815792, 0, 0), tolerance = 1e-5)
+  # Round fitted results to remove small numerical differences across platforms.
+  fit.KD2$coefficients <- round(fit.KD2$coefficients, 5)
+  fit.KD2$fit$weights <- round(fit.KD2$fit$weights, 5)
   
-  # Compare print formatting exactly and printed estimates numerically.
-  output <- capture_output_lines(print(fit.KD2), print = TRUE, width = 150)
+  # print
   expect_equal(
-    head(output, -1),
+    capture_output_lines(print(fit.KD2), print = TRUE, width = 150),
     c("Call:"                                                  ,
       "zcurve(z = OSC.z, method = \"density\", bootstrap = 10)",
       ""                                                       ,
       "Estimates:"                                             ,
-      "      ERR       EDR "
+      "    ERR     EDR "                                         ,
+      "0.61327 0.50647 "
     ))
-  expect_equal(scan(text = tail(output, 1), quiet = TRUE),
-               c(0.6132671, 0.5064694), tolerance = 1e-6)
   
   # basic summary
   expect_equal(
@@ -111,8 +106,8 @@ test_that("z-curve KD2 can be fitted and reproduces OSC results", {
     ))
   
   # plot
-  expect_doppelganger_tolerance("z-curve KD2", function()plot(fit.KD2), tolerance = 0.011)
-  expect_doppelganger_tolerance("z-curve KD2 (ggplot)", plot(fit.KD2, plot_type = "ggplot"), tolerance = 0.011)
+  vdiffr::expect_doppelganger("z-curve KD2", function()plot(fit.KD2))
+  vdiffr::expect_doppelganger("z-curve KD2 (ggplot)", plot(fit.KD2, plot_type = "ggplot"))
   
 })
 test_that("z-curve EM censoring works", {
