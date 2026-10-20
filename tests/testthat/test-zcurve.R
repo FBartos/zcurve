@@ -72,10 +72,19 @@ test_that("z-curve KD2 can be fitted and reproduces OSC results", {
   
   # fit the EM method
   fit.KD2 <- suppressWarnings(zcurve(OSC.z, method = "density", bootstrap = 10))
+
+  # Check optimizer results numerically; the final digits vary across platforms.
+  reference.KD2 <- fit.KD2
+  reference.KD2$coefficients[1:2] <- c(ERR = 0.6132671, EDR = 0.5064694)
+  reference.KD2$fit$weights <- c(0, 0.0810331470538404, 0.785092085130368,
+                               0, 0.133874767815792, 0, 0)
+  expect_equal(fit.KD2$coefficients[1:2], reference.KD2$coefficients[1:2],
+               tolerance = 1e-6)
+  expect_equal(fit.KD2$fit$weights, reference.KD2$fit$weights, tolerance = 1e-5)
   
-  # print
+  # Use fixed estimates for exact print and plot snapshots.
   expect_equal(
-    capture_output_lines(print(fit.KD2), print = TRUE, width = 150),
+    capture_output_lines(print(reference.KD2), print = TRUE, width = 150),
     c("Call:"                                                  ,
       "zcurve(z = OSC.z, method = \"density\", bootstrap = 10)",
       ""                                                       ,
@@ -102,8 +111,8 @@ test_that("z-curve KD2 can be fitted and reproduces OSC results", {
     ))
   
   # plot
-  vdiffr::expect_doppelganger("z-curve KD2", function()plot(fit.KD2))
-  vdiffr::expect_doppelganger("z-curve KD2 (ggplot)", plot(fit.KD2, plot_type = "ggplot"))
+  vdiffr::expect_doppelganger("z-curve KD2", function()plot(reference.KD2))
+  vdiffr::expect_doppelganger("z-curve KD2 (ggplot)", plot(reference.KD2, plot_type = "ggplot"))
   
 })
 test_that("z-curve EM censoring works", {
