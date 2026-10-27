@@ -16,7 +16,7 @@ zcurve_clustered(
 \item{data}{an object created with \code{\link[=zcurve_data]{zcurve_data()}} function.}
 
 \item{method}{the method to be used for fitting. Possible options are
-down weighting \code{"w"} and nested bootstrap \code{"b"}.
+down weighting \code{"w"} and cluster bootstrap \code{"b"}.
 Defaults to \code{"w"}.}
 
 \item{bootstrap}{the number of bootstraps for estimating CI. To skip
@@ -39,9 +39,10 @@ clustered data. The function requires a data object created with the
 Two different methods that account for clustering ar implemented via
 the EM model: \code{"w"} for down weighting the likelihood of the test
 statistics proportionately to the number of repetitions in the clusters,
-and \code{"b"} for a nested bootstrap where only a single study from each
-bootstrap is selected for model fitting. The CI for \code{"w"} is obtained
-with a cluster bootstrap that resamples clusters with replacement.
+and \code{"b"} for a cluster bootstrap where clusters are resampled with
+replacement (keeping all of their test statistics) to estimate the CI.
+The CI for \code{"w"} is also obtained with a cluster bootstrap that
+resamples clusters with replacement.
 
 Note that \code{"w"} gives each cluster the same total weight, so it
 estimates the ERR and EDR of a typical cluster rather than of a typical
