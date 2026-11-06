@@ -5,9 +5,16 @@
 #' [zcurve_data()] function as the input (where id denotes clusters). 
 #' Two different methods that account for clustering ar implemented via 
 #' the EM model: \code{"w"} for down weighting the likelihood of the test 
-#' statistics proportionately to the number of repetitions in the clusters, 
-#' and \code{"b"} for a nested bootstrap where only a single study from each 
-#' bootstrap is selected for model fitting.
+#' statistics proportionately to the number of repetitions in the clusters,
+#' and \code{"b"} for a nested bootstrap where only a single study from each
+#' bootstrap is selected for model fitting. The CI for \code{"w"} is obtained
+#' with a cluster bootstrap that resamples clusters with replacement.
+#'
+#' Note that \code{"w"} gives each cluster the same total weight, so it
+#' estimates the ERR and EDR of a typical cluster rather than of a typical
+#' test. When the number of significant results in a cluster depends on its
+#' power (e.g., high-powered articles report more significant results),
+#' \code{"w"} underestimates the test-level ERR and EDR.
 #' @param data an object created with [zcurve_data()] function.
 #' @param method the method to be used for fitting. Possible options are
 #' down weighting \code{"w"} and nested bootstrap \code{"b"}. 
@@ -355,34 +362,41 @@ zcurve_clustered <- function(data, method = "b", bootstrap = 1000, parallel = FA
   x_w <- id_weights$w[match(z_id, id_weights$id)]
   b_w <- id_weights$w[match(b_id, id_weights$id)]
   
-  indx <- c(
-    if(length(z)  > 0) 1:length(z),
-    if(length(lb) > 0) (-length(lb)):-1
-  )
-  
-  fit_boot <- .zcurve_EMc_boot_fast_w_RCpp(x         = z,
-                                           x_w       = x_w,
-                                           lb        = lb,
-                                           ub        = ub,
-                                           b_w       = b_w,
-                                           indx      = indx,
-                                           mu        = fit$mu,
-                                           sigma     = control$sigma,
-                                           theta     = fit$weights,
-                                           a         = control$a,
-                                           b         = control$b,
-                                           sig_level = control$sig_level,
-                                           bootstrap = bootstrap,
-                                           prop_boot = control$bootstrap_prop,
-                                           criterion = control$criterion_boot,
-                                           max_iter  = control$max_iter_boot)
+  # rows of each article's precise and censored results
+  z_rows <- split(seq_along(z),  factor(z_id, levels = id_weights$id))
+  b_rows <- split(seq_along(lb), factor(b_id, levels = id_weights$id))
+
+  # cluster bootstrap: resample articles with replacement, keeping all of their
+  # results and their original weights
+  fit_boot <- list()
+  for(i in 1:bootstrap){
+
+    boot_id <- sample(id_weights$id, replace = TRUE)
+    z_i     <- unlist(z_rows[boot_id], use.names = FALSE)
+    b_i     <- unlist(b_rows[boot_id], use.names = FALSE)
+
+    fit_boot[[i]] <- .zcurve_EMc_fit_fast_w_RCpp(x         = z[z_i],
+                                                 x_w       = x_w[z_i],
+                                                 lb        = lb[b_i],
+                                                 ub        = ub[b_i],
+                                                 b_w       = b_w[b_i],
+                                                 mu        = fit$mu,
+                                                 sigma     = control$sigma,
+                                                 theta     = fit$weights,
+                                                 a         = control$a,
+                                                 b         = control$b,
+                                                 sig_level = control$sig_level,
+                                                 max_iter  = control$max_iter_boot,
+                                                 criterion = control$criterion_boot)
+  }
+
   return(
     list(
-      "mu"        = fit_boot$mu,
-      "weights"   = fit_boot$weights,
-      "Q"         = fit_boot$Q,
-      "prop_high" = fit_boot$prop_high,
-      "iter"      = fit_boot$iter
+      "mu"        = do.call(rbind, lapply(fit_boot, function(f) f[["mu"]])),
+      "weights"   = do.call(rbind, lapply(fit_boot, function(f) f[["weights"]])),
+      "Q"         = do.call(c,     lapply(fit_boot, function(f) f[["Q"]])),
+      "prop_high" = do.call(c,     lapply(fit_boot, function(f) f[["prop_high"]])),
+      "iter"      = do.call(c,     lapply(fit_boot, function(f) f[["iter"]]))
     )
   )
   
