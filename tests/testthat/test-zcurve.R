@@ -17,7 +17,7 @@ test_that("z-curve EM can be fitted and reproduces OSC results", {
       ""                    , 
       "Estimates:"          , 
       "      ERR       EDR ",
-      "0.6180361 0.3905984 "    
+      "0.6180358 0.3906043 "    
     ))
   
   # basic summary
@@ -32,7 +32,7 @@ test_that("z-curve EM can be fitted and reproduces OSC results", {
       "ERR    0.618 0.447 0.743"                                                                ,
       "EDR    0.391 0.070 0.701"                                                                ,
       ""                                                                                        ,
-      "Model converged in 27 + 783 iterations"                                                  ,
+      "Model converged in 26 + 783 iterations"                                                  ,
       "Fitted using 73 z-values. 90 supplied, 85 significant (ODR = 0.94, 95% CI [0.87, 0.98]).",
       "Q = -60.61, 95% CI[-72.24, -46.24]"       
     ))
@@ -48,12 +48,12 @@ test_that("z-curve EM can be fitted and reproduces OSC results", {
       "              Estimate  l.CI   u.CI"                                                     ,
       "ERR              0.618 0.447  0.743"                                                     ,
       "EDR              0.391 0.070  0.701"                                                     ,
-      "Soric FDR        0.082 0.022  0.697"                                                     ,
-      "File Drawer R    1.560 0.426 13.237"                                                     ,
+      "Soric FDR        0.082 0.022  0.696"                                                     ,
+      "File Drawer R    1.560 0.426 13.233"                                                     ,
       "Expected N         218   121   1210"                                                     ,
       "Missing N          128    31   1120"                                                     ,
       ""                                                                                        ,
-      "Model converged in 27 + 783 iterations"                                                  ,
+      "Model converged in 26 + 783 iterations"                                                  ,
       "Fitted using 73 z-values. 90 supplied, 85 significant (ODR = 0.94, 95% CI [0.87, 0.98]).",
       "Q = -60.61, 95% CI[-72.24, -46.24]"       
     ))
@@ -133,7 +133,7 @@ test_that("z-curve EM censoring works", {
       "ERR    0.961 0.910 1.000"                                                                   ,
       "EDR    0.957 0.884 1.000"                                                                   ,
       ""                                                                                           ,
-      "Model converged in 70 + 223 iterations"                                                     ,
+      "Model converged in 69 + 223 iterations"                                                     ,
       "Fitted using 165 z-values. 200 supplied, 200 significant (ODR = 1.00, 95% CI [0.98, 1.00]).",
       "Q = -319.22, 95% CI[-346.77, -288.55]"
     ))
@@ -158,7 +158,7 @@ test_that("z-curve EM censoring works", {
       "ERR    0.968 0.908 1.000"                                                                 ,
       "EDR    0.965 0.879 1.000"                                                                 ,
       ""                                                                                         ,
-      "Model converged in 85 + 89 iterations"                                                    ,
+      "Model converged in 84 + 89 iterations"                                                    ,
       "Fitted using 82 -values. 100 supplied, 100 significant (ODR = 1.00, 95% CI [0.95, 1.00]).",
       "Q = -205.22, 95% CI[-228.49, -179.08]"  
     ))
@@ -190,7 +190,7 @@ test_that("z-curve clustered works", {
       "ERR    0.787 0.687 0.846"                                                                             ,
       "EDR    0.756 0.501 0.845"                                                                             ,
       ""                                                                                                     ,
-      "Model converged in 57 + 283 iterations"                                                                  ,
+      "Model converged in 56 + 283 iterations"                                                                  ,
       "Fitted using 299 zcurve-data-values. 500 supplied, 300 significant (ODR = 0.60, 95% CI [0.56, 0.64]).",
       "Q = -372.68, 95% CI[-407.01, -333.93]"  
     ))
@@ -206,7 +206,7 @@ test_that("z-curve clustered works", {
       "ERR    0.766 0.656 0.871"                                                                             ,
       "EDR    0.730 0.592 0.883"                                                                             ,
       ""                                                                                                     ,
-      "Model converged in 72 + 835 iterations"                                                               ,
+      "Model converged in 71 + 834 iterations"                                                               ,
       "Fitted using 299 zcurve-data-values. 500 supplied, 300 significant (ODR = 0.60, 95% CI [0.56, 0.64]).",
       "Q = -236.38, 95% CI[-264.91, -224.62]"  
     ))
@@ -237,7 +237,7 @@ test_that("z-curve clustered works", {
       "ERR    0.788 0.713 0.864"                                                                             ,
       "EDR    0.758 0.507 0.874"                                                                             ,
       ""                                                                                                     ,
-      "Model converged in 54 + 129 iterations"                                                               ,
+      "Model converged in 53 + 129 iterations"                                                               ,
       "Fitted using 299 zcurve-data-values. 500 supplied, 299 significant (ODR = 0.60, 95% CI [0.55, 0.64]).",
       "Q = -321.87, 95% CI[-350.26, -300.19]"  
     ))
@@ -253,7 +253,7 @@ test_that("z-curve clustered works", {
       "ERR    0.766 0.693 0.827"                                                                             ,
       "EDR    0.730 0.630 0.818"                                                                             ,
       ""                                                                                                     ,
-      "Model converged in 66 + 233 iterations"                                                               ,
+      "Model converged in 65 + 232 iterations"                                                               ,
       "Fitted using 299 zcurve-data-values. 500 supplied, 299 significant (ODR = 0.60, 95% CI [0.55, 0.64]).",
       "Q = -199.94, 95% CI[-218.65, -184.41]" 
     ))
@@ -284,7 +284,7 @@ test_that("z-curve clustered works", {
       "ERR    0.788 0.710 0.873"                                                                             ,
       "EDR    0.758 0.650 0.887"                                                                             ,
       ""                                                                                                     ,
-      "Model converged in 65 + 221 iterations"                                                               ,
+      "Model converged in 64 + 221 iterations"                                                               ,
       "Fitted using 299 zcurve-data-values. 500 supplied, 300 significant (ODR = 0.60, 95% CI [0.56, 0.64]).",
       "Q = -520.30, 95% CI[-555.41, -477.13]"  
     ))
@@ -300,7 +300,7 @@ test_that("z-curve clustered works", {
       "ERR    0.768 0.657 0.836"                                                                             ,
       "EDR    0.732 0.595 0.830"                                                                             ,
       ""                                                                                                     ,
-      "Model converged in 67 + 165 iterations"                                                               ,
+      "Model converged in 66 + 165 iterations"                                                               ,
       "Fitted using 299 zcurve-data-values. 500 supplied, 300 significant (ODR = 0.60, 95% CI [0.56, 0.64]).",
       "Q = -319.69, 95% CI[-348.74, -292.24]"  
     ))

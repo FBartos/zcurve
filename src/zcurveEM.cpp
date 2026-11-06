@@ -95,12 +95,12 @@ NumericVector tdist_pdf(NumericVector x, double mu, double df, double a, double 
   return exp(L);
 }
 NumericVector trunc_normal_lpdf(NumericVector x, double mu, double sigma, double a, double b) {
-  double lccdf = R::pnorm(a, mu, sigma, false,true);
-  double lcdf  = R::pnorm(b, mu, sigma, true, true);
+  double cdf_a = R::pnorm(a, mu, sigma, true, false);
+  double cdf_b = R::pnorm(b, mu, sigma, true, false);
 
   NumericVector L = dnorm(x, mu, sigma, true);
 
-  L = L - lccdf - lcdf;
+  L = L - log(cdf_b - cdf_a);
   return L;
 }
 
@@ -304,13 +304,15 @@ List zcurve_EM_fit_RCpp(NumericVector x, int type, NumericVector mu, NumericVect
   NumericVector Q (max_iter+1);
 
   int i= 0;
-  Q[i] = 0;
+
+  // likelihood at the starting values
+  log_lik   = compute_log_lik(x, mu, sigma, a, b, theta);
+  lik       = exp_matrix(log_lik);
+  l_row_sum = compute_l_row_sum(lik);
+  Q[i]      = sum(log(l_row_sum));
 
   do{
     // E-step
-    log_lik   = compute_log_lik(x, mu, sigma, a, b, theta);
-    lik       = exp_matrix(log_lik);
-    l_row_sum = compute_l_row_sum(lik);
     p         = compute_p(lik,l_row_sum);
 
     // M-step
@@ -318,6 +320,11 @@ List zcurve_EM_fit_RCpp(NumericVector x, int type, NumericVector mu, NumericVect
     if(type == 2){
       mu = update_mu(p, x, mu, sigma, a, b);
     }
+
+    // likelihood at the updated parameters
+    log_lik   = compute_log_lik(x, mu, sigma, a, b, theta);
+    lik       = exp_matrix(log_lik);
+    l_row_sum = compute_l_row_sum(lik);
 
     Q[i+1] = sum(log(l_row_sum));
     ++i;
@@ -348,19 +355,26 @@ List zcurve_EM_fit_fast_RCpp(NumericVector x, NumericVector mu, NumericVector si
   NumericVector Q (max_iter+1);
 
   int i= 0;
-  Q[i] = 0;
-
 
   NumericMatrix u_log_lik =  compute_u_log_lik(x, mu, sigma, a, b);
+
+  // likelihood at the starting values
+  log_lik   = weight_u_log_lik(u_log_lik, theta);
+  lik       = exp_matrix(log_lik);
+  l_row_sum = compute_l_row_sum(lik);
+  Q[i]      = sum(log(l_row_sum));
+
   do{
     // E-step
-    log_lik   = weight_u_log_lik(u_log_lik, theta);
-    lik       = exp_matrix(log_lik);
-    l_row_sum = compute_l_row_sum(lik);
     p         = compute_p(lik,l_row_sum);
 
     // M-step
     theta = update_theta(p);
+
+    // likelihood at the updated weights
+    log_lik   = weight_u_log_lik(u_log_lik, theta);
+    lik       = exp_matrix(log_lik);
+    l_row_sum = compute_l_row_sum(lik);
 
     Q[i+1] = sum(log(l_row_sum));
     ++i;
@@ -392,20 +406,27 @@ List zcurve_EMc_fit_fast_RCpp(NumericVector x, NumericVector lb, NumericVector u
   NumericVector Q (max_iter+1);
   
   int i= 0;
-  Q[i] = 0;
-  
-  
+
   NumericMatrix u_log_lik =  compute_u_log_lik_c(x, lb, ub, mu, sigma, a, b);
+
+  // likelihood at the starting values
+  log_lik   = weight_u_log_lik(u_log_lik, theta);
+  lik       = exp_matrix(log_lik);
+  l_row_sum = compute_l_row_sum(lik);
+  Q[i]      = sum(log(l_row_sum));
+
   do{
     // E-step
+    p         = compute_p(lik,l_row_sum);
+
+    // M-step
+    theta = update_theta(p);
+
+    // likelihood at the updated weights
     log_lik   = weight_u_log_lik(u_log_lik, theta);
     lik       = exp_matrix(log_lik);
     l_row_sum = compute_l_row_sum(lik);
-    p         = compute_p(lik,l_row_sum);
-    
-    // M-step
-    theta = update_theta(p);
-    
+
     Q[i+1] = sum(log(l_row_sum));
     ++i;
     
@@ -437,9 +458,7 @@ List zcurve_EMc_fit_fast_w_RCpp(NumericVector x, NumericVector x_w, NumericVecto
   NumericVector Q (max_iter+1);
   
   int i= 0;
-  Q[i] = 0;
-  
-  
+
   // weights in the same row order as u_log_lik: observed z-scores, then censored ones
   NumericVector w (x.size() + lb.size());
   for(int j = 0; j < x.size(); j++)  w[j]            = x_w[j];
@@ -448,15 +467,24 @@ List zcurve_EMc_fit_fast_w_RCpp(NumericVector x, NumericVector x_w, NumericVecto
   // the weights scale each observation's contribution to the log-likelihood,
   // so the component densities themselves stay unweighted
   NumericMatrix u_log_lik =  compute_u_log_lik_c(x, lb, ub, mu, sigma, a, b);
+
+  // likelihood at the starting values
+  log_lik   = weight_u_log_lik(u_log_lik, theta);
+  lik       = exp_matrix(log_lik);
+  l_row_sum = compute_l_row_sum(lik);
+  Q[i]      = sum(w * log(l_row_sum));
+
   do{
     // E-step
-    log_lik   = weight_u_log_lik(u_log_lik, theta);
-    lik       = exp_matrix(log_lik);
-    l_row_sum = compute_l_row_sum(lik);
     p         = compute_p(lik,l_row_sum);
 
     // M-step
     theta = update_theta_w(p, w);
+
+    // likelihood at the updated weights
+    log_lik   = weight_u_log_lik(u_log_lik, theta);
+    lik       = exp_matrix(log_lik);
+    l_row_sum = compute_l_row_sum(lik);
 
     Q[i+1] = sum(w * log(l_row_sum));
     ++i;
