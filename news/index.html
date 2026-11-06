@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">zcurve</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.7.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.5.0</span>
       </span>
     </div>
 
@@ -47,6 +47,16 @@
       <small>Source: <a href="https://github.com/FBartos/zcurve/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.5.0" id="version-250">version 2.5.0<a class="anchor" aria-label="anchor" href="#version-250"></a></h2>
+<ul><li>Fixes the weighted EM algorithm in <code>zcurve_clustered(method = "w")</code>, which down-weighted the component densities instead of the observations and overestimated ERR and EDR. Its bootstrap now resamples articles instead of individual test statistics. Contributed by Shaheed Azaad (<a href="https://github.com/FBartos/zcurve/issues/33" class="external-link">#33</a>, <a href="https://github.com/FBartos/zcurve/issues/37" class="external-link">#37</a>).</li>
+<li>Uses a cluster bootstrap in <code>zcurve_clustered(method = "b")</code>, so the confidence intervals include the between-article sampling variation. Contributed by Shaheed Azaad (<a href="https://github.com/FBartos/zcurve/issues/36" class="external-link">#36</a>, <a href="https://github.com/FBartos/zcurve/issues/38" class="external-link">#38</a>).</li>
+<li>Fixes the EM algorithm reporting the log-likelihood of the previous iteration, which affected the convergence check, the choice of starting values, and the reported fit, and fixes the normalizing constant of the truncated normal used when the component means are estimated. Identified by Richard D. Morey (<a href="https://github.com/FBartos/zcurve/issues/30" class="external-link">#30</a>, <a href="https://github.com/FBartos/zcurve/issues/31" class="external-link">#31</a>, <a href="https://github.com/FBartos/zcurve/issues/32" class="external-link">#32</a>, <a href="https://github.com/FBartos/zcurve/issues/40" class="external-link">#40</a>).</li>
+<li>Fixes <code><a href="../reference/zcurve_data.html">zcurve_data()</a></code> misreading rounded censored test statistics (e.g., <code>"F(2,23) &gt; 10"</code>) and treating values in scientific notation as rounded (<a href="https://github.com/FBartos/zcurve/issues/41" class="external-link">#41</a>).</li>
+<li>Fixes <code><a href="../reference/zcurve_clustered.html">zcurve_clustered()</a></code> dropping censored results above the fitting range (<a href="https://github.com/FBartos/zcurve/issues/41" class="external-link">#41</a>).</li>
+<li>Fixes the parallel bootstrap failing when the number of bootstrap samples is smaller than the number of cores (<a href="https://github.com/FBartos/zcurve/issues/41" class="external-link">#41</a>).</li>
+<li>Counts significant results (ODR, expected and missing number of studies) at <code>sig_level</code> rather than at the start of the fitting range (<a href="https://github.com/FBartos/zcurve/issues/41" class="external-link">#41</a>).</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.4.7" id="version-247">version 2.4.7<small>2026-10-19</small><a class="anchor" aria-label="anchor" href="#version-247"></a></h2>
 <ul><li>Replaces the evmix dependency with an internal implementation of reflected Gaussian kernel density estimation, preserving the density_dbc option.</li>
@@ -144,7 +154,7 @@
 <ul><li>Added check for supplying p-values as z-scores. (issue <a href="https://github.com/FBartos/zcurve/issues/2" class="external-link">#2</a>)</li>
 </ul></div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.0" id="version-10">version 1.0.<a class="anchor" aria-label="anchor" href="#version-10"></a></h2>
+<h2 class="page-header" data-toc-text="1.0.0" id="version-100">version 1.0.0<small>2020-03-31</small><a class="anchor" aria-label="anchor" href="#version-100"></a></h2>
 <ul><li>The release version of the package.</li>
 </ul></div>
   </div>
