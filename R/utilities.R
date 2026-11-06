@@ -54,3 +54,10 @@ assign("defaultoptions",  list(envir    = zcurve.private))
 
 assign("options",         zcurve.private$defaultoptions,   envir = zcurve.private)
 assign("max_cores",       parallel::detectCores(logical = TRUE) - 1,  envir = zcurve.private)
+
+# number of bootstrap samples per core (never more cores than bootstrap samples)
+.bootstrap_core_load <- function(bootstrap){
+  cores     <- max(1, min(zcurve.get_option("max_cores"), bootstrap))
+  core_load <- split(1:bootstrap, rep(1:cores, length.out = bootstrap))
+  return(unname(sapply(core_load, length)))
+}

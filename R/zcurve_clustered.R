@@ -65,6 +65,9 @@ zcurve_clustered <- function(data, method = "b", bootstrap = 1000, parallel = FA
   # create control
   control <- .zcurve_EM.control(control)
   
+  # significance cutoff for counting significant results (independent of the fitting range)
+  z_sig <- stats::qnorm(control$sig_level/2, lower.tail = FALSE)
+  
   ### prepare data
   if(nrow(data$precise) != 0){
     z    <- .p_to_z(data$precise$p)
@@ -76,7 +79,7 @@ zcurve_clustered <- function(data, method = "b", bootstrap = 1000, parallel = FA
   
   # get the total number of observations before removal for fitting purposes
   N_obs <- length(data$precise$p)
-  N_sig <- length(data$precise$p[.p_to_z(data$precise$p) >= control$a])
+  N_sig <- length(data$precise$p[.p_to_z(data$precise$p) >= z_sig])
   
   if(nrow(data$censored) != 0){
     
@@ -86,7 +89,7 @@ zcurve_clustered <- function(data, method = "b", bootstrap = 1000, parallel = FA
     
     # get the total number of observations before removal for fitting purposes (using the collected bounds before accounting for rounding)
     N_obs <- N_obs + length(.p_to_z(data$censored$p.rep))
-    N_sig <- N_sig + length(.p_to_z(data$censored$p.rep)[.p_to_z(data$censored$p.rep) >= control$a])
+    N_sig <- N_sig + length(.p_to_z(data$censored$p.rep)[.p_to_z(data$censored$p.rep) >= z_sig])
     
     # remove non-significant censored p-values
     if(any(lb < control$a)){
@@ -98,7 +101,8 @@ zcurve_clustered <- function(data, method = "b", bootstrap = 1000, parallel = FA
     
     # move too significant censored p-values among precise p-values          
     if(length(lb) > 0 && any(lb >= control$b)){
-      object$data <- c(object$data, lb[lb >= control$b])
+      z    <- c(z,    lb[lb >= control$b])
+      z_id <- c(z_id, b_id[lb >= control$b])
       b_id <- b_id[lb < control$b]
       ub   <- ub[lb < control$b]
       lb   <- lb[lb < control$b]
@@ -219,12 +223,12 @@ zcurve_clustered <- function(data, method = "b", bootstrap = 1000, parallel = FA
 
   if(parallel){
     
-    cores        <- zcurve.get_option("max_cores")
-    core_load    <- split(1:bootstrap, rep(1:cores, length.out = bootstrap))
-    core_load    <- sapply(core_load, length)
+    core_load    <- .bootstrap_core_load(bootstrap)
+    cores        <- length(core_load)
     initial_seed <- sample(.Machine$integer.max, 1)
-    
+
     cl <- parallel::makePSOCKcluster(cores)
+    on.exit(parallel::stopCluster(cl), add = TRUE)
     parallel::clusterEvalQ(cl, {library("zcurve")})
     parallel::clusterExport(cl, c("fit_start", "control", "data_index", "core_load", "initial_seed"), envir = environment())
     fit <- parallel::parLapplyLB(cl, 1:cores, function(i){
@@ -252,7 +256,6 @@ zcurve_clustered <- function(data, method = "b", bootstrap = 1000, parallel = FA
       
       return(fit)
     })
-    parallel::stopCluster(cl)
     fit <- do.call(c, fit)
     
   }else{
@@ -417,19 +420,18 @@ zcurve_clustered <- function(data, method = "b", bootstrap = 1000, parallel = FA
 }
 .zcurve_EM_w_boot.par <- function(z, z_id, lb, ub, b_id, control, fit, bootstrap){
   
-  cores        <- zcurve.get_option("max_cores")
-  core_load    <- split(1:bootstrap, rep(1:cores, length.out = bootstrap))
-  core_load    <- sapply(core_load, length)
+  core_load    <- .bootstrap_core_load(bootstrap)
+  cores        <- length(core_load)
   initial_seed <- sample(.Machine$integer.max, 1)
-  
+
   cl <- parallel::makePSOCKcluster(cores)
+  on.exit(parallel::stopCluster(cl), add = TRUE)
   parallel::clusterEvalQ(cl, {library("zcurve")})
   parallel::clusterExport(cl, c("z", "z_id", "lb", "ub", "b_id", "control", "fit", "bootstrap", "core_load", "initial_seed"), envir = environment())
   fit_boot <- parallel::parLapplyLB(cl, 1:cores, function(i){
     set.seed(initial_seed + i)
     return(.zcurve_EM_w_boot(z, z_id, lb, ub, b_id, control, fit, core_load[i]))
   })
-  parallel::stopCluster(cl)
   
   
   return(

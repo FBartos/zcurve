@@ -1,3 +1,12 @@
+## version 2.5.0
+- Fixes the weighted EM algorithm in `zcurve_clustered(method = "w")`, which down-weighted the component densities instead of the observations and overestimated ERR and EDR. Its bootstrap now resamples articles instead of individual test statistics. Contributed by Shaheed Azaad (#33, #37).
+- Uses a cluster bootstrap in `zcurve_clustered(method = "b")`, so the confidence intervals include the between-article sampling variation. Contributed by Shaheed Azaad (#36, #38).
+- Fixes the EM algorithm reporting the log-likelihood of the previous iteration, which affected the convergence check, the choice of starting values, and the reported fit, and fixes the normalizing constant of the truncated normal used when the component means are estimated. Identified by Richard D. Morey (#30, #31, #32, #40).
+- Fixes `zcurve_data()` misreading rounded censored test statistics (e.g., `"F(2,23) > 10"`) and treating values in scientific notation as rounded (#41).
+- Fixes `zcurve_clustered()` dropping censored results above the fitting range (#41).
+- Fixes the parallel bootstrap failing when the number of bootstrap samples is smaller than the number of cores (#41).
+- Counts significant results (ODR, expected and missing number of studies) at `sig_level` rather than at the start of the fitting range (#41).
+
 ## version 2.4.7
 - Replaces the evmix dependency with an internal implementation of reflected Gaussian kernel density estimation, preserving the density_dbc option.
 - Documents control settings as option lists to satisfy R-devel Rd checks.
@@ -70,5 +79,5 @@
 ## version 1.0.1
 - Added check for supplying p-values as z-scores. (issue #2)
 
-## version 1.0.
+## version 1.0.0
 - The release version of the package.

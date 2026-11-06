@@ -78,14 +78,14 @@ zcurve_data <- function(data, id = NULL, rounded = TRUE, stat_precise = 2, p_pre
   stat_df1  <- ifelse(stat_type %in% c("t", "f", "c"), substr(data, regexpr("\\(", data) + 1, regexpr("[,]|[\\)]", data) - 1), NA)
   stat_df2  <- ifelse(stat_type == "f",           substr(data, regexpr(",", data) + 1, regexpr("[\\)]", data) - 1), NA)
   censored  <- grepl("<", data) | grepl(">", data)
-  digits    <- ifelse(regexpr("\\.", data) == -1, 0, nchar(data) - regexpr("\\.", data))
-  
+
   # check the input
   if(any(!stat_type %in% c("t", "z", "p", "f", "c")))
     stop(paste0("Unknown test statistic: ", paste0("'", unique(stat_type[!stat_type %in% c("t", "z", "p", "f", "c")]),"'", collapse = ", "), "."))
   
   
   # check that all matches are numeric
+  digits   <- .n_decimals(stat_val)
   stat_val <- tryCatch(
     as.numeric(stat_val),
     warning = function(w) stop(paste0("The following input could not be decoded: ", paste0("'", data[which(is.na(suppressWarnings(as.numeric(stat_val))))], "'", collapse = ", "), "."), call. = FALSE)
@@ -196,10 +196,12 @@ zcurve_data <- function(data, id = NULL, rounded = TRUE, stat_precise = 2, p_pre
         warning = function(w) stop(paste0("The following input could not be decoded: '", data[i], "'."))
       )
     }else if(rounded[i] != -1 && censored[i]){
-      # rounded censored values
-      temp_stat_val    <- abs(stat_val[i]) 
-      temp_stat_val.ub <- abs(stat_val[i]) + 0.5 * 10^-digits[i]
-    
+      # rounded censored values (the statistic is larger than its lowest unrounded value)
+      temp_stat_val    <- abs(stat_val[i])
+      temp_stat_val.lb <- abs(stat_val[i]) - 0.5 * 10^-digits[i]
+
+      temp_stat_val.lb <- ifelse(temp_stat_val.lb < 0, 0, temp_stat_val.lb)
+
       p_vals.ub[i] <- tryCatch(
         switch(
           stat_type[i],
@@ -215,10 +217,10 @@ zcurve_data <- function(data, id = NULL, rounded = TRUE, stat_precise = 2, p_pre
       p_vals.rep[i] <- tryCatch(
         switch(
           stat_type[i],
-          "f" = stats::pf(temp_stat_val.lb , df1 = stat_df1[i], df2 = stat_df2[i], lower.tail = FALSE),
-          "c" = stats::pchisq(temp_stat_val.lb, df = stat_df1[i], lower.tail = FALSE),
-          "t" = stats::pt(temp_stat_val.lb, df = stat_df1[i], lower.tail = FALSE) * 2,
-          "z" = stats::pnorm(temp_stat_val.lb, lower.tail = FALSE) * 2,
+          "f" = stats::pf(temp_stat_val, df1 = stat_df1[i], df2 = stat_df2[i], lower.tail = FALSE),
+          "c" = stats::pchisq(temp_stat_val, df = stat_df1[i], lower.tail = FALSE),
+          "t" = stats::pt(temp_stat_val, df = stat_df1[i], lower.tail = FALSE) * 2,
+          "z" = stats::pnorm(temp_stat_val, lower.tail = FALSE) * 2,
           "p" = temp_stat_val
         ),
         warning = function(w) stop(paste0("The following input could not be decoded: '", data[i], "'."))
@@ -241,8 +243,18 @@ zcurve_data <- function(data, id = NULL, rounded = TRUE, stat_precise = 2, p_pre
     )
   )
   class(output) <- "zcurve_data"
-  
+
   return(output)
+}
+
+# number of decimal places of the reported values (e.g., "0.03" -> 2, "1.5e-5" -> 6)
+.n_decimals <- function(x){
+  mantissa <- sub("e.*$", "", x)
+  exponent <- rep(0, length(x))
+  is_sci   <- grepl("^[^e]*e[+-]?[0-9]+$", x)
+  exponent[is_sci] <- as.numeric(sub("^.*e", "", x[is_sci]))
+  decimals <- ifelse(regexpr("\\.", mantissa) == -1, 0, nchar(mantissa) - regexpr("\\.", mantissa))
+  return(pmax(decimals - exponent, 0))
 }
 
 ### methods

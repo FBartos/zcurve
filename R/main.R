@@ -132,6 +132,9 @@ zcurve       <- function(z, z.lb, z.ub, p, p.lb, p.ub, data, method = "EM", boot
     control <- .zcurve_density.control(control)
   }
   
+  # significance cutoff for counting significant results (independent of the fitting range)
+  z_sig <- stats::qnorm(control$sig_level/2, lower.tail = FALSE)
+  
   ### prepare data
   if(missing(data)){
     
@@ -159,7 +162,7 @@ zcurve       <- function(z, z.lb, z.ub, p, p.lb, p.ub, data, method = "EM", boot
     
     # get the total number of observations before removal for fitting purposes
     N_obs <- length(z) + length(lb)
-    N_sig <- length(z[z >= control$a]) + length(lb[lb >= control$a])
+    N_sig <- length(z[z >= z_sig]) + length(lb[lb >= z_sig])
     
     # restrict censoring to the fitting range & treat extremely censored values as extremely significant values
     if(!is.null(lb)){
@@ -200,7 +203,7 @@ zcurve       <- function(z, z.lb, z.ub, p, p.lb, p.ub, data, method = "EM", boot
     
     # get the total number of observations before removal for fitting purposes
     N_obs <- length(data$precise$p)
-    N_sig <- length(data$precise$p[.p_to_z(data$precise$p) >= control$a])
+    N_sig <- length(data$precise$p[.p_to_z(data$precise$p) >= z_sig])
     
     if(nrow(data$censored) != 0){
       
@@ -209,7 +212,7 @@ zcurve       <- function(z, z.lb, z.ub, p, p.lb, p.ub, data, method = "EM", boot
       
       # get the total number of observations before removal for fitting purposes (using the collected bounds before accounting for rounding)
       N_obs <- N_obs + length(.p_to_z(data$censored$p.rep))
-      N_sig <- N_sig + length(.p_to_z(data$censored$p.rep)[.p_to_z(data$censored$p.rep) >= control$a])
+      N_sig <- N_sig + length(.p_to_z(data$censored$p.rep)[.p_to_z(data$censored$p.rep) >= z_sig])
       
       # remove non-significant censored p-values
       if(any(lb < control$a)){
