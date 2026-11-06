@@ -5,10 +5,11 @@
 #' [zcurve_data()] function as the input (where id denotes clusters). 
 #' Two different methods that account for clustering ar implemented via 
 #' the EM model: \code{"w"} for down weighting the likelihood of the test 
-#' statistics proportionately to the number of repetitions in the clusters,
-#' and \code{"b"} for a nested bootstrap where only a single study from each
-#' bootstrap is selected for model fitting. The CI for \code{"w"} is obtained
-#' with a cluster bootstrap that resamples clusters with replacement.
+#' statistics proportionately to the number of repetitions in the clusters, 
+#' and \code{"b"} for a cluster bootstrap where clusters are resampled with 
+#' replacement (keeping all of their test statistics) to estimate the CI.
+#' The CI for \code{"w"} is also obtained with a cluster bootstrap that
+#' resamples clusters with replacement.
 #'
 #' Note that \code{"w"} gives each cluster the same total weight, so it
 #' estimates the ERR and EDR of a typical cluster rather than of a typical
@@ -17,7 +18,7 @@
 #' \code{"w"} underestimates the test-level ERR and EDR.
 #' @param data an object created with [zcurve_data()] function.
 #' @param method the method to be used for fitting. Possible options are
-#' down weighting \code{"w"} and nested bootstrap \code{"b"}. 
+#' down weighting \code{"w"} and cluster bootstrap \code{"b"}. 
 #' Defaults to \code{"w"}.
 #' @param bootstrap the number of bootstraps for estimating CI. To skip
 #' bootstrap specify \code{FALSE}.
@@ -42,7 +43,7 @@ zcurve_clustered <- function(data, method = "b", bootstrap = 1000, parallel = FA
   if(!method %in% c("w", "b"))
     stop("Wrong method, select a supported option.")
   if(method == "b" && is.logical(bootstrap) && !bootstrap)
-    stop("The nested boostrap method requires bootstrap.")
+    stop("The cluster bootstrap method requires bootstrap.")
   
   # set bootstrap
   if(!is.numeric(bootstrap)){
@@ -284,14 +285,27 @@ zcurve_clustered <- function(data, method = "b", bootstrap = 1000, parallel = FA
     "iter"       = do.call(c, lapply(fit, function(f) f[["iter"]]))
   )
   
+  # point estimate from all results
+  fit_all <- .zcurve_EMc_fit_fast_RCpp(x          = z,
+                                       lb         = lb,
+                                       ub         = ub,
+                                       mu         = fit_start$mu[which.max(fit_start$Q),],
+                                       sigma      = control$sigma,
+                                       theta      = fit_start$weights[which.max(fit_start$Q),],
+                                       a          = control$a,
+                                       b          = control$b,
+                                       sig_level  = control$sig_level,
+                                       max_iter   = control$max_iter,
+                                       criterion  = control$criterion)
+
   return(
     list(
       fit =      list(
-        "mu"         = apply(fit_boot[["mu"]], 2, mean),
-        "weights"    = apply(fit_boot[["weights"]], 2, mean),
-        "prop_high"  = mean(fit_boot[["prop_high"]]),
-        "Q"          = mean(fit_boot[["Q"]]),
-        "iter"       = mean(fit_boot[["iter"]]),
+        "mu"         = fit_all$mu,
+        "weights"    = fit_all$weights,
+        "prop_high"  = fit_all$prop_high,
+        "Q"          = fit_all$Q,
+        "iter"       = fit_all$iter,
         "iter_start" = fit_start$iter[which.max(fit_start$Q)]
       ),
       fit_boot = fit_boot
@@ -431,24 +445,11 @@ zcurve_clustered <- function(data, method = "b", bootstrap = 1000, parallel = FA
 
 .boot_id <- function(data){
   
+  # resample articles with replacement, keeping all results of each drawn article
   unique_id <- unique(data$id)
-  
-  if(length(unique_id) == nrow(data)){
-    return(data)
-  }
-  
-  boot_out <- list()
-  for(id in unique_id){
-    
-    temp_data <- data[data$id == id,]
-    
-    if(nrow(temp_data) == 1){
-      boot_out[[id]] <- temp_data
-    }else{
-      boot_out[[id]] <- temp_data[sample(nrow(temp_data), 1),]
-    }
-  }
-  boot_out <- do.call(rbind, boot_out)
-  
-  return(boot_out)
+  boot_id   <- unique_id[sample.int(length(unique_id), replace = TRUE)]
+
+  rows <- unlist(lapply(boot_id, function(id) which(data$id == id)))
+
+  return(data[rows, ])
 }
