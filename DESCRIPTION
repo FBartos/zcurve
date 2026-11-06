@@ -1,9 +1,10 @@
 Package: zcurve
 Title: An Implementation of Z-Curves
-Version: 2.4.7.9000
+Version: 2.5.0
 Authors@R: c(
     person("František", "Bartoš", email = "f.bartos96@gmail.com", role = c("aut", "cre")),
-    person("Ulrich", "Schimmack", email = "ulrich.schimmack@utoronto.ca", role = c("aut")))
+    person("Ulrich", "Schimmack", email = "ulrich.schimmack@utoronto.ca", role = c("aut")),
+    person("Shaheed", "Azaad", role = c("ctb")))
 Maintainer: František Bartoš <f.bartos96@gmail.com>
 Description: An implementation of z-curves - a method for estimating expected discovery 
     and replicability rates on the bases of test-statistics of published studies. The package 
