@@ -6,7 +6,13 @@ Two different methods that account for clustering ar implemented via
 the EM model: "w" for down weighting the likelihood of the test
 statistics proportionately to the number of repetitions in the clusters,
 and "b" for a nested bootstrap where only a single study from each
-bootstrap is selected for model fitting.'><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
+bootstrap is selected for model fitting. The CI for "w" is obtained
+with a cluster bootstrap that resamples clusters with replacement.
+Note that "w" gives each cluster the same total weight, so it
+estimates the ERR and EDR of a typical cluster rather than of a typical
+test. When the number of significant results in a cluster depends on its
+power (e.g., high-powered articles report more significant results),
+"w" underestimates the test-level ERR and EDR.'><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
@@ -63,7 +69,13 @@ Two different methods that account for clustering ar implemented via
 the EM model: <code>"w"</code> for down weighting the likelihood of the test
 statistics proportionately to the number of repetitions in the clusters,
 and <code>"b"</code> for a nested bootstrap where only a single study from each
-bootstrap is selected for model fitting.</p>
+bootstrap is selected for model fitting. The CI for <code>"w"</code> is obtained
+with a cluster bootstrap that resamples clusters with replacement.</p>
+<p>Note that <code>"w"</code> gives each cluster the same total weight, so it
+estimates the ERR and EDR of a typical cluster rather than of a typical
+test. When the number of significant results in a cluster depends on its
+power (e.g., high-powered articles report more significant results),
+<code>"w"</code> underestimates the test-level ERR and EDR.</p>
     </div>
 
     <div id="ref-usage">
