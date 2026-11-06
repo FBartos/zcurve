@@ -5,9 +5,10 @@ zcurve_data() function as the input (where id denotes clusters).
 Two different methods that account for clustering ar implemented via
 the EM model: "w" for down weighting the likelihood of the test
 statistics proportionately to the number of repetitions in the clusters,
-and "b" for a nested bootstrap where only a single study from each
-bootstrap is selected for model fitting. The CI for "w" is obtained
-with a cluster bootstrap that resamples clusters with replacement.
+and "b" for a cluster bootstrap where clusters are resampled with
+replacement (keeping all of their test statistics) to estimate the CI.
+The CI for "w" is also obtained with a cluster bootstrap that
+resamples clusters with replacement.
 Note that "w" gives each cluster the same total weight, so it
 estimates the ERR and EDR of a typical cluster rather than of a typical
 test. When the number of significant results in a cluster depends on its
@@ -30,7 +31,7 @@ power (e.g., high-powered articles report more significant results),
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">zcurve</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.7.9000</span>
       </span>
     </div>
 
@@ -68,9 +69,10 @@ clustered data. The function requires a data object created with the
 Two different methods that account for clustering ar implemented via
 the EM model: <code>"w"</code> for down weighting the likelihood of the test
 statistics proportionately to the number of repetitions in the clusters,
-and <code>"b"</code> for a nested bootstrap where only a single study from each
-bootstrap is selected for model fitting. The CI for <code>"w"</code> is obtained
-with a cluster bootstrap that resamples clusters with replacement.</p>
+and <code>"b"</code> for a cluster bootstrap where clusters are resampled with
+replacement (keeping all of their test statistics) to estimate the CI.
+The CI for <code>"w"</code> is also obtained with a cluster bootstrap that
+resamples clusters with replacement.</p>
 <p>Note that <code>"w"</code> gives each cluster the same total weight, so it
 estimates the ERR and EDR of a typical cluster rather than of a typical
 test. When the number of significant results in a cluster depends on its
@@ -98,7 +100,7 @@ power (e.g., high-powered articles report more significant results),
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p>the method to be used for fitting. Possible options are
-down weighting <code>"w"</code> and nested bootstrap <code>"b"</code>.
+down weighting <code>"w"</code> and cluster bootstrap <code>"b"</code>.
 Defaults to <code>"w"</code>.</p></dd>
 
 
