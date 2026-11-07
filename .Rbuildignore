@@ -2,7 +2,6 @@
 ^\.Rproj\.user$
 ^cran-comments\.md$
 ^README\.Rmd$
-^NEWS\.md$
 ^\.travis\.yml$
 ^trash/
 ^_pkgdown\.yml$
